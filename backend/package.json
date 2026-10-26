@@ -4,6 +4,9 @@
   "description": "",
   "main": "src/server.js",
   "scripts": {
+    "prisma:generate": "prisma generate",
+    "predev": "npm run prisma:generate",
+    "prestart": "npm run prisma:generate",
     "dev": "nodemon src/server.js ",
     "start": "node src/server.js"
   },
@@ -14,10 +17,14 @@
   "dependencies": {
     "@prisma/adapter-mariadb": "^7.10.0",
     "@prisma/client": "^7.10.0",
+    "bcrypt": "^6.0.0",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
     "dotenv": "^18.0.6",
     "express": "^5.2.1",
-    "mariadb": "^3.5.4"
+    "jsonwebtoken": "^9.0.3",
+    "mariadb": "^3.5.4",
+    "ms": "^2.1.3"
   },
   "devDependencies": {
     "@types/express": "^5.0.6",

@@ -1,0 +1,273 @@
+-- CreateTable
+CREATE TABLE `VAITRO` (
+    `maVaiTro` INTEGER NOT NULL AUTO_INCREMENT,
+    `tenVaiTro` VARCHAR(50) NOT NULL,
+    `moTa` VARCHAR(255) NULL,
+    `createdAt` DATETIME(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
+    `updatedAt` DATETIME(0) NOT NULL,
+
+    UNIQUE INDEX `VAITRO_tenVaiTro_key`(`tenVaiTro`),
+    PRIMARY KEY (`maVaiTro`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `NGUOIDUNG` (
+    `maNguoiDung` INTEGER NOT NULL AUTO_INCREMENT,
+    `maVaiTro` INTEGER NOT NULL,
+    `hoTen` VARCHAR(100) NOT NULL,
+    `email` VARCHAR(255) NOT NULL,
+    `matKhauHash` VARCHAR(255) NOT NULL,
+    `soDienThoai` VARCHAR(15) NULL,
+    `anhDaiDien` VARCHAR(500) NULL,
+    `duongDanZalo` VARCHAR(500) NULL,
+    `emailDaXacThuc` BOOLEAN NOT NULL DEFAULT false,
+    `maXacThucEmail` VARCHAR(255) NULL,
+    `hanXacThucEmail` DATETIME(0) NULL,
+    `trangThai` VARCHAR(30) NOT NULL DEFAULT 'HOAT_DONG',
+    `createdAt` DATETIME(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
+    `updatedAt` DATETIME(0) NOT NULL,
+    `deletedAt` DATETIME(0) NULL,
+
+    UNIQUE INDEX `NGUOIDUNG_email_key`(`email`),
+    INDEX `NGUOIDUNG_maVaiTro_idx`(`maVaiTro`),
+    INDEX `NGUOIDUNG_trangThai_deletedAt_idx`(`trangThai`, `deletedAt`),
+    PRIMARY KEY (`maNguoiDung`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `PHIENDANGNHAP` (
+    `maPhienDangNhap` INTEGER NOT NULL AUTO_INCREMENT,
+    `maNguoiDung` INTEGER NOT NULL,
+    `refreshToken` VARCHAR(255) NOT NULL,
+    `expiredAt` DATETIME(0) NOT NULL,
+    `createdAt` DATETIME(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
+
+    UNIQUE INDEX `PHIENDANGNHAP_refreshToken_key`(`refreshToken`),
+    INDEX `PHIENDANGNHAP_maNguoiDung_idx`(`maNguoiDung`),
+    INDEX `PHIENDANGNHAP_expiredAt_idx`(`expiredAt`),
+    PRIMARY KEY (`maPhienDangNhap`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `LOAIBATDONGSAN` (
+    `maLoaiBatDongSan` INTEGER NOT NULL AUTO_INCREMENT,
+    `tenLoai` VARCHAR(100) NOT NULL,
+    `moTa` TEXT NULL,
+    `createdAt` DATETIME(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
+    `updatedAt` DATETIME(0) NOT NULL,
+
+    UNIQUE INDEX `LOAIBATDONGSAN_tenLoai_key`(`tenLoai`),
+    PRIMARY KEY (`maLoaiBatDongSan`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `GIAYTOPHAPLY` (
+    `maGiayTo` INTEGER NOT NULL AUTO_INCREMENT,
+    `tenGiayTo` VARCHAR(200) NOT NULL,
+    `moTa` TEXT NULL,
+    `createdAt` DATETIME(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
+    `updatedAt` DATETIME(0) NOT NULL,
+
+    UNIQUE INDEX `GIAYTOPHAPLY_tenGiayTo_key`(`tenGiayTo`),
+    PRIMARY KEY (`maGiayTo`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `TINHTHANH` (
+    `maTinhThanh` VARCHAR(20) NOT NULL,
+    `tenTinhThanh` VARCHAR(150) NOT NULL,
+
+    PRIMARY KEY (`maTinhThanh`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `PHUONGXA` (
+    `maPhuongXa` INTEGER NOT NULL AUTO_INCREMENT,
+    `maTinhThanh` VARCHAR(20) NOT NULL,
+    `tenPhuongXa` VARCHAR(150) NOT NULL,
+
+    INDEX `PHUONGXA_maTinhThanh_idx`(`maTinhThanh`),
+    INDEX `PHUONGXA_maTinhThanh_tenPhuongXa_idx`(`maTinhThanh`, `tenPhuongXa`),
+    PRIMARY KEY (`maPhuongXa`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `TINDANG` (
+    `maTinDang` INTEGER NOT NULL AUTO_INCREMENT,
+    `maNguoiDang` INTEGER NOT NULL,
+    `maLoaiBatDongSan` INTEGER NOT NULL,
+    `maGiayTo` INTEGER NULL,
+    `maPhuongXa` INTEGER NOT NULL,
+    `tieuDe` VARCHAR(200) NOT NULL,
+    `moTa` TEXT NOT NULL,
+    `diaChiChiTiet` VARCHAR(255) NOT NULL,
+    `viDo` DECIMAL(10, 7) NULL,
+    `kinhDo` DECIMAL(10, 7) NULL,
+    `giaNiemYet` DECIMAL(18, 2) NOT NULL,
+    `dienTich` DECIMAL(12, 2) NOT NULL,
+    `soPhongNgu` INTEGER NULL,
+    `soPhongTam` INTEGER NULL,
+    `soTang` INTEGER NULL,
+    `huongNha` VARCHAR(100) NULL,
+    `ngayDang` DATETIME(0) NULL,
+    `trangThai` VARCHAR(30) NOT NULL DEFAULT 'CHO_KIEM_DUYET',
+    `createdAt` DATETIME(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
+    `updatedAt` DATETIME(0) NOT NULL,
+    `deletedAt` DATETIME(0) NULL,
+
+    INDEX `TINDANG_maNguoiDang_createdAt_idx`(`maNguoiDang`, `createdAt`),
+    INDEX `TINDANG_maLoaiBatDongSan_idx`(`maLoaiBatDongSan`),
+    INDEX `TINDANG_maGiayTo_idx`(`maGiayTo`),
+    INDEX `TINDANG_maPhuongXa_idx`(`maPhuongXa`),
+    INDEX `TINDANG_trangThai_deletedAt_ngayDang_idx`(`trangThai`, `deletedAt`, `ngayDang`),
+    INDEX `TINDANG_giaNiemYet_idx`(`giaNiemYet`),
+    INDEX `TINDANG_dienTich_idx`(`dienTich`),
+    PRIMARY KEY (`maTinDang`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `TIENICH` (
+    `maTienIch` INTEGER NOT NULL AUTO_INCREMENT,
+    `tenTienIch` VARCHAR(100) NOT NULL,
+    `moTa` VARCHAR(255) NULL,
+    `createdAt` DATETIME(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
+    `updatedAt` DATETIME(0) NOT NULL,
+
+    UNIQUE INDEX `TIENICH_tenTienIch_key`(`tenTienIch`),
+    PRIMARY KEY (`maTienIch`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `TINDANG_TIENICH` (
+    `maTinDang` INTEGER NOT NULL,
+    `maTienIch` INTEGER NOT NULL,
+
+    INDEX `TINDANG_TIENICH_maTienIch_idx`(`maTienIch`),
+    PRIMARY KEY (`maTinDang`, `maTienIch`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `HINHANHTINDANG` (
+    `maHinhAnh` INTEGER NOT NULL AUTO_INCREMENT,
+    `maTinDang` INTEGER NOT NULL,
+    `duongDanAnh` VARCHAR(500) NOT NULL,
+    `thuTuHienThi` INTEGER NOT NULL DEFAULT 0,
+    `laAnhDaiDien` BOOLEAN NOT NULL DEFAULT false,
+    `createdAt` DATETIME(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
+
+    INDEX `HINHANHTINDANG_maTinDang_thuTuHienThi_idx`(`maTinDang`, `thuTuHienThi`),
+    PRIMARY KEY (`maHinhAnh`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `TINDANGYEUTHICH` (
+    `maNguoiDung` INTEGER NOT NULL,
+    `maTinDang` INTEGER NOT NULL,
+    `ngayLuu` DATETIME(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
+
+    INDEX `TINDANGYEUTHICH_maTinDang_idx`(`maTinDang`),
+    PRIMARY KEY (`maNguoiDung`, `maTinDang`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `PHANANHTINDANG` (
+    `maBaoCao` INTEGER NOT NULL AUTO_INCREMENT,
+    `maTinDang` INTEGER NOT NULL,
+    `maNguoiBaoCao` INTEGER NOT NULL,
+    `noiDung` TEXT NOT NULL,
+    `ngayBaoCao` DATETIME(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
+    `ngayXuLy` DATETIME(0) NULL,
+    `hanhDongXuLy` VARCHAR(255) NULL,
+    `ghiChu` TEXT NULL,
+    `trangThai` VARCHAR(30) NOT NULL DEFAULT 'CHO_XU_LY',
+    `updatedAt` DATETIME(0) NOT NULL,
+
+    INDEX `PHANANHTINDANG_maTinDang_idx`(`maTinDang`),
+    INDEX `PHANANHTINDANG_maNguoiBaoCao_idx`(`maNguoiBaoCao`),
+    INDEX `PHANANHTINDANG_trangThai_ngayBaoCao_idx`(`trangThai`, `ngayBaoCao`),
+    PRIMARY KEY (`maBaoCao`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `LICHSUKIEMDUYET` (
+    `maKiemDuyet` INTEGER NOT NULL AUTO_INCREMENT,
+    `maTinDang` INTEGER NOT NULL,
+    `maNguoiDung` INTEGER NOT NULL,
+    `ketQua` VARCHAR(50) NOT NULL,
+    `ghiChu` TEXT NULL,
+    `ngayKiemDuyet` DATETIME(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
+
+    INDEX `LICHSUKIEMDUYET_maTinDang_ngayKiemDuyet_idx`(`maTinDang`, `ngayKiemDuyet`),
+    INDEX `LICHSUKIEMDUYET_maNguoiDung_idx`(`maNguoiDung`),
+    PRIMARY KEY (`maKiemDuyet`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `THONGBAO` (
+    `maThongBao` INTEGER NOT NULL AUTO_INCREMENT,
+    `maNguoiNhan` INTEGER NOT NULL,
+    `maTinDang` INTEGER NULL,
+    `tieuDe` VARCHAR(200) NOT NULL,
+    `noiDung` TEXT NOT NULL,
+    `daDoc` BOOLEAN NOT NULL DEFAULT false,
+    `ngayDoc` DATETIME(0) NULL,
+    `createdAt` DATETIME(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
+
+    INDEX `THONGBAO_maNguoiNhan_daDoc_createdAt_idx`(`maNguoiNhan`, `daDoc`, `createdAt`),
+    INDEX `THONGBAO_maTinDang_idx`(`maTinDang`),
+    PRIMARY KEY (`maThongBao`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- AddForeignKey
+ALTER TABLE `NGUOIDUNG` ADD CONSTRAINT `NGUOIDUNG_maVaiTro_fkey` FOREIGN KEY (`maVaiTro`) REFERENCES `VAITRO`(`maVaiTro`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `PHIENDANGNHAP` ADD CONSTRAINT `PHIENDANGNHAP_maNguoiDung_fkey` FOREIGN KEY (`maNguoiDung`) REFERENCES `NGUOIDUNG`(`maNguoiDung`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `PHUONGXA` ADD CONSTRAINT `PHUONGXA_maTinhThanh_fkey` FOREIGN KEY (`maTinhThanh`) REFERENCES `TINHTHANH`(`maTinhThanh`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `TINDANG` ADD CONSTRAINT `TINDANG_maNguoiDang_fkey` FOREIGN KEY (`maNguoiDang`) REFERENCES `NGUOIDUNG`(`maNguoiDung`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `TINDANG` ADD CONSTRAINT `TINDANG_maLoaiBatDongSan_fkey` FOREIGN KEY (`maLoaiBatDongSan`) REFERENCES `LOAIBATDONGSAN`(`maLoaiBatDongSan`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `TINDANG` ADD CONSTRAINT `TINDANG_maGiayTo_fkey` FOREIGN KEY (`maGiayTo`) REFERENCES `GIAYTOPHAPLY`(`maGiayTo`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `TINDANG` ADD CONSTRAINT `TINDANG_maPhuongXa_fkey` FOREIGN KEY (`maPhuongXa`) REFERENCES `PHUONGXA`(`maPhuongXa`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `TINDANG_TIENICH` ADD CONSTRAINT `TINDANG_TIENICH_maTinDang_fkey` FOREIGN KEY (`maTinDang`) REFERENCES `TINDANG`(`maTinDang`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `TINDANG_TIENICH` ADD CONSTRAINT `TINDANG_TIENICH_maTienIch_fkey` FOREIGN KEY (`maTienIch`) REFERENCES `TIENICH`(`maTienIch`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `HINHANHTINDANG` ADD CONSTRAINT `HINHANHTINDANG_maTinDang_fkey` FOREIGN KEY (`maTinDang`) REFERENCES `TINDANG`(`maTinDang`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `TINDANGYEUTHICH` ADD CONSTRAINT `TINDANGYEUTHICH_maNguoiDung_fkey` FOREIGN KEY (`maNguoiDung`) REFERENCES `NGUOIDUNG`(`maNguoiDung`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `TINDANGYEUTHICH` ADD CONSTRAINT `TINDANGYEUTHICH_maTinDang_fkey` FOREIGN KEY (`maTinDang`) REFERENCES `TINDANG`(`maTinDang`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `PHANANHTINDANG` ADD CONSTRAINT `PHANANHTINDANG_maTinDang_fkey` FOREIGN KEY (`maTinDang`) REFERENCES `TINDANG`(`maTinDang`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `PHANANHTINDANG` ADD CONSTRAINT `PHANANHTINDANG_maNguoiBaoCao_fkey` FOREIGN KEY (`maNguoiBaoCao`) REFERENCES `NGUOIDUNG`(`maNguoiDung`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `LICHSUKIEMDUYET` ADD CONSTRAINT `LICHSUKIEMDUYET_maTinDang_fkey` FOREIGN KEY (`maTinDang`) REFERENCES `TINDANG`(`maTinDang`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `LICHSUKIEMDUYET` ADD CONSTRAINT `LICHSUKIEMDUYET_maNguoiDung_fkey` FOREIGN KEY (`maNguoiDung`) REFERENCES `NGUOIDUNG`(`maNguoiDung`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `THONGBAO` ADD CONSTRAINT `THONGBAO_maNguoiNhan_fkey` FOREIGN KEY (`maNguoiNhan`) REFERENCES `NGUOIDUNG`(`maNguoiDung`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `THONGBAO` ADD CONSTRAINT `THONGBAO_maTinDang_fkey` FOREIGN KEY (`maTinDang`) REFERENCES `TINDANG`(`maTinDang`) ON DELETE SET NULL ON UPDATE CASCADE;

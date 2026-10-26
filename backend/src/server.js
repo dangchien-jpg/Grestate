@@ -1,14 +1,20 @@
 import express from "express";
 import dotenv from "dotenv";
+import cookieParser from "cookie-parser";
 import prisma from "./libs/prisma.js";
 import route from "./routes/test.route.js";
+import authRoute from "./routes/auth.route.js";
+
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5001;
 
 app.use(express.json());
+app.use(cookieParser());
+// public route
 app.use("/api/", route);
+app.use("/api/auth/", authRoute);
 
 async function startServer() {
   try {
