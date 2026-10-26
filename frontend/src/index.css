@@ -1,0 +1,724 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "@fontsource-variable/jetbrains-mono";
+
+@custom-variant dark (&:is(.dark *));
+
+/* =========================================================
+   GRESTATE DESIGN SYSTEM
+   Tailwind CSS v4
+   Theme: Navy + Emerald + Amber
+   ========================================================= */
+
+:root {
+  /* =======================================================
+     BASE
+     ======================================================= */
+
+  --background: hsl(210 40% 98%);
+  --foreground: hsl(222 47% 11%);
+
+  /* =======================================================
+     CARD
+     ======================================================= */
+
+  --card: hsl(0 0% 100%);
+  --card-foreground: hsl(222 47% 11%);
+
+  /* =======================================================
+     POPOVER
+     ======================================================= */
+
+  --popover: hsl(0 0% 100%);
+  --popover-foreground: hsl(222 47% 11%);
+
+  /* =======================================================
+     PRIMARY
+     Navy - Brand / Header / CTA
+     ======================================================= */
+
+  --primary: hsl(221 83% 35%);
+  --primary-foreground: hsl(0 0% 100%);
+
+  /* Emerald - secondary brand color */
+  --primary-glow: hsl(160 84% 39%);
+
+  /* =======================================================
+     SECONDARY
+     ======================================================= */
+
+  --secondary: hsl(210 40% 96%);
+  --secondary-foreground: hsl(221 83% 35%);
+
+  /* =======================================================
+     MUTED
+     ======================================================= */
+
+  --muted: hsl(210 40% 96%);
+  --muted-foreground: hsl(215 16% 47%);
+
+  /* =======================================================
+     ACCENT
+     Amber - Price / Featured / Important
+     ======================================================= */
+
+  --accent: hsl(38 92% 50%);
+  --accent-foreground: hsl(24 10% 10%);
+
+  /* =======================================================
+     REAL ESTATE STATUS
+     ======================================================= */
+
+  /* Available */
+  --available: hsl(142 71% 45%);
+  --available-foreground: hsl(0 0% 100%);
+
+  /* Pending / Negotiating */
+  --pending: hsl(38 92% 50%);
+  --pending-foreground: hsl(24 10% 10%);
+
+  /* Sold */
+  --sold: hsl(0 72% 51%);
+  --sold-foreground: hsl(0 0% 100%);
+
+  /* =======================================================
+     MAP / GIS
+     ======================================================= */
+
+  --map: hsl(199 89% 48%);
+  --map-foreground: hsl(0 0% 100%);
+  --map-highlight: hsl(187 85% 53%);
+
+  /* =======================================================
+     CONTACT
+     ======================================================= */
+
+  --contact: hsl(160 84% 39%);
+  --contact-foreground: hsl(0 0% 100%);
+
+  /* =======================================================
+     USER STATUS
+     ======================================================= */
+
+  --online: hsl(142 71% 45%);
+  --offline: hsl(215 16% 60%);
+  --away: hsl(38 92% 50%);
+
+  /* =======================================================
+     WARNING / INFO
+     ======================================================= */
+
+  --warning: hsl(38 92% 50%);
+  --warning-foreground: hsl(24 10% 10%);
+
+  --info: hsl(199 89% 48%);
+  --info-foreground: hsl(0 0% 100%);
+
+  /* =======================================================
+     DESTRUCTIVE
+     ======================================================= */
+
+  --destructive: hsl(0 72% 51%);
+  --destructive-foreground: hsl(0 0% 100%);
+
+  /* =======================================================
+     BORDER / INPUT / RING
+     ======================================================= */
+
+  --border: hsl(214 32% 91%);
+  --input: hsl(214 32% 91%);
+  --ring: hsl(221 83% 35%);
+
+  /* =======================================================
+     CHART
+     ======================================================= */
+
+  --chart-1: hsl(221 83% 35%);
+  --chart-2: hsl(160 84% 39%);
+  --chart-3: hsl(38 92% 50%);
+  --chart-4: hsl(199 89% 48%);
+  --chart-5: hsl(0 72% 51%);
+
+  /* =======================================================
+     SIDEBAR
+     ======================================================= */
+
+  --sidebar: hsl(0 0% 100%);
+  --sidebar-foreground: hsl(222 47% 11%);
+
+  --sidebar-primary: hsl(221 83% 35%);
+  --sidebar-primary-foreground: hsl(0 0% 100%);
+
+  --sidebar-accent: hsl(210 40% 96%);
+  --sidebar-accent-foreground: hsl(221 83% 35%);
+
+  --sidebar-border: hsl(214 32% 91%);
+  --sidebar-ring: hsl(221 83% 35%);
+
+  /* =======================================================
+     RADIUS
+     ======================================================= */
+
+  --radius: 0.75rem;
+
+  /* =======================================================
+     GRADIENTS
+     ======================================================= */
+
+  --gradient-primary: linear-gradient(
+    135deg,
+    hsl(221 83% 35%),
+    hsl(221 83% 42%)
+  );
+
+  --gradient-brand: linear-gradient(135deg, hsl(221 83% 35%), hsl(160 84% 39%));
+
+  --gradient-map: linear-gradient(135deg, hsl(199 89% 48%), hsl(187 85% 53%));
+
+  --gradient-soft: linear-gradient(135deg, hsl(210 40% 98%), hsl(214 32% 94%));
+
+  --gradient-property: linear-gradient(
+    to top,
+    hsl(222 47% 11% / 0.75),
+    hsl(222 47% 11% / 0.05)
+  );
+
+  /* =======================================================
+     SHADOWS
+     ======================================================= */
+
+  --shadow-soft-value: 0 8px 30px -10px hsl(221 83% 35% / 0.15);
+
+  --shadow-card-value: 0 4px 20px -6px hsl(222 47% 11% / 0.1);
+
+  --shadow-hover-value: 0 12px 35px -10px hsl(221 83% 35% / 0.2);
+
+  --shadow-map-value: 0 4px 20px -5px hsl(199 89% 48% / 0.25);
+
+  /* =======================================================
+     TRANSITIONS
+     ======================================================= */
+
+  --transition-smooth: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
+  --transition-bounce: all 0.35s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+/* =========================================================
+   DARK MODE
+   ========================================================= */
+
+.dark {
+  --background: hsl(222 47% 8%);
+  --foreground: hsl(210 40% 96%);
+
+  --card: hsl(222 47% 11%);
+  --card-foreground: hsl(210 40% 96%);
+
+  --popover: hsl(222 47% 11%);
+  --popover-foreground: hsl(210 40% 96%);
+
+  /* Primary */
+  --primary: hsl(214 100% 70%);
+  --primary-foreground: hsl(222 47% 8%);
+
+  --primary-glow: hsl(160 84% 45%);
+
+  /* Secondary */
+  --secondary: hsl(217 33% 17%);
+  --secondary-foreground: hsl(214 100% 75%);
+
+  /* Muted */
+  --muted: hsl(217 33% 15%);
+  --muted-foreground: hsl(215 20% 65%);
+
+  /* Accent */
+  --accent: hsl(38 92% 55%);
+  --accent-foreground: hsl(24 10% 10%);
+
+  /* Real estate status */
+  --available: hsl(142 71% 50%);
+  --available-foreground: hsl(0 0% 100%);
+
+  --pending: hsl(38 92% 55%);
+  --pending-foreground: hsl(24 10% 10%);
+
+  --sold: hsl(0 72% 55%);
+  --sold-foreground: hsl(0 0% 100%);
+
+  /* Map */
+  --map: hsl(199 89% 55%);
+  --map-foreground: hsl(222 47% 8%);
+  --map-highlight: hsl(187 85% 60%);
+
+  /* Contact */
+  --contact: hsl(160 84% 45%);
+  --contact-foreground: hsl(222 47% 8%);
+
+  /* User status */
+  --online: hsl(142 71% 55%);
+  --offline: hsl(215 20% 45%);
+  --away: hsl(38 92% 55%);
+
+  /* Warning / Info */
+  --warning: hsl(38 92% 55%);
+  --warning-foreground: hsl(24 10% 10%);
+
+  --info: hsl(199 89% 55%);
+  --info-foreground: hsl(222 47% 8%);
+
+  /* Destructive */
+  --destructive: hsl(0 72% 55%);
+  --destructive-foreground: hsl(0 0% 100%);
+
+  /* Border */
+  --border: hsl(217 33% 20%);
+  --input: hsl(217 33% 20%);
+  --ring: hsl(214 100% 70%);
+
+  /* Chart */
+  --chart-1: hsl(214 100% 70%);
+  --chart-2: hsl(160 84% 45%);
+  --chart-3: hsl(38 92% 55%);
+  --chart-4: hsl(199 89% 55%);
+  --chart-5: hsl(0 72% 55%);
+
+  /* Sidebar */
+  --sidebar: hsl(222 47% 8%);
+  --sidebar-foreground: hsl(210 40% 96%);
+
+  --sidebar-primary: hsl(214 100% 70%);
+  --sidebar-primary-foreground: hsl(222 47% 8%);
+
+  --sidebar-accent: hsl(217 33% 15%);
+  --sidebar-accent-foreground: hsl(214 100% 75%);
+
+  --sidebar-border: hsl(217 33% 20%);
+  --sidebar-ring: hsl(214 100% 70%);
+
+  /* Dark gradients */
+  --gradient-primary: linear-gradient(
+    135deg,
+    hsl(214 100% 65%),
+    hsl(221 83% 50%)
+  );
+
+  --gradient-brand: linear-gradient(
+    135deg,
+    hsl(214 100% 65%),
+    hsl(160 84% 45%)
+  );
+
+  --gradient-map: linear-gradient(135deg, hsl(199 89% 55%), hsl(187 85% 60%));
+
+  --gradient-soft: linear-gradient(135deg, hsl(222 47% 8%), hsl(217 33% 12%));
+
+  --gradient-property: linear-gradient(
+    to top,
+    hsl(222 47% 5% / 0.85),
+    hsl(222 47% 5% / 0.05)
+  );
+
+  /* Dark shadows */
+  --shadow-soft-value: 0 8px 30px -10px hsl(214 100% 70% / 0.15);
+
+  --shadow-card-value: 0 4px 20px -6px hsl(0 0% 0% / 0.35);
+
+  --shadow-hover-value: 0 12px 35px -10px hsl(214 100% 70% / 0.2);
+
+  --shadow-map-value: 0 4px 20px -5px hsl(199 89% 55% / 0.25);
+}
+
+/* =========================================================
+   TAILWIND THEME
+   ========================================================= */
+
+@theme inline {
+  /* Fonts */
+  --font-sans: "Inter", "system-ui", sans-serif;
+  --font-heading: "Inter", "system-ui", sans-serif;
+  --font-mono: "JetBrains Mono Variable", "JetBrains Mono", monospace;
+
+  /* Base colors */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  /* Card */
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+
+  /* Popover */
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+
+  /* Brand */
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+
+  /* Muted */
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+
+  /* Feedback */
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
+
+  /* Real estate status */
+  --color-available: var(--available);
+  --color-available-foreground: var(--available-foreground);
+
+  --color-pending: var(--pending);
+  --color-pending-foreground: var(--pending-foreground);
+
+  --color-sold: var(--sold);
+  --color-sold-foreground: var(--sold-foreground);
+
+  /* Map */
+  --color-map: var(--map);
+  --color-map-foreground: var(--map-foreground);
+  --color-map-highlight: var(--map-highlight);
+
+  /* Contact */
+  --color-contact: var(--contact);
+  --color-contact-foreground: var(--contact-foreground);
+
+  /* User status */
+  --color-online: var(--online);
+  --color-offline: var(--offline);
+  --color-away: var(--away);
+
+  /* Border */
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* Charts */
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  /* Sidebar */
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Radius */
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 0.25rem);
+
+  /* Shadows */
+  --shadow-soft: var(--shadow-soft-value);
+  --shadow-card: var(--shadow-card-value);
+  --shadow-hover: var(--shadow-hover-value);
+  --shadow-map: var(--shadow-map-value);
+
+  /* Custom background images */
+  --background-image-gradient-primary: var(--gradient-primary);
+  --background-image-gradient-brand: var(--gradient-brand);
+  --background-image-gradient-map: var(--gradient-map);
+  --background-image-gradient-soft: var(--gradient-soft);
+  --background-image-gradient-property: var(--gradient-property);
+}
+
+/* =========================================================
+   BASE
+   ========================================================= */
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  html {
+    font-family: var(--font-sans);
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    margin: 0;
+    min-width: 320px;
+  }
+
+  button,
+  [role="button"] {
+    cursor: pointer;
+  }
+
+  code,
+  pre,
+  kbd,
+  samp {
+    font-family: var(--font-mono);
+  }
+}
+
+/* =========================================================
+   COMPONENTS
+   ========================================================= */
+
+@layer components {
+  /* =======================================================
+     GLASS
+     ======================================================= */
+
+  .glass {
+    @apply border border-white/30 bg-white/70 backdrop-blur-xl;
+  }
+
+  .dark .glass {
+    @apply border-white/10 bg-white/5;
+  }
+
+  .glass-strong {
+    @apply border border-border/70 bg-card/90 backdrop-blur-2xl;
+  }
+
+  /* =======================================================
+     PROPERTY CARD
+     ======================================================= */
+
+  .property-card {
+    @apply overflow-hidden rounded-xl border border-border
+           bg-card shadow-card
+           transition-all duration-300;
+  }
+
+  .property-card:hover {
+    @apply -translate-y-1;
+    box-shadow: var(--shadow-hover-value);
+  }
+
+  /* =======================================================
+     PROPERTY IMAGE OVERLAY
+     ======================================================= */
+
+  .property-overlay {
+    background: var(--gradient-property);
+  }
+
+  /* =======================================================
+     PRICE
+     ======================================================= */
+
+  .property-price {
+    @apply font-bold text-primary;
+  }
+
+  .property-price-highlight {
+    @apply font-bold text-accent;
+  }
+
+  /* =======================================================
+     REAL ESTATE STATUS
+     ======================================================= */
+
+  .status-available {
+    @apply bg-available text-available-foreground;
+  }
+
+  .status-pending {
+    @apply bg-pending text-pending-foreground;
+  }
+
+  .status-sold {
+    @apply bg-sold text-sold-foreground;
+  }
+
+  /* =======================================================
+     MAP / GIS
+     ======================================================= */
+
+  .map-marker {
+    @apply bg-map text-map-foreground shadow-map;
+  }
+
+  .map-highlight {
+    @apply bg-map-highlight;
+  }
+
+  .bg-gradient-map {
+    background: var(--gradient-map);
+  }
+
+  /* =======================================================
+     BRAND GRADIENT
+     ======================================================= */
+
+  .bg-gradient-primary {
+    background: var(--gradient-primary);
+  }
+
+  .bg-gradient-brand {
+    background: var(--gradient-brand);
+  }
+
+  .bg-gradient-soft {
+    background: var(--gradient-soft);
+  }
+
+  /* =======================================================
+     CONTACT
+     ======================================================= */
+
+  .contact-button {
+    @apply bg-contact text-contact-foreground;
+  }
+
+  /* =======================================================
+     SHADOWS
+     ======================================================= */
+
+  .shadow-soft {
+    box-shadow: var(--shadow-soft-value);
+  }
+
+  .shadow-card {
+    box-shadow: var(--shadow-card-value);
+  }
+
+  .shadow-hover {
+    box-shadow: var(--shadow-hover-value);
+  }
+
+  .shadow-map {
+    box-shadow: var(--shadow-map-value);
+  }
+
+  /* =======================================================
+     TRANSITIONS
+     ======================================================= */
+
+  .transition-smooth {
+    transition: var(--transition-smooth);
+  }
+
+  .transition-bounce {
+    transition: var(--transition-bounce);
+  }
+
+  /* =======================================================
+     STATUS INDICATORS
+     ======================================================= */
+
+  .status-online {
+    @apply bg-online;
+    box-shadow: 0 0 8px hsl(var(--online) / 0.5);
+  }
+
+  .status-offline {
+    @apply bg-offline;
+  }
+
+  .status-away {
+    @apply bg-away;
+  }
+
+  /* =======================================================
+     MESSAGES
+     ======================================================= */
+
+  .error-message {
+    @apply text-sm text-destructive;
+  }
+
+  .success-message {
+    @apply text-sm text-emerald-600 dark:text-emerald-400;
+  }
+
+  /* =======================================================
+     SCROLLBAR
+     ======================================================= */
+
+  .beautiful-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-slate-300) transparent;
+  }
+
+  .dark .beautiful-scrollbar {
+    scrollbar-color: var(--color-slate-700) transparent;
+  }
+
+  /* =======================================================
+     PRICE ESTIMATION
+     ======================================================= */
+
+  .ai-price {
+    @apply border border-indigo-200
+           bg-indigo-50
+           text-indigo-700
+           dark:border-indigo-900
+           dark:bg-indigo-950
+           dark:text-indigo-300;
+  }
+
+  /* =======================================================
+     MAP PANEL
+     ======================================================= */
+
+  .map-panel {
+    @apply overflow-hidden rounded-xl
+           border border-border
+           bg-card
+           shadow-card;
+  }
+
+  /* =======================================================
+     PROPERTY BADGE
+     ======================================================= */
+
+  .property-badge {
+    @apply inline-flex items-center
+           rounded-full
+           px-2.5 py-1
+           text-xs font-medium;
+  }
+
+  /* =======================================================
+     ANIMATION
+     ======================================================= */
+
+  .fade-up {
+    animation: fadeUp 0.4s ease-out forwards;
+  }
+}
+
+/* =========================================================
+   KEYFRAMES
+   ========================================================= */
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
