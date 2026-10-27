@@ -12,6 +12,6 @@ const route = express.Router();
 route.post("/signup", signUpValidate, signUp);
 route.post("/signin", signIn);
 route.post("/signout", signOut);
-route.post("/refreshToken", refreshToken);
+route.post("/refresh_token", refreshToken);
 
 export default route;
