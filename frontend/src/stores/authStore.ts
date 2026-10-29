@@ -37,7 +37,9 @@ export const useAuthStore = create<AuthState>()(
           set({ loading: true });
           const { accessToken } = await authService.signIn(email, password);
           get().setAccessToken(accessToken);
+          await get().fetchMe();
         } catch (error) {
+          get().clearState();
           console.error(error);
           throw error;
         } finally {
@@ -64,6 +66,19 @@ export const useAuthStore = create<AuthState>()(
         } catch (error) {
           console.error(error);
           get().clearState();
+        } finally {
+          set({ loading: false });
+        }
+      },
+
+      fetchMe: async () => {
+        try {
+          set({ loading: true });
+          const user = await authService.fetchMe();
+          set({ user });
+        } catch (error) {
+          console.error(error);
+          throw error;
         } finally {
           set({ loading: false });
         }

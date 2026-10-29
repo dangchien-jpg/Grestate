@@ -32,9 +32,14 @@ export const authService = {
   },
 
   refreshToken: async () => {
-    const res = await api.post("/auth/refresh_token", {
+    const res = await api.post("/auth/refresh_token", {}, {
       withCredentials: true,
     });
     return res.data.accessToken;
+  },
+
+  fetchMe: async () => {
+    const res = await api.get("/users/me");
+    return res.data.user;
   },
 };
