@@ -1,34 +1,35 @@
+import { formatPrice } from "@/lib/format-price";
 import { type ReactNode } from "react";
-import { Link } from "react-router";
 import {
   ArrowRight,
   Bath,
   BedDouble,
-  Bell,
-  Building2,
-  Check,
   Clock3,
   Heart,
   House,
   LandPlot,
-  Mail,
   MapPin,
-  Menu,
-  Phone,
   Search,
-  ShieldCheck,
   Sparkles,
-  Store,
-  Trees,
-  UserRound,
-  type LucideIcon,
 } from "lucide-react";
+
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { useAuthStore } from "@/stores/authStore";
-import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import Header from "@/components/layout/header";
+import Footer from "@/components/layout/footer";
+import { Link } from "react-router";
+import { usePostStore } from "@/stores/postStore";
+import type { TinDangDanhSach } from "@/types/post";
 
 export type PropertyType =
   | "apartment"
@@ -39,37 +40,6 @@ export type PropertyType =
   | "office"
   | "retail"
   | "warehouse";
-export interface PropertyListing {
-  id: string;
-  title: string;
-  location: string;
-  image: string;
-  type: PropertyType;
-  price: number;
-  area: number;
-  bedrooms?: number;
-  bathrooms?: number;
-  publishedAt: string;
-}
-export interface HomeProject {
-  id: string;
-  name: string;
-  location: string;
-  image: string;
-  startingPrice: number;
-}
-export interface MarketArticle {
-  id: string;
-  title: string;
-  image: string;
-  publishedAt: string;
-}
-
-export interface HomePageData {
-  listings: PropertyListing[];
-  projects: HomeProject[];
-  articles: MarketArticle[];
-}
 
 const photo = (id: string, width = 720) =>
   `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${width}&q=80`;
@@ -84,121 +54,15 @@ const images = {
   building: photo("photo-1460317442991-0ec209397118"),
   paperwork: photo("photo-1450101499163-c8848c66ca85"),
 };
-const DEMO_DATA: HomePageData = {
-  listings: [
-    {
-      id: "monarchy",
-      title: "Căn hộ cao cấp Monarchy Đà Nẵng",
-      location: "Quận Sơn Trà, Đà Nẵng",
-      image: images.room,
-      type: "apartment",
-      price: 3200000000,
-      area: 72,
-      bedrooms: 2,
-      bathrooms: 2,
-      publishedAt: "2025-08-10",
-    },
-    {
-      id: "nguyen-huu-tho",
-      title: "Nhà phố 3 tầng đường Nguyễn Hữu Thọ",
-      location: "Quận Hải Châu, Đà Nẵng",
-      image: images.villa,
-      type: "townhouse",
-      price: 5800000000,
-      area: 100,
-      bedrooms: 4,
-      bathrooms: 3,
-      publishedAt: "2025-08-09",
-    },
-    {
-      id: "fpt-plaza",
-      title: "Căn hộ FPT Plaza view sông",
-      location: "Quận Ngũ Hành Sơn, Đà Nẵng",
-      image: images.apartment,
-      type: "apartment",
-      price: 12000000,
-      area: 68,
-      bedrooms: 2,
-      bathrooms: 2,
-      publishedAt: "2025-08-08",
-    },
-    {
-      id: "nam-hoa-xuan",
-      title: "Đất nền khu đô thị Nam Hòa Xuân",
-      location: "Quận Ngũ Hành Sơn, Đà Nẵng",
-      image: images.land,
-      type: "land",
-      price: 2600000000,
-      area: 120,
-      publishedAt: "2025-08-07",
-    },
-  ],
-  projects: [
-    {
-      id: "sun-symphony",
-      name: "Sun Symphony Residence",
-      location: "Quận Sơn Trà, Đà Nẵng",
-      image: images.city,
-      startingPrice: 2500000000,
-    },
-    {
-      id: "filmore",
-      name: "The Filmore Da Nang",
-      location: "Quận Hải Châu, Đà Nẵng",
-      image: images.towers,
-      startingPrice: 4800000000,
-    },
-    {
-      id: "fpt-3",
-      name: "FPT Plaza 3",
-      location: "Quận Ngũ Hành Sơn, Đà Nẵng",
-      image: images.building,
-      startingPrice: 2200000000,
-    },
-    {
-      id: "blooming",
-      name: "Blooming Tower",
-      location: "Quận Liên Chiểu, Đà Nẵng",
-      image: images.skyline,
-      startingPrice: 1900000000,
-    },
-  ],
-  articles: [
-    {
-      id: "market",
-      title:
-        "Thị trường bất động sản Đà Nẵng có nhiều tín hiệu tích cực trong năm 2025",
-      image: images.city,
-      publishedAt: "2025-08-10",
-    },
-    {
-      id: "first-home",
-      title: "Kinh nghiệm mua căn hộ chung cư lần đầu cho người mới",
-      image: images.room,
-      publishedAt: "2025-08-08",
-    },
-    {
-      id: "planning",
-      title: "Quy hoạch đô thị Đà Nẵng giai đoạn 2025 – 2030 có gì mới?",
-      image: images.skyline,
-      publishedAt: "2025-08-05",
-    },
-    {
-      id: "legal",
-      title: "Thủ tục pháp lý cần biết khi mua bán bất động sản",
-      image: images.paperwork,
-      publishedAt: "2025-08-01",
-    },
-  ],
-};
-const categories: { id: PropertyType; label: string; icon: LucideIcon }[] = [
-  { id: "apartment", label: "Căn hộ", icon: Building2 },
-  { id: "house", label: "Nhà riêng", icon: House },
-  { id: "townhouse", label: "Nhà phố", icon: Store },
-  { id: "land", label: "Đất nền", icon: LandPlot },
-  { id: "villa", label: "Biệt thự", icon: Trees },
-  { id: "office", label: "Văn phòng", icon: Building2 },
-  { id: "retail", label: "Mặt bằng", icon: Store },
+
+const categories = [
+  { value: "apartment", label: "Căn hộ" },
+  { value: "house", label: "Nhà riêng" },
+  { value: "townhouse", label: "Nhà phố" },
+  { value: "land", label: "Đất nền" },
+  { value: "villa", label: "Biệt thự" },
+  { value: "office", label: "Văn phòng" },
+  { value: "retail", label: "Mặt bằng" },
 ];
 
 const numberFormat = new Intl.NumberFormat("vi-VN", {
@@ -207,12 +71,6 @@ const numberFormat = new Intl.NumberFormat("vi-VN", {
 const dateFormat = new Intl.DateTimeFormat("vi-VN", {
   timeZone: "Asia/Ho_Chi_Minh",
 });
-function formatPrice(value: number) {
-  if (!Number.isFinite(value) || value <= 0) return "Liên hệ";
-  return value >= 1e9
-    ? `${numberFormat.format(value / 1e9)} tỷ`
-    : `${numberFormat.format(value / 1e6)} triệu`;
-}
 function formatDate(value: string) {
   const date = new Date(value);
   return Number.isNaN(date.getTime())
@@ -243,28 +101,7 @@ function SafeImage({
     />
   );
 }
-function Brand({ light = false }: { light?: boolean }) {
-  return (
-    <Link
-      to="/"
-      aria-label="Grestate - Trang chủ"
-      className={`inline-flex items-center gap-1.5 ${light ? "text-white" : "text-primary"}`}
-    >
-      <span className="relative">
-        <House className="size-9" strokeWidth={2.4} />
-        <span className="absolute bottom-2 right-2 h-3 w-1.5 rounded-sm bg-emerald-400" />
-      </span>
-      <span>
-        <span className="block text-3xl font-extrabold leading-8 tracking-tight">
-          Grestate<span className="text-emerald-400">.</span>
-        </span>
-        <span className="block text-[9px] tracking-wide">
-          Kết nối giá trị · Mở lối an cư
-        </span>
-      </span>
-    </Link>
-  );
-}
+
 function Section({
   id,
   title,
@@ -279,7 +116,7 @@ function Section({
   return (
     <section id={id} className="scroll-mt-24">
       <div className="mb-5 flex items-center justify-between gap-3">
-        <h2 className="relative pb-2 text-xl font-bold tracking-tight sm:text-2xl after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-9 after:bg-emerald-400">
+        <h2 className="relative pb-2 text-xl font-bold tracking-tight sm:text-2xl after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-9 ">
           {title}
         </h2>
         {action}
@@ -299,181 +136,84 @@ function MoreLink({ href }: { href: string }) {
   );
 }
 
-function PropertyCard({ property }: { property: PropertyListing }) {
+function PropertyCard({ property }: { property: TinDangDanhSach }) {
   return (
-    <Card className="group gap-0 rounded-xl py-0 shadow-sm transition-shadow hover:shadow-lg">
-      <div className="relative aspect-[1.75] overflow-hidden">
-        <button
-          type="button"
-          className="h-full w-full focus-visible:outline-2 focus-visible:-outline-offset-4 focus-visible:outline-primary"
-          aria-label={`Xem ${property.title}`}
-        >
+    <Card className="group gap-0 rounded-sm py-0 shadow-sm transition-shadow hover:shadow-lg">
+      <Link to={`/detail/${property.maTinDang}`}>
+        <div className="relative aspect-[1.75] overflow-hidden">
           <SafeImage
-            src={property.image}
-            alt={property.title}
+            src={property.anhDaiDienUrl ?? ""}
+            alt={property.tieuDe}
             className="transition-transform duration-500 motion-safe:group-hover:scale-105"
           />
-        </button>
-        <Button
-          size="icon"
-          variant="secondary"
-          aria-label="L?u tin"
-          className="absolute right-3 top-3 size-8 rounded-full bg-white/95 text-slate-600 shadow-sm"
-        >
-          <Heart />
-        </Button>
-      </div>
-      <CardContent className="space-y-3 p-4">
-        <h3>
-          <button
-            type="button"
-            className="line-clamp-1 text-left text-sm font-bold hover:text-primary"
-            title={property.title}
+
+          <Button
+            size="icon"
+            variant="secondary"
+            aria-label="Lưu tin"
+            className="absolute right-3 top-3 size-8 rounded-full bg-white/95 text-slate-600 shadow-sm"
           >
-            {property.title}
-          </button>
-        </h3>
-        <p className="flex items-center gap-1 text-xs text-muted-foreground">
-          <MapPin className="size-3.5 shrink-0" />
-          <span className="truncate">{property.location}</span>
-        </p>
-        <div className="flex flex-wrap gap-4 text-xs">
-          <span className="flex items-center gap-1">
-            <LandPlot className="size-3.5" />
-            {numberFormat.format(property.area)} m²
-          </span>
-          {property.bedrooms != null && (
-            <span className="flex items-center gap-1">
-              <BedDouble className="size-3.5" />
-              {property.bedrooms} PN
-            </span>
-          )}
-          {property.bathrooms != null && (
-            <span className="flex items-center gap-1">
-              <Bath className="size-3.5" />
-              {property.bathrooms} WC
-            </span>
-          )}
+            <Heart />
+          </Button>
         </div>
-        <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
-          <p className="text-lg font-bold text-red-600">
-            {formatPrice(property.price)}
+        <CardContent className="space-y-3 p-4">
+          <h3
+            title={property.tieuDe}
+            className="line-clamp-2 min-h-14 wrap-break-word text-sm leading-7 font-bold tracking-tight text-slate-900 transition-colors"
+          >
+            {property.tieuDe}
+          </h3>
+          <p className="flex items-center gap-1 text-xs text-muted-foreground">
+            <MapPin className="size-3.5 shrink-0" />
+            <span className="truncate">
+              {[
+                property.diaChiChiTiet,
+                property.phuongXa.tenPhuongXa,
+                property.phuongXa.tinhThanh.tenTinhThanh,
+              ]
+                .filter(Boolean)
+                .join(", ")}
+            </span>
           </p>
-          <span className="flex items-center gap-1 text-[10px] text-muted-foreground">
-            <Clock3 className="size-3" />
-            {formatDate(property.publishedAt)}
-          </span>
-        </div>
-      </CardContent>
+          <div className="flex flex-wrap gap-4 text-xs">
+            <span className="flex items-center gap-1">
+              <LandPlot className="size-3.5" />
+              {numberFormat.format(property.dienTich)} m²
+            </span>
+            {property.soPhongNgu != null && (
+              <span className="flex items-center gap-1">
+                <BedDouble className="size-3.5" />
+                {property.soPhongNgu} PN
+              </span>
+            )}
+            {property.soPhongTam != null && (
+              <span className="flex items-center gap-1">
+                <Bath className="size-3.5" />
+                {property.soPhongTam} WC
+              </span>
+            )}
+          </div>
+          <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
+            <p className="text-lg font-bold text-red-600">
+              {formatPrice(property.giaNiemYet)}
+            </p>
+            <span className="flex items-center gap-1 text-[10px] text-muted-foreground">
+              <Clock3 className="size-3" />
+              {formatDate(property.ngayDang ?? " ")}
+            </span>
+          </div>
+        </CardContent>
+      </Link>
     </Card>
   );
 }
 
 export default function HomePage() {
-  const { listings, projects, articles } = DEMO_DATA;
-  const { user } = useAuthStore();
-  const selectClass =
-    "h-12 min-w-0 w-full rounded-lg border border-input bg-white pl-10 pr-3 text-sm text-slate-700 outline-none focus-visible:ring-2 focus-visible:ring-ring";
+  const { posts } = usePostStore();
 
   return (
     <div className="min-h-screen bg-white font-sans text-slate-950">
-      <header className="sticky top-0 z-50 border-b bg-white shadow-sm">
-        <div className="mx-auto flex h-20 max-w-7xl items-center justify-between gap-5 px-5 sm:px-8">
-          <Brand />
-          <nav
-            aria-label="Điều hướng chính"
-            className="hidden items-center gap-7 text-sm font-medium lg:flex"
-          >
-            <a
-              href="#"
-              aria-current="page"
-              className="border-b-2 border-primary py-7 text-primary"
-            >
-              Trang chủ
-            </a>
-            <a href="#projects" className="hover:text-primary">
-              Dự án
-            </a>
-            <a href="#valuation" className="hover:text-primary">
-              Định giá AI
-            </a>
-            <a href="#news" className="hover:text-primary">
-              Tin tức
-            </a>
-            <a href="#contact" className="hover:text-primary">
-              Liên hệ
-            </a>
-          </nav>
-          <div className="flex items-center gap-2">
-            <Button
-              variant="ghost"
-              size="icon"
-              aria-label="L?u tin"
-              className="relative rounded-full"
-            >
-              <Heart />
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              aria-label="Thông báo"
-              className="hidden rounded-full sm:inline-flex"
-            >
-              <Bell />
-            </Button>
-            {user ? (
-              <Avatar>
-                {user.anhDaiDien ? (
-                  <AvatarImage src={user.anhDaiDien} />
-                ) : (
-                  <AvatarImage src="/user.png" />
-                )}
-              </Avatar>
-            ) : (
-              <Link
-                to="/signin"
-                className="hidden items-center gap-2 rounded-full border px-3 py-2 text-xs font-semibold sm:inline-flex"
-              >
-                <UserRound className="size-4" />
-                Đăng nhập
-              </Link>
-            )}
-
-            <Link
-              to="/signin"
-              className="rounded-full bg-primary px-4 py-2.5 text-xs font-semibold text-white hover:bg-primary/90"
-            >
-              Đăng tin
-            </Link>
-          </div>
-        </div>
-        <details className="border-t px-5 py-3 lg:hidden">
-          <summary className="flex cursor-pointer list-none items-center gap-2 text-sm font-medium">
-            <Menu className="size-4" />
-            ?i?u h??ng
-          </summary>
-          <nav
-            id="mobile-nav"
-            aria-label="Điều hướng trên điện thoại"
-            className="grid grid-cols-2 gap-4 border-t px-5 py-5 text-sm lg:hidden"
-          >
-            {[
-              ["Trang chủ", "#"],
-              ["Tìm bất động sản", "#search"],
-              ["Dự án", "#projects"],
-              ["Định giá AI", "#valuation"],
-              ["Tin tức", "#news"],
-              ["Liên hệ", "#contact"],
-            ].map(([label, href]) => (
-              <a key={label} href={href}>
-                {label}
-              </a>
-            ))}
-            <Link to="/signin">Đăng nhập</Link>
-          </nav>
-        </details>
-      </header>
-
+      <Header />
       <main>
         <section
           aria-labelledby="hero-title"
@@ -491,40 +231,46 @@ export default function HomePage() {
             <div id="search" className="mx-auto mt-8 max-w-5xl scroll-mt-24">
               <div className="grid gap-3 rounded-xl bg-white p-4 shadow-xl md:grid-cols-[2fr_1.2fr_1.1fr_auto]">
                 <div className="relative">
-                  <MapPin className="absolute left-3 top-4 size-4 text-primary" />
+                  <Search className="absolute left-3 top-4 size-4 text-primary" />
                   <Input
                     aria-label="Địa điểm hoặc tên bất động sản"
-                    placeholder="Nhập tỉnh/thành, quận/huyện, phường/xã…"
+                    placeholder="Nhập thông tin bạn muốn tìm..."
                     className="h-12 rounded-lg pl-10 text-sm"
                   />
                 </div>
                 <div className="relative">
                   <House className="pointer-events-none absolute left-3 top-4 size-4 text-primary" />
-                  <select
-                    aria-label="Loại bất động sản"
-                    defaultValue="all"
-                    className={selectClass}
-                  >
-                    <option value="all">Loại bất động sản</option>
-                    {categories.map((item) => (
-                      <option key={item.id} value={item.id}>
-                        {item.label}
-                      </option>
-                    ))}
-                  </select>
+                  <Select items={categories}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Loại bất động sản" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        {categories.map((item) => (
+                          <SelectItem key={item.value} value={item.value}>
+                            {item.label}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div className="relative">
                   <LandPlot className="pointer-events-none absolute left-3 top-4 size-4 text-primary" />
-                  <select
-                    aria-label="Khoảng giá"
-                    defaultValue="all"
-                    className={selectClass}
-                  >
-                    <option value="all">Khoảng giá</option>
-                    <option value="under-2">Dưới 2 tỷ</option>
-                    <option value="2-5">Từ 2 – 5 tỷ</option>
-                    <option value="over-5">Trên 5 tỷ</option>
-                  </select>
+                  <Select items={categories}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Chọn mức giá" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        {categories.map((item) => (
+                          <SelectItem key={item.value} value={item.value}>
+                            {item.label}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
                 </div>
                 <Button
                   type="button"
@@ -550,8 +296,8 @@ export default function HomePage() {
             }
           >
             <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-              {listings.map((property) => (
-                <PropertyCard key={property.id} property={property} />
+              {posts.map((post) => (
+                <PropertyCard key={post.maTinDang} property={post} />
               ))}
             </div>
           </Section>
@@ -560,31 +306,9 @@ export default function HomePage() {
             title="Dự án nổi bật"
             action={<MoreLink href="#projects" />}
           >
-            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-              {projects.map((project) => (
-                <button
-                  type="button"
-                  key={project.id}
-                  className="group relative aspect-[1.35] overflow-hidden rounded-lg bg-slate-900 text-left text-white shadow-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-                >
-                  <SafeImage
-                    src={project.image}
-                    alt={project.name}
-                    className="transition-transform duration-500 motion-safe:group-hover:scale-105"
-                  />
-                  <div className="absolute inset-0 bg-linear-to-t from-black/95 via-black/20 to-transparent" />
-                  <div className="absolute inset-x-0 bottom-0 space-y-1 p-4">
-                    <h3 className="text-sm font-bold">{project.name}</h3>
-                    <p className="truncate text-xs text-white/80">
-                      {project.location}
-                    </p>
-                    <p className="font-semibold">
-                      Từ {formatPrice(project.startingPrice)}
-                    </p>
-                  </div>
-                </button>
-              ))}
-            </div>
+            <p className="text-sm text-muted-foreground">
+              Thông tin dự án đang được cập nhật.
+            </p>
           </Section>
 
           <section
@@ -681,123 +405,13 @@ export default function HomePage() {
             title="Tin tức thị trường"
             action={<MoreLink href="#news" />}
           >
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-              {articles.map((article) => (
-                <article key={article.id} className="group">
-                  <button type="button" className="w-full text-left">
-                    <div className="aspect-[2.6] overflow-hidden rounded-lg bg-muted">
-                      <SafeImage
-                        src={article.image}
-                        alt={article.title}
-                        className="transition-transform duration-500 motion-safe:group-hover:scale-105"
-                      />
-                    </div>
-                    <h3 className="mt-3 line-clamp-2 text-sm font-bold leading-relaxed group-hover:text-primary">
-                      {article.title}
-                    </h3>
-                  </button>
-                  <time
-                    dateTime={article.publishedAt}
-                    className="mt-2 block text-xs text-muted-foreground"
-                  >
-                    {formatDate(article.publishedAt)}
-                  </time>
-                </article>
-              ))}
-            </div>
+            <p className="text-sm text-muted-foreground">
+              Tin tức thị trường đang được cập nhật.
+            </p>
           </Section>
         </div>
       </main>
-
-      <footer id="contact" className="bg-[#0a2138] text-slate-300">
-        <div className="mx-auto max-w-7xl px-5 pb-5 pt-10 sm:px-8">
-          <div className="grid gap-9 pb-8 sm:grid-cols-2 lg:grid-cols-[1.8fr_0.8fr_1fr_1.2fr]">
-            <div>
-              <Brand light />
-              <p className="mt-4 max-w-sm text-sm leading-relaxed">
-                Grestate là nền tảng bất động sản uy tín, giúp bạn dễ dàng tìm
-                kiếm, đăng tin và kết nối với người có nhu cầu.
-              </p>
-              <div className="mt-4 inline-flex items-center gap-2 text-xs text-emerald-300">
-                <ShieldCheck className="size-4" />
-                Kết nối tin cậy, an cư bền vững
-              </div>
-            </div>
-            <div>
-              <h2 className="mb-4 text-sm font-semibold text-white">
-                Liên kết nhanh
-              </h2>
-              <ul className="space-y-2 text-sm">
-                {[
-                  ["Trang chủ", "#"],
-                  ["Mua bán", "#search"],
-                  ["Cho thuê", "#search"],
-                  ["Dự án", "#projects"],
-                  ["Tin tức", "#news"],
-                  ["Liên hệ", "#contact"],
-                ].map(([label, href]) => (
-                  <li key={label}>
-                    <a href={href} className="hover:text-white">
-                      {label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <h2 className="mb-4 text-sm font-semibold text-white">Hỗ trợ</h2>
-              <ul className="space-y-2 text-sm">
-                {[
-                  "Hướng dẫn sử dụng",
-                  "Câu hỏi thường gặp",
-                  "Quy định đăng tin",
-                  "Chính sách bảo mật",
-                  "Điều khoản sử dụng",
-                ].map((label) => (
-                  <li key={label}>
-                    <button
-                      type="button"
-                      className="text-left hover:text-white"
-                    >
-                      {label}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <h2 className="mb-4 text-sm font-semibold text-white">Liên hệ</h2>
-              <address className="space-y-3 text-sm not-italic">
-                <p className="flex items-start gap-3">
-                  <MapPin className="mt-0.5 size-4 shrink-0 text-emerald-400" />
-                  123 Đường 2/9, Quận Hải Châu, Đà Nẵng
-                </p>
-                <a
-                  href="tel:0123456789"
-                  className="flex items-center gap-3 hover:text-white"
-                >
-                  <Phone className="size-4 text-emerald-400" />
-                  0123 456 789
-                </a>
-                <a
-                  href="mailto:support@grestate.vn"
-                  className="flex items-center gap-3 hover:text-white"
-                >
-                  <Mail className="size-4 text-emerald-400" />
-                  support@grestate.vn
-                </a>
-              </address>
-              <p className="mt-4 flex items-center gap-1 text-[10px] text-slate-400">
-                <Check className="size-3" />
-                Thông tin liên hệ minh họa
-              </p>
-            </div>
-          </div>
-          <div className="border-t border-white/10 pt-5 text-center text-xs text-slate-400">
-            © {new Date().getFullYear()} Grestate. Tất cả quyền được bảo lưu.
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

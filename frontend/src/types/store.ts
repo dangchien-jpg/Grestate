@@ -1,3 +1,4 @@
+import type { TinDangDanhSach } from "@/types/post";
 import type { NguoiDung } from "@/types/user";
 
 export interface AuthState {
@@ -17,4 +18,22 @@ export interface AuthState {
   signOut: () => Promise<void>;
   refreshToken: () => Promise<void>;
   fetchMe: () => Promise<void>;
+}
+
+export interface UserState {
+  updateProfile: (
+    fullName: string,
+    email: string,
+    phoneNumber: string,
+    linkZalo: string,
+  ) => Promise<void>;
+  uploadAvatar: (formData: FormData) => Promise<void>;
+}
+
+export interface PostState {
+  posts: TinDangDanhSach[];
+  post: TinDangDanhSach | null;
+  loading: boolean;
+  fetchPost: () => Promise<void>;
+  fetchDetailPost: (maTinDang: number) => Promise<void>;
 }

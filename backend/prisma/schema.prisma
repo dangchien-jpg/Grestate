@@ -25,7 +25,8 @@ model NguoiDung {
   email           String    @unique @db.VarChar(255)
   matKhauHash     String    @db.VarChar(255)
   soDienThoai     String?   @db.VarChar(15)
-  anhDaiDien      String?   @db.VarChar(500)
+  anhDaiDienUrl String? @db.VarChar(500)
+  anhDaiDienId  String? @db.VarChar(255)
   duongDanZalo    String?   @db.VarChar(500)
   emailDaXacThuc  Boolean   @default(false)
   maXacThucEmail  String?   @db.VarChar(255)
@@ -107,7 +108,7 @@ model PhuongXa {
 
 model TinDang {
   maTinDang        Int       @id @default(autoincrement())
-  maNguoiDang      Int
+  maNguoiDung      Int
   maLoaiBatDongSan Int
   maGiayTo         Int?
   maPhuongXa       Int
@@ -128,7 +129,7 @@ model TinDang {
   updatedAt        DateTime  @updatedAt @db.DateTime(0)
   deletedAt        DateTime? @db.DateTime(0)
 
-  nguoiDang        NguoiDung         @relation(fields: [maNguoiDang], references: [maNguoiDung])
+  nguoiDang        NguoiDung         @relation(fields: [maNguoiDung], references: [maNguoiDung])
   loaiBatDongSan   LoaiBatDongSan    @relation(fields: [maLoaiBatDongSan], references: [maLoaiBatDongSan])
   giayToPhapLy     GiayToPhapLy?     @relation(fields: [maGiayTo], references: [maGiayTo])
   phuongXa         PhuongXa          @relation(fields: [maPhuongXa], references: [maPhuongXa])
@@ -139,7 +140,7 @@ model TinDang {
   lichSuKiemDuyets LichSuKiemDuyet[]
   thongBaos        ThongBao[]
 
-  @@index([maNguoiDang, createdAt])
+  @@index([maNguoiDung, createdAt])
   @@index([maLoaiBatDongSan])
   @@index([maGiayTo])
   @@index([maPhuongXa])
@@ -175,7 +176,8 @@ model TinDangTienIch {
 model HinhAnhTinDang {
   maHinhAnh    Int      @id @default(autoincrement())
   maTinDang    Int
-  duongDanAnh  String   @db.VarChar(500)
+  hinhAnhUrl   String   @db.VarChar(500)
+  hinhAnhId    String?  @db.VarChar(255)
   thuTuHienThi Int      @default(0)
   laAnhDaiDien Boolean  @default(false)
   createdAt    DateTime @default(now()) @db.DateTime(0)
@@ -202,7 +204,7 @@ model TinDangYeuThich {
 model PhanAnhTinDang {
   maBaoCao      Int       @id @default(autoincrement())
   maTinDang     Int
-  maNguoiBaoCao Int
+  maNguoiDung Int
   noiDung       String    @db.Text
   ngayBaoCao    DateTime  @default(now()) @db.DateTime(0)
   ngayXuLy      DateTime? @db.DateTime(0)
@@ -212,10 +214,10 @@ model PhanAnhTinDang {
   updatedAt     DateTime  @updatedAt @db.DateTime(0)
 
   tinDang     TinDang   @relation(fields: [maTinDang], references: [maTinDang])
-  nguoiBaoCao NguoiDung @relation(fields: [maNguoiBaoCao], references: [maNguoiDung])
+  nguoiBaoCao NguoiDung @relation(fields: [maNguoiDung], references: [maNguoiDung])
 
   @@index([maTinDang])
-  @@index([maNguoiBaoCao])
+  @@index([maNguoiDung])
   @@index([trangThai, ngayBaoCao])
   @@map("PHANANHTINDANG")
 }
@@ -238,7 +240,7 @@ model LichSuKiemDuyet {
 
 model ThongBao {
   maThongBao  Int       @id @default(autoincrement())
-  maNguoiNhan Int
+  maNguoiDung Int
   maTinDang   Int?
   tieuDe      String    @db.VarChar(200)
   noiDung     String    @db.Text
@@ -246,10 +248,11 @@ model ThongBao {
   ngayDoc     DateTime? @db.DateTime(0)
   createdAt   DateTime  @default(now()) @db.DateTime(0)
 
-  nguoiNhan NguoiDung @relation(fields: [maNguoiNhan], references: [maNguoiDung], onDelete: Cascade)
+  nguoiNhan NguoiDung @relation(fields: [maNguoiDung], references: [maNguoiDung], onDelete: Cascade)
   tinDang   TinDang?  @relation(fields: [maTinDang], references: [maTinDang], onDelete: SetNull)
 
-  @@index([maNguoiNhan, daDoc, createdAt])
+  @@index([maNguoiDung, daDoc, createdAt])
   @@index([maTinDang])
   @@map("THONGBAO")
 }
+

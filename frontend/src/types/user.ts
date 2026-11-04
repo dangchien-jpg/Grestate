@@ -1,4 +1,4 @@
-﻿export interface VaiTro {
+export interface VaiTro {
   maVaiTro: number;
   tenVaiTro: string;
   moTa: string | null;
@@ -12,7 +12,8 @@ export interface NguoiDung {
   hoTen: string;
   email: string;
   soDienThoai: string | null;
-  anhDaiDien: string | null;
+  anhDaiDienUrl: string | null;
+  anhDaiDienId: string | null;
   duongDanZalo: string | null;
   emailDaXacThuc: boolean;
   trangThai: string;
