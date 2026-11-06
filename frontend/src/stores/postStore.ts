@@ -25,4 +25,13 @@ export const usePostStore = create<PostState>((set) => ({
       throw error;
     }
   },
+
+  createPost: async (formData) => {
+    try {
+      return await postService.createPost(formData);
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  },
 }));

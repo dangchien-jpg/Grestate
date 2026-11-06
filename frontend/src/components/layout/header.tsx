@@ -39,13 +39,13 @@ const Header = () => {
   return (
     <header className="sticky top-0 z-50 border-b bg-white shadow-sm">
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between gap-5 px-5 sm:px-8">
-        <div>
+        <Link to="/">
           <img
             src="/Grestate_Logo_Vector.svg"
             alt="Grestate Logo"
             className="w-44 h-auto"
           />
-        </div>
+        </Link>
         <nav
           aria-label="Điều hướng chính"
           className="hidden items-center gap-7 text-sm font-medium lg:flex"
@@ -135,7 +135,7 @@ const Header = () => {
           </DropdownMenu>
 
           <Link
-            to="/signin"
+            to="/me/create-post"
             className="rounded-full bg-primary  px-4 py-2.5 text-xs font-semibold text-white hover:bg-primary/90"
           >
             Đăng tin

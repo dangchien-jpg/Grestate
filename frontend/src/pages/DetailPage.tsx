@@ -5,7 +5,6 @@ import {
   Bath,
   BedDouble,
   Building2,
-  Check,
   ChevronRight,
   ChevronLeft,
   Compass,
@@ -80,7 +79,7 @@ function PostGallery({ post }: { post: TinDangDanhSach }) {
           {urls.length > 0 ? selectedIndex + 1 : 0} / {urls.length}
         </span>
       </div>
-      <div className="grid grid-cols-4 gap-2.5">
+      <div className="flex gap-2.5 overflow-x-auto p-1">
         {urls.map((url, index) => (
           <button
             key={`${url}-${index}`}
@@ -88,7 +87,7 @@ function PostGallery({ post }: { post: TinDangDanhSach }) {
             onClick={() => setSelectedIndex(index)}
             aria-label={`Xem ảnh ${index + 1}`}
             aria-pressed={selectedIndex === index}
-            className={`overflow-hidden rounded-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${selectedIndex === index ? "ring-2 ring-primary ring-offset-2" : ""}`}
+            className={`min-w-0 basis-[calc((100%-2.5rem)/5)] shrink-0 overflow-hidden rounded-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${selectedIndex === index ? "ring-2 ring-primary ring-offset-2" : ""}`}
           >
             <img
               src={url}
@@ -172,6 +171,9 @@ const DetailPage = () => {
   ]
     .filter(Boolean)
     .join(", ");
+  const mapQuery = encodeURIComponent(`${address}, Việt Nam`);
+  const mapUrl = `https://maps.google.com/maps?q=${mapQuery}&output=embed&hl=vi&z=17`;
+  const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${mapQuery}`;
   let zaloUrl: string | null = null;
   const zaloLink = post.nguoiDang.duongDanZalo?.trim();
   if (zaloLink) {
@@ -210,7 +212,7 @@ const DetailPage = () => {
           <article className="min-w-0 space-y-6">
             <PostGallery key={post.maTinDang} post={post} />
 
-            <section className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-7">
+            <section className="rounded-2xl border border-gray-300 bg-white p-5 sm:p-7">
               <h1 className="text-2xl font-bold leading-snug tracking-tight sm:text-3xl">
                 {post.tieuDe}
               </h1>
@@ -277,41 +279,17 @@ const DetailPage = () => {
               </dl>
             </section>
 
-            <section className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-7">
+            <section className="rounded-2xl border border-gray-300 bg-white p-5 sm:p-7">
               <h2 className="mb-4 text-xl font-bold tracking-tight sm:text-2xl">
                 Mô tả chi tiết
               </h2>
               <p className="whitespace-pre-line break-words text-sm leading-7 text-slate-600">
                 {post.moTa}
               </p>
-              <div className="mt-7 border-t border-slate-100 pt-6">
-                <h2 className="mb-4 text-xl font-bold tracking-tight sm:text-2xl">
-                  Tiện ích
-                </h2>
-                <div className="flex flex-wrap gap-2.5">
-                  {post.tienIchs.map((tienIch) => (
-                    <span
-                      key={tienIch.maTienIch}
-                      className="inline-flex items-center gap-2 rounded-lg border border-slate-100 bg-slate-50 px-3 py-2.5 text-xs text-slate-600"
-                    >
-                      <Check
-                        aria-hidden="true"
-                        className="size-4 text-primary"
-                      />
-                      {tienIch.tenTienIch}
-                    </span>
-                  ))}
-                  {post.tienIchs.length === 0 && (
-                    <p className="text-sm text-muted-foreground">
-                      Chưa có thông tin tiện ích.
-                    </p>
-                  )}
-                </div>
-              </div>
             </section>
             <section
               aria-labelledby="property-map-title"
-              className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-7"
+              className="rounded-2xl border border-gray-300 bg-white p-5 sm:p-7"
             >
               <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
                 <h2
@@ -324,6 +302,9 @@ const DetailPage = () => {
                   type="button"
                   variant="link"
                   className="gap-2 px-0 text-xs sm:text-sm"
+                  onClick={() =>
+                    window.open(googleMapsUrl, "_blank", "noopener,noreferrer")
+                  }
                 >
                   <MapPin className="size-4" />
                   Xem trên bản đồ
@@ -333,11 +314,14 @@ const DetailPage = () => {
                 <MapPin className="mt-0.5 size-4 shrink-0" />
                 {address}
               </p>
-              <p className="text-sm text-muted-foreground">
-                {post.viDo != null && post.kinhDo != null
-                  ? `${post.viDo}, ${post.kinhDo}`
-                  : "Chưa có tọa độ."}
-              </p>
+              <iframe
+                title="Vị trí bất động sản trên Google Maps"
+                src={mapUrl}
+                className="h-80 w-full rounded-xl border-0"
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                allowFullScreen
+              />
             </section>
           </article>
 
@@ -345,7 +329,7 @@ const DetailPage = () => {
             aria-label="Thông tin người đăng"
             className="space-y-4 lg:sticky lg:top-28"
           >
-            <section className="rounded-2xl border border-slate-200 bg-white p-6">
+            <section className="rounded-2xl border border-gray-300 bg-white p-6">
               <p className="mb-5 text-xs font-semibold tracking-wider text-muted-foreground">
                 Thông tin người đăng
               </p>

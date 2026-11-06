@@ -1,4 +1,11 @@
-import type { TinDangDanhSach } from "@/types/post";
+import type {
+  GiayToPhapLy,
+  LoaiBatDongSan,
+  PhuongXa,
+  TinDang,
+  TinDangDanhSach,
+  TinhThanh,
+} from "@/types/post";
 import type { NguoiDung } from "@/types/user";
 
 export interface AuthState {
@@ -36,4 +43,22 @@ export interface PostState {
   loading: boolean;
   fetchPost: () => Promise<void>;
   fetchDetailPost: (maTinDang: number) => Promise<void>;
+  createPost: (formData: FormData) => Promise<TinDang>;
+}
+
+export interface CategoryState {
+  categories: LoaiBatDongSan[];
+  fetchCategories: () => Promise<void>;
+}
+
+export interface LegalDocumentState {
+  legalDocuments: GiayToPhapLy[];
+  fetchLegalDocument: () => Promise<void>;
+}
+
+export interface LocationState {
+  provinces: TinhThanh[];
+  wards: PhuongXa[];
+  fetchProvinces: () => Promise<void>;
+  fetchWardsByProvince: (maTinhThanh: string) => Promise<void>;
 }

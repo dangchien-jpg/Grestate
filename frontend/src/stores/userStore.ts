@@ -3,7 +3,7 @@ import { useAuthStore } from "@/stores/authStore";
 import type { UserState } from "@/types/store";
 import { create } from "zustand";
 
-export const useUserStore = create<UserState>((set, get) => ({
+export const useUserStore = create<UserState>(() => ({
   updateProfile: async (fullName, email, phoneNumber, linkZalo) => {
     try {
       const { fetchMe } = useAuthStore.getState();

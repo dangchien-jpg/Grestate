@@ -1,4 +1,5 @@
 import api from "@/lib/axios";
+import type { TinDang } from "@/types/post";
 
 export const postService = {
   fetchPost: async () => {
@@ -9,5 +10,10 @@ export const postService = {
   fetchDetailPost: async (maTinDang: number) => {
     const res = await api.get(`/posts/${maTinDang}`);
     return res.data;
+  },
+
+  createPost: async (formData: FormData): Promise<TinDang> => {
+    const res = await api.post("/posts", formData);
+    return res.data.post;
   },
 };

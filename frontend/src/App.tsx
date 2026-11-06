@@ -6,6 +6,7 @@ import { Toaster } from "sonner";
 import ProtectedRoute from "@/components/auth/protected-route";
 import { ProfilePage } from "@/pages/ProfilePage";
 import DetailPage from "@/pages/DetailPage";
+import CreatePostPage from "@/pages/CreatePostPage";
 function App() {
   return (
     <>
@@ -20,6 +21,7 @@ function App() {
           <Route element={<ProtectedRoute />}>
             <Route path="/" element={<HomePage />} />
             <Route path="/me/profile" element={<ProfilePage />} />
+            <Route path="/me/create-post" element={<CreatePostPage />} />
           </Route>
         </Routes>
       </BrowserRouter>

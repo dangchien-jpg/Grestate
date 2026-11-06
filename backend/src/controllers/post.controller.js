@@ -1,4 +1,6 @@
 import prisma from "../libs/prisma.js";
+import { v2 as cloudinary } from "cloudinary";
+import { uploadPostFromBuffer } from "../middlewares/uploadPost.middleware.js";
 
 export const fetchPost = async (req, res) => {
   try {
@@ -53,6 +55,8 @@ export const fetchPost = async (req, res) => {
       ...post,
       giaNiemYet: Number(post.giaNiemYet),
       dienTich: Number(post.dienTich),
+      matTien: post.matTien === null ? null : Number(post.matTien),
+      matDuong: post.matDuong === null ? null : Number(post.matDuong),
       viDo: post.viDo === null ? null : Number(post.viDo),
       kinhDo: post.kinhDo === null ? null : Number(post.kinhDo),
       tienIchs: tinDangTienIchs.map(({ tienIch }) => tienIch),
@@ -134,6 +138,8 @@ export const fetchDetailPost = async (req, res) => {
         ...post,
         giaNiemYet: Number(post.giaNiemYet),
         dienTich: Number(post.dienTich),
+        matTien: post.matTien === null ? null : Number(post.matTien),
+        matDuong: post.matDuong === null ? null : Number(post.matDuong),
         viDo: post.viDo === null ? null : Number(post.viDo),
         kinhDo: post.kinhDo === null ? null : Number(post.kinhDo),
         tienIchs: tinDangTienIchs.map(({ tienIch }) => tienIch),
@@ -148,4 +154,69 @@ export const fetchDetailPost = async (req, res) => {
     console.error(error);
     return res.status(500).json({ message: "Lấy tin đăng thất bại" });
   }
+};
+
+export const createPost = async (req, res) => {
+  const uploadedImages = [];
+  let post;
+  try {
+    for (const file of req.files) {
+      const result = await uploadPostFromBuffer(file.buffer);
+      if (result?.public_id) uploadedImages.push(result);
+      if (!result?.public_id || !result?.secure_url)
+        throw new Error("Cloudinary returned an invalid image result");
+    }
+    post = await prisma.tinDang.create({
+      data: {
+        ...req.postData,
+        maNguoiDung: req.user.maNguoiDung,
+        trangThai: "CHO_KIEM_DUYET",
+        hinhAnhTinDangs: {
+          create: uploadedImages.map((image, index) => ({
+            hinhAnhUrl: image.secure_url,
+            hinhAnhId: image.public_id,
+            thuTuHienThi: index,
+            laAnhDaiDien: index === 0,
+          })),
+        },
+      },
+      include: { hinhAnhTinDangs: { orderBy: { thuTuHienThi: "asc" } } },
+    });
+  } catch (error) {
+    console.error(error);
+    const cleanup = await Promise.allSettled(
+      uploadedImages.map((image) =>
+        cloudinary.uploader.destroy(image.public_id, {
+          resource_type: "image",
+        }),
+      ),
+    );
+    cleanup.forEach((result, index) => {
+      if (
+        result.status === "rejected" ||
+        !["ok", "not found"].includes(result.value?.result)
+      ) {
+        console.error(
+          "Failed to remove post image",
+          uploadedImages[index].public_id,
+          result,
+        );
+      }
+    });
+    return res
+      .status(500)
+      .json({ message: "Unable to create post. Please try again." });
+  }
+  return res.status(201).json({
+    message: "Tạo đăng được tạo thành công và đang chờ kiểm duyệt",
+    post: {
+      ...post,
+      giaNiemYet: Number(post.giaNiemYet),
+      dienTich: Number(post.dienTich),
+      matTien: post.matTien === null ? null : Number(post.matTien),
+      matDuong: post.matDuong === null ? null : Number(post.matDuong),
+      viDo: post.viDo === null ? null : Number(post.viDo),
+      kinhDo: post.kinhDo === null ? null : Number(post.kinhDo),
+    },
+  });
 };

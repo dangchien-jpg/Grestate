@@ -17,6 +17,12 @@ export interface TinDang {
   soPhongTam: number | null;
   soTang: number | null;
   huongNha: string | null;
+  huongBanCong: string | null;
+  noiThat: string | null;
+  matTien: number | null;
+  matDuong: number | null;
+  nguoiLienHe: string | null;
+  soDienThoaiLienHe: string | null;
   ngayDang: string | null;
   trangThai: string;
   createdAt: string;
@@ -24,9 +30,12 @@ export interface TinDang {
   deletedAt: string | null;
 }
 
+export type NhomBatDongSan = "NHA" | "DAT";
+
 export interface LoaiBatDongSan {
   maLoaiBatDongSan: number;
   tenLoai: string;
+  nhomBatDongSan: NhomBatDongSan;
   moTa: string | null;
   createdAt: string;
   updatedAt: string;
