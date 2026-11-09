@@ -112,7 +112,6 @@ export const signIn = async (req, res) => {
 export const signOut = async (req, res) => {
   try {
     const token = req.cookies?.refreshToken;
-    console.log(token);
 
     if (!token) {
       return res.status(400).json({ message: "Unauthorized" });

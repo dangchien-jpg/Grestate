@@ -5,7 +5,6 @@ import {
   Bath,
   BedDouble,
   Clock3,
-  Heart,
   House,
   LandPlot,
   MapPin,
@@ -30,6 +29,8 @@ import Footer from "@/components/layout/footer";
 import { Link } from "react-router";
 import { usePostStore } from "@/stores/postStore";
 import type { TinDangDanhSach } from "@/types/post";
+import FavoriteButton from "@/components/favorite-post/favorite-button";
+import { useFavorites } from "@/hooks/use-favorites";
 
 export type PropertyType =
   | "apartment"
@@ -138,7 +139,7 @@ function MoreLink({ href }: { href: string }) {
 
 function PropertyCard({ property }: { property: TinDangDanhSach }) {
   return (
-    <Card className="group gap-0 rounded-sm py-0 shadow-sm transition-shadow hover:shadow-lg">
+    <Card className="group relative gap-0 rounded-sm py-0 shadow-sm transition-shadow hover:shadow-lg">
       <Link to={`/detail/${property.maTinDang}`}>
         <div className="relative aspect-[1.75] overflow-hidden">
           <SafeImage
@@ -146,15 +147,6 @@ function PropertyCard({ property }: { property: TinDangDanhSach }) {
             alt={property.tieuDe}
             className="transition-transform duration-500 motion-safe:group-hover:scale-105"
           />
-
-          <Button
-            size="icon"
-            variant="secondary"
-            aria-label="Lưu tin"
-            className="absolute right-3 top-3 size-8 rounded-full bg-white/95 text-slate-600 shadow-sm"
-          >
-            <Heart />
-          </Button>
         </div>
         <CardContent className="space-y-3 p-4">
           <h3
@@ -204,13 +196,17 @@ function PropertyCard({ property }: { property: TinDangDanhSach }) {
           </div>
         </CardContent>
       </Link>
+      <FavoriteButton
+        post={property}
+        className="absolute top-3 right-3 size-8 rounded-sm bg-white/95 shadow-sm hover:bg-white"
+      />
     </Card>
   );
 }
 
 export default function HomePage() {
+  useFavorites();
   const { posts } = usePostStore();
-
   return (
     <div className="min-h-screen bg-white font-sans text-slate-950">
       <Header />
@@ -229,7 +225,7 @@ export default function HomePage() {
           <div className="absolute inset-0 -z-10 bg-linear-to-r from-slate-950/75 via-slate-900/35 to-slate-900/10" />
           <div className="mx-auto max-w-7xl px-5 pb-7 pt-12 sm:px-8 sm:pt-16">
             <div id="search" className="mx-auto mt-8 max-w-5xl scroll-mt-24">
-              <div className="grid gap-3 rounded-xl bg-white p-4 shadow-xl md:grid-cols-[2fr_1.2fr_1.1fr_auto]">
+              <div className="grid gap-3 rounded-sm bg-white p-4 shadow-xl md:grid-cols-[2fr_1.2fr_1.1fr_auto]">
                 <div className="relative">
                   <Search className="absolute left-3 top-4 size-4 text-primary" />
                   <Input
@@ -287,7 +283,7 @@ export default function HomePage() {
         <div className="mx-auto max-w-7xl space-y-8 px-5 py-8 sm:px-8">
           <Section
             id="listings"
-            title="Tin đăng nổi bật"
+            title="Bất động sản nổi bật"
             action={
               <Button variant="link" className="gap-2 text-xs sm:text-sm">
                 Xem tất cả

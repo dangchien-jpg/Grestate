@@ -10,6 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { SearchableSelect } from "@/components/ui/searchable-select";
 import {
   Select,
   SelectContent,
@@ -199,11 +200,16 @@ const PostForm = () => {
       if (body?.errors && typeof body.errors === "object") {
         for (const [field, message] of Object.entries(body.errors)) {
           if (field in values && typeof message === "string") {
-            setError(field as keyof PostFormValues, { type: "server", message });
+            setError(field as keyof PostFormValues, {
+              type: "server",
+              message,
+            });
           }
         }
       }
-      setError("root.server", { message: body?.message ?? "Không thể đăng tin. Vui lòng thử lại." });
+      setError("root.server", {
+        message: body?.message ?? "Không thể đăng tin. Vui lòng thử lại.",
+      });
     }
   };
 
@@ -252,7 +258,10 @@ const PostForm = () => {
             onSubmit={handleSubmit(onSubmit)}
             className="space-y-6 rounded-xl border border-slate-200 bg-white p-5 shadow-sm sm:p-8"
           >
-            <fieldset disabled={isSubmitting} className="space-y-5 border-t border-gray-300 pt-6">
+            <fieldset
+              disabled={isSubmitting}
+              className="space-y-5 border-t border-gray-300 pt-6"
+            >
               <legend className="pr-3 text-lg font-bold text-slate-900">
                 Địa chỉ bất động sản
               </legend>
@@ -265,10 +274,24 @@ const PostForm = () => {
                     name="provinceCode"
                     control={control}
                     render={({ field }) => (
-                      <Select
+                      <SearchableSelect
+                        id="provinceCode"
                         name={field.name}
-                        required
                         value={field.value || null}
+                        options={provinces.map((province) => ({
+                          value: province.maTinhThanh,
+                          label: province.tenTinhThanh,
+                        }))}
+                        placeholder="Chọn tỉnh / thành phố"
+                        searchLabel="Tìm tỉnh / thành phố"
+                        emptyMessage="Chưa có danh sách tỉnh / thành phố."
+                        triggerRef={field.ref}
+                        onBlur={field.onBlur}
+                        invalid={!!errors.provinceCode}
+                        describedBy={
+                          errors.provinceCode ? "provinceCode-error" : undefined
+                        }
+                        disabled={isSubmitting}
                         onValueChange={(value) => {
                           field.onChange(value ?? "");
                           setProvinceCode(value);
@@ -277,44 +300,7 @@ const PostForm = () => {
                           });
                           setWardId(null);
                         }}
-                      >
-                        <SelectTrigger
-                          id="provinceCode"
-                          ref={field.ref}
-                          onBlur={field.onBlur}
-                          aria-invalid={!!errors.provinceCode}
-                          aria-describedby={
-                            errors.provinceCode
-                              ? "provinceCode-error"
-                              : undefined
-                          }
-                          className="pl-4 shadow-sm"
-                        >
-                          <SelectValue placeholder="Chọn tỉnh / thành phố">
-                            {
-                              provinces.find(
-                                (province) =>
-                                  province.maTinhThanh === field.value,
-                              )?.tenTinhThanh
-                            }
-                          </SelectValue>
-                        </SelectTrigger>
-                        <SelectContent>
-                          {provinces.map((province) => (
-                            <SelectItem
-                              key={province.maTinhThanh}
-                              value={province.maTinhThanh}
-                            >
-                              {province.tenTinhThanh}
-                            </SelectItem>
-                          ))}
-                          {provinces.length === 0 && (
-                            <p className="px-3 py-3 text-sm text-slate-500">
-                              Chưa có danh sách tỉnh / thành phố.
-                            </p>
-                          )}
-                        </SelectContent>
-                      </Select>
+                      />
                     )}
                   />
                   {errors.provinceCode && (
@@ -335,50 +321,27 @@ const PostForm = () => {
                     name="wardId"
                     control={control}
                     render={({ field }) => (
-                      <Select
+                      <SearchableSelect
+                        id="wardId"
                         name={field.name}
-                        required
                         value={field.value}
+                        options={filteredWards.map((ward) => ({
+                          value: ward.maPhuongXa,
+                          label: ward.tenPhuongXa,
+                        }))}
+                        placeholder="Chọn phường / xã"
+                        searchLabel="Tìm phường / xã"
+                        emptyMessage="Chưa có danh sách phường / xã."
+                        triggerRef={field.ref}
+                        onBlur={field.onBlur}
+                        invalid={!!errors.wardId}
+                        describedBy={errors.wardId ? "wardId-error" : undefined}
                         onValueChange={(value) => {
                           field.onChange(value);
                           setWardId(value);
                         }}
-                        disabled={!provinceCode}
-                      >
-                        <SelectTrigger
-                          id="wardId"
-                          ref={field.ref}
-                          onBlur={field.onBlur}
-                          aria-invalid={!!errors.wardId}
-                          aria-describedby={
-                            errors.wardId ? "wardId-error" : undefined
-                          }
-                          className="pl-4 shadow-sm"
-                        >
-                          <SelectValue placeholder="Chọn phường / xã">
-                            {
-                              wards.find(
-                                (ward) => ward.maPhuongXa === field.value,
-                              )?.tenPhuongXa
-                            }
-                          </SelectValue>
-                        </SelectTrigger>
-                        <SelectContent>
-                          {filteredWards.map((ward) => (
-                            <SelectItem
-                              key={ward.maPhuongXa}
-                              value={ward.maPhuongXa}
-                            >
-                              {ward.tenPhuongXa}
-                            </SelectItem>
-                          ))}
-                          {filteredWards.length === 0 && (
-                            <p className="px-3 py-3 text-sm text-slate-500">
-                              Chưa có danh sách phường / xã.
-                            </p>
-                          )}
-                        </SelectContent>
-                      </Select>
+                        disabled={!provinceCode || isSubmitting}
+                      />
                     )}
                   />
                   {errors.wardId && (
@@ -443,7 +406,10 @@ const PostForm = () => {
                 </div>
               </div>
             </fieldset>
-            <fieldset disabled={isSubmitting} className="space-y-5 pt-6 border-t border-gray-300">
+            <fieldset
+              disabled={isSubmitting}
+              className="space-y-5 pt-6 border-t border-gray-300"
+            >
               <legend className="pr-3 mb-5 text-lg font-bold text-slate-900">
                 Thông tin chính
               </legend>
@@ -742,7 +708,10 @@ const PostForm = () => {
               {selectedCategory?.nhomBatDongSan === "DAT" && <LandDetailForm />}
             </>
 
-            <fieldset disabled={isSubmitting} className="space-y-5 border-t border-gray-300 pt-6">
+            <fieldset
+              disabled={isSubmitting}
+              className="space-y-5 border-t border-gray-300 pt-6"
+            >
               <legend className="pr-3 mb-5 text-lg font-bold text-slate-900">
                 Thông tin cơ bản
               </legend>
@@ -799,7 +768,10 @@ const PostForm = () => {
               </div>
             </fieldset>
 
-            <fieldset disabled={isSubmitting} className="space-y-5 border-t border-gray-300 pt-6">
+            <fieldset
+              disabled={isSubmitting}
+              className="space-y-5 border-t border-gray-300 pt-6"
+            >
               <legend className="pr-3 text-lg font-bold text-slate-900">
                 Thông tin liên hệ
               </legend>
@@ -865,7 +837,10 @@ const PostForm = () => {
               </div>
             </fieldset>
 
-            <fieldset disabled={isSubmitting} className="space-y-5 border-t border-gray-300 pt-6">
+            <fieldset
+              disabled={isSubmitting}
+              className="space-y-5 border-t border-gray-300 pt-6"
+            >
               <legend className="pr-3 text-lg font-bold text-slate-900">
                 Hình ảnh bất động sản
               </legend>
@@ -1002,7 +977,11 @@ const PostForm = () => {
               />
             </fieldset>
 
-            {errors.root?.server && <p role="alert" className="text-sm text-destructive">{errors.root.server.message}</p>}
+            {errors.root?.server && (
+              <p role="alert" className="text-sm text-destructive">
+                {errors.root.server.message}
+              </p>
+            )}
             <div className="flex justify-end border-t border-gray-300 pt-6">
               <Button
                 type="submit"

@@ -8,6 +8,7 @@ import { ProfilePage } from "@/pages/ProfilePage";
 import DetailPage from "@/pages/DetailPage";
 import CreatePostPage from "@/pages/CreatePostPage";
 import PredictPage from "@/pages/PredictPage";
+import FavoritePostPage from "@/pages/FavoritePostPage";
 function App() {
   return (
     <>
@@ -24,6 +25,7 @@ function App() {
             <Route path="/predict" element={<PredictPage />} />
             <Route path="/me/profile" element={<ProfilePage />} />
             <Route path="/me/create-post" element={<CreatePostPage />} />
+            <Route path="/me/favorite-post" element={<FavoritePostPage />} />
           </Route>
         </Routes>
       </BrowserRouter>

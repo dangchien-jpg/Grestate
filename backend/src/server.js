@@ -10,6 +10,7 @@ import legalDocumentRoute from "./routes/legal-document.route.js";
 import categoryRoute from "./routes/category.route.js";
 import locationRoute from "./routes/location.route.js";
 import valuationRoute from "./routes/valuation.route.js";
+import favoriteRoute from "./routes/favorite.route.js";
 import { protectedRoute } from "./middlewares/auth.middleware.js";
 import { v2 as cloudinary } from "cloudinary";
 
@@ -38,6 +39,7 @@ app.use("/api/users", userRoute);
 app.use("/api/categories", categoryRoute);
 app.use("/api/legal-documents", legalDocumentRoute);
 app.use("/api/provinces", locationRoute);
+app.use("/api/favorites", favoriteRoute);
 
 async function startServer() {
   try {

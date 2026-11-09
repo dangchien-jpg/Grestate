@@ -9,7 +9,6 @@ import {
   ChevronLeft,
   Compass,
   FileCheck2,
-  Heart,
   House,
   LandPlot,
   MapPin,
@@ -24,6 +23,8 @@ import Footer from "@/components/layout/footer";
 import { Button } from "@/components/ui/button";
 import { useParams } from "react-router";
 import { usePostStore } from "@/stores/postStore";
+import FavoriteButton from "@/components/favorite-post/favorite-button";
+import { useFavorites } from "@/hooks/use-favorites";
 
 function PostGallery({ post }: { post: TinDangDanhSach }) {
   const urls = post.hinhAnhTinDangs.map((photo) => photo.hinhAnhUrl);
@@ -103,6 +104,7 @@ function PostGallery({ post }: { post: TinDangDanhSach }) {
 }
 
 const DetailPage = () => {
+  useFavorites();
   const { maTinDang } = useParams();
   const id = Number(maTinDang);
   const fetchDetailPost = usePostStore((state) => state.fetchDetailPost);
@@ -233,14 +235,7 @@ const DetailPage = () => {
                   </p>
                 </div>
                 <div className="flex gap-1 text-slate-600">
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    aria-label="Lưu tin đăng"
-                  >
-                    <Heart className="size-5" />
-                  </Button>
+                  <FavoriteButton post={post} />
                   <Button
                     type="button"
                     variant="ghost"

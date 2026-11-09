@@ -21,10 +21,15 @@ import { Button } from "@/components/ui/button";
 
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { useAuthStore } from "@/stores/authStore";
+import { useFavoriteStore } from "@/stores/favoriteStore";
+import { useFavorites } from "@/hooks/use-favorites";
 import { toast } from "sonner";
 
 const Header = () => {
+  useFavorites();
   const { user, signOut } = useAuthStore();
+  const savedCount = useFavoriteStore((state) => state.posts.length);
+  const favoriteCount = user ? savedCount : 0;
   const navigation = useNavigate();
 
   const handleSignout = async () => {
@@ -71,21 +76,29 @@ const Header = () => {
           </a>
         </nav>
         <div className="flex items-center gap-2">
-          <Button
-            variant="ghost"
-            size="icon"
-            aria-label="L?u tin"
-            className="relative rounded-full"
+          <Link
+            to="/me/favorite-post"
+            aria-label={`Tin đăng đã lưu: ${favoriteCount} tin`}
+            className="relative inline-flex size-8 shrink-0 items-center justify-center rounded-full outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
-            <Heart />
-          </Button>
+            <Heart aria-hidden="true" className="size-6" />
+            {favoriteCount > 0 && (
+              <span
+                aria-live="polite"
+                aria-atomic="true"
+                className="absolute -top-1 -right-1 inline-flex h-4 min-w-4 items-center justify-center rounded-md bg-red-600 px-1 text-[10px] leading-none font-semibold text-white ring-2 ring-white"
+              >
+                {favoriteCount}
+              </span>
+            )}
+          </Link>
           <Button
             variant="ghost"
             size="icon"
             aria-label="Thông báo"
             className="hidden rounded-full sm:inline-flex"
           >
-            <Bell />
+            <Bell className="size-6" />
           </Button>
           <DropdownMenu>
             <DropdownMenuTrigger>
