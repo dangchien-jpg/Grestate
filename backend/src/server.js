@@ -9,6 +9,7 @@ import postRoute from "./routes/post.route.js";
 import legalDocumentRoute from "./routes/legal-document.route.js";
 import categoryRoute from "./routes/category.route.js";
 import locationRoute from "./routes/location.route.js";
+import valuationRoute from "./routes/valuation.route.js";
 import { protectedRoute } from "./middlewares/auth.middleware.js";
 import { v2 as cloudinary } from "cloudinary";
 
@@ -32,6 +33,7 @@ app.use("/api/auth/", authRoute);
 app.use("/api/posts", postRoute);
 // private route
 app.use(protectedRoute);
+app.use("/api/valuation", valuationRoute);
 app.use("/api/users", userRoute);
 app.use("/api/categories", categoryRoute);
 app.use("/api/legal-documents", legalDocumentRoute);

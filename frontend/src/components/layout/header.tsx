@@ -60,7 +60,7 @@ const Header = () => {
           <a href="#projects" className="hover:text-primary">
             Dự án
           </a>
-          <a href="#valuation" className="hover:text-primary">
+          <a href="/predict" className="hover:text-primary">
             Định giá AI
           </a>
           <a href="#news" className="hover:text-primary">

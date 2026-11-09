@@ -7,6 +7,7 @@ import ProtectedRoute from "@/components/auth/protected-route";
 import { ProfilePage } from "@/pages/ProfilePage";
 import DetailPage from "@/pages/DetailPage";
 import CreatePostPage from "@/pages/CreatePostPage";
+import PredictPage from "@/pages/PredictPage";
 function App() {
   return (
     <>
@@ -20,6 +21,7 @@ function App() {
           {/* Private routes */}
           <Route element={<ProtectedRoute />}>
             <Route path="/" element={<HomePage />} />
+            <Route path="/predict" element={<PredictPage />} />
             <Route path="/me/profile" element={<ProfilePage />} />
             <Route path="/me/create-post" element={<CreatePostPage />} />
           </Route>

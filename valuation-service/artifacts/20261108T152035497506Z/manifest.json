@@ -1,0 +1,75 @@
+{
+  "schema_version": 2,
+  "model_version": "20261108T152035497506Z",
+  "model_name": "XGBoost",
+  "selection_metric": "validation_mape",
+  "target": "log_price_per_m2_million",
+  "features": [
+    "district",
+    "property_type",
+    "legal_status",
+    "direction",
+    "ward_key",
+    "street_key",
+    "area",
+    "log_area",
+    "frontage",
+    "road_width",
+    "num_bedrooms",
+    "num_toilets",
+    "num_floors",
+    "total_rooms",
+    "is_car_road",
+    "near_school",
+    "near_hospital",
+    "near_market",
+    "near_beach",
+    "amenity_score"
+  ],
+  "location_resolution": "district_ward_street",
+  "model_sha256": "41a63663cce29594ae023ce36446c591790989205dfe859112d1bb455d600c7d",
+  "feature_code_sha256": "57435bddfb01b10a6d515a2ef7787e23f01b109e83a3c761030d5268f1f5e49c",
+  "dataset": {
+    "dataset": "tinixai/vietnam-real-estates",
+    "cache_revision": "ca3fedcbb089bf65f7e4cfb03316cce4bd0d779f",
+    "file_inventory_sha256": "46887426b62da0fba9c6a8246431a857cbb2bae904a42010f8e6dca71e4de9a9"
+  },
+  "data_report": {
+    "raw_region_rows": 185973,
+    "eligible_rows": 161673,
+    "reposts_removed": 38230,
+    "deduplicated_rows": 123443,
+    "data_start": "2025-06-01T00:24:30.026000+00:00",
+    "data_end": "2026-03-30T23:59:34.921000+00:00",
+    "splits": {
+      "train": {
+        "rows": 78418,
+        "start": "2025-06-01T00:24:30.026000+00:00",
+        "end": "2025-11-28T23:38:06.976000+00:00"
+      },
+      "validation": {
+        "rows": 17551,
+        "start": "2025-11-29T00:14:36.157000+00:00",
+        "end": "2026-01-13T23:59:22.477000+00:00"
+      },
+      "calibration": {
+        "rows": 6863,
+        "start": "2026-01-14T00:11:07.234000+00:00",
+        "end": "2026-02-12T23:54:11.989000+00:00"
+      },
+      "test": {
+        "rows": 20611,
+        "start": "2026-02-13T00:01:54.117000+00:00",
+        "end": "2026-03-30T23:59:34.921000+00:00"
+      }
+    }
+  },
+  "packages": {
+    "scikit-learn": "1.9.1",
+    "xgboost": "3.4.1",
+    "numpy": "2.2.3",
+    "pandas": "2.2.3",
+    "joblib": "1.6.0"
+  },
+  "feature_hash_format": "utf8_lf"
+}

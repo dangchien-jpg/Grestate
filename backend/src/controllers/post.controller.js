@@ -42,16 +42,10 @@ export const fetchPost = async (req, res) => {
             laAnhDaiDien: true,
           },
         },
-        tinDangTienIchs: {
-          orderBy: { maTienIch: "asc" },
-          select: {
-            tienIch: { select: { maTienIch: true, tenTienIch: true } },
-          },
-        },
       },
     });
 
-    const posts = records.map(({ tinDangTienIchs, ...post }) => ({
+    const posts = records.map((post) => ({
       ...post,
       giaNiemYet: Number(post.giaNiemYet),
       dienTich: Number(post.dienTich),
@@ -59,7 +53,6 @@ export const fetchPost = async (req, res) => {
       matDuong: post.matDuong === null ? null : Number(post.matDuong),
       viDo: post.viDo === null ? null : Number(post.viDo),
       kinhDo: post.kinhDo === null ? null : Number(post.kinhDo),
-      tienIchs: tinDangTienIchs.map(({ tienIch }) => tienIch),
       anhDaiDienUrl:
         post.hinhAnhTinDangs.find((image) => image.laAnhDaiDien)?.hinhAnhUrl ??
         post.hinhAnhTinDangs[0]?.hinhAnhUrl ??
@@ -118,12 +111,6 @@ export const fetchDetailPost = async (req, res) => {
             laAnhDaiDien: true,
           },
         },
-        tinDangTienIchs: {
-          orderBy: { maTienIch: "asc" },
-          select: {
-            tienIch: { select: { maTienIch: true, tenTienIch: true } },
-          },
-        },
       },
     });
 
@@ -131,7 +118,7 @@ export const fetchDetailPost = async (req, res) => {
       return res.status(404).json({ message: "Không tìm thấy tin đăng" });
     }
 
-    const { tinDangTienIchs, ...post } = record;
+    const post = record;
 
     return res.status(200).json({
       post: {
@@ -142,7 +129,6 @@ export const fetchDetailPost = async (req, res) => {
         matDuong: post.matDuong === null ? null : Number(post.matDuong),
         viDo: post.viDo === null ? null : Number(post.viDo),
         kinhDo: post.kinhDo === null ? null : Number(post.kinhDo),
-        tienIchs: tinDangTienIchs.map(({ tienIch }) => tienIch),
         anhDaiDienUrl:
           post.hinhAnhTinDangs.find((image) => image.laAnhDaiDien)
             ?.hinhAnhUrl ??

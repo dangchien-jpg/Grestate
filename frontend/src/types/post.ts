@@ -60,19 +60,6 @@ export interface PhuongXa {
   tenPhuongXa: string;
 }
 
-export interface TienIch {
-  maTienIch: number;
-  tenTienIch: string;
-  moTa: string | null;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface TinDangTienIch {
-  maTinDang: number;
-  maTienIch: number;
-}
-
 export interface HinhAnhTinDang {
   maHinhAnh: number;
   maTinDang: number;
@@ -134,7 +121,6 @@ export interface TinDangDanhSach extends TinDang {
     HinhAnhTinDang,
     "maHinhAnh" | "hinhAnhUrl" | "thuTuHienThi" | "laAnhDaiDien"
   >[];
-  tienIchs: Pick<TienIch, "maTienIch" | "tenTienIch">[];
   anhDaiDienUrl: string | null;
 }
 

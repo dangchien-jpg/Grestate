@@ -148,7 +148,6 @@ model TinDang {
   giayToPhapLy     GiayToPhapLy?     @relation(fields: [maGiayTo], references: [maGiayTo])
   phuongXa         PhuongXa          @relation(fields: [maPhuongXa], references: [maPhuongXa])
   hinhAnhTinDangs  HinhAnhTinDang[]
-  tinDangTienIchs  TinDangTienIch[]
   tinDangYeuThichs TinDangYeuThich[]
   phanAnhTinDangs  PhanAnhTinDang[]
   lichSuKiemDuyets LichSuKiemDuyet[]
@@ -162,29 +161,6 @@ model TinDang {
   @@index([giaNiemYet])
   @@index([dienTich])
   @@map("TINDANG")
-}
-
-model TienIch {
-  maTienIch       Int              @id @default(autoincrement())
-  tenTienIch      String           @unique @db.VarChar(100)
-  moTa            String?          @db.VarChar(255)
-  createdAt       DateTime         @default(now()) @db.DateTime(0)
-  updatedAt       DateTime         @updatedAt @db.DateTime(0)
-  tinDangTienIchs TinDangTienIch[]
-
-  @@map("TIENICH")
-}
-
-model TinDangTienIch {
-  maTinDang Int
-  maTienIch Int
-
-  tinDang TinDang @relation(fields: [maTinDang], references: [maTinDang], onDelete: Cascade)
-  tienIch TienIch @relation(fields: [maTienIch], references: [maTienIch])
-
-  @@id([maTinDang, maTienIch])
-  @@index([maTienIch])
-  @@map("TINDANG_TIENICH")
 }
 
 model HinhAnhTinDang {
