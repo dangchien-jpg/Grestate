@@ -148,7 +148,7 @@ export default function PredictPage() {
   return (
     <>
       <Header />
-      <main className="min-h-screen px-4 py-8 text-slate-800">
+      <main className="min-h-screen px-4 py-8 ">
         {error && (
           <div
             role="alert"
@@ -200,7 +200,7 @@ export default function PredictPage() {
                 bounds={metadata.location_meta.bounds}
               />
               {locationNotice && (
-                <p role="status" className="text-sm text-slate-600">
+                <p role="status" className="text-sm ">
                   {locationNotice}
                 </p>
               )}

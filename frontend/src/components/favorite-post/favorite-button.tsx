@@ -54,7 +54,7 @@ export default function FavoriteButton({
       aria-busy={pending || loading}
       title={saved ? "Bỏ lưu tin đăng" : "Lưu tin đăng"}
       disabled={pending || loading}
-      className={`${saved ? "text-red-500 hover:text-red-600" : "text-slate-600"} ${className}`}
+      className={`${saved ? "text-red-500 hover:text-red-600" : ""} ${className}`}
       onClick={(event) => {
         event.preventDefault();
         event.stopPropagation();

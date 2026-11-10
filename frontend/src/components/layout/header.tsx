@@ -130,7 +130,7 @@ const Header = () => {
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
-                  <Link to="" className="flex gap-2">
+                  <Link to="/me/manager-post" className="flex gap-2">
                     <ListCheck /> Quản lý đăng tin
                   </Link>
                 </DropdownMenuItem>

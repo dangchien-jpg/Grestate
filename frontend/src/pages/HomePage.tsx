@@ -151,11 +151,11 @@ function PropertyCard({ property }: { property: TinDangDanhSach }) {
         <CardContent className="space-y-3 p-4">
           <h3
             title={property.tieuDe}
-            className="line-clamp-2 min-h-14 wrap-break-word text-sm leading-7 font-bold tracking-tight text-slate-900 transition-colors"
+            className="line-clamp-2 min-h-14 wrap-break-word text-sm leading-7 font-bold tracking-tight transition-colors"
           >
             {property.tieuDe}
           </h3>
-          <p className="flex items-center gap-1 text-xs text-muted-foreground">
+          <p className="flex items-center gap-1 text-xs ">
             <MapPin className="size-3.5 shrink-0" />
             <span className="truncate">
               {[
@@ -189,7 +189,7 @@ function PropertyCard({ property }: { property: TinDangDanhSach }) {
             <p className="text-lg font-bold text-red-600">
               {formatPrice(property.giaNiemYet)}
             </p>
-            <span className="flex items-center gap-1 text-[10px] text-muted-foreground">
+            <span className="flex items-center gap-1 text-[10px] ">
               <Clock3 className="size-3" />
               {formatDate(property.ngayDang ?? " ")}
             </span>
@@ -208,7 +208,7 @@ export default function HomePage() {
   useFavorites();
   const { posts } = usePostStore();
   return (
-    <div className="min-h-screen bg-white font-sans text-slate-950">
+    <div className="min-h-screen bg-white font-sans ">
       <Header />
       <main>
         <section
@@ -302,7 +302,7 @@ export default function HomePage() {
             title="Dự án nổi bật"
             action={<MoreLink href="#projects" />}
           >
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm ">
               Thông tin dự án đang được cập nhật.
             </p>
           </Section>
@@ -318,7 +318,7 @@ export default function HomePage() {
               <h2 id="map-title" className="text-2xl font-bold text-blue-950">
                 Tìm kiếm theo bản đồ
               </h2>
-              <p className="mb-5 mt-2 max-w-xs text-sm leading-relaxed text-slate-600">
+              <p className="mb-5 mt-2 max-w-xs text-sm leading-relaxed ">
                 Khám phá các bất động sản xung quanh khu vực bạn quan tâm trên
                 bản đồ trực quan.
               </p>
@@ -353,7 +353,7 @@ export default function HomePage() {
                   {marker.name}
                 </span>
               ))}
-              <span className="absolute bottom-2 right-3 rounded bg-white/80 px-2 py-1 text-[9px] text-slate-500">
+              <span className="absolute bottom-2 right-3 rounded bg-white/80 px-2 py-1 text-[9px] ">
                 Bản đồ minh họa
               </span>
             </div>
@@ -401,7 +401,7 @@ export default function HomePage() {
             title="Tin tức thị trường"
             action={<MoreLink href="#news" />}
           >
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm ">
               Tin tức thị trường đang được cập nhật.
             </p>
           </Section>

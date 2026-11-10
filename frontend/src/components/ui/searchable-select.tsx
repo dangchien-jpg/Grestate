@@ -53,16 +53,16 @@ export function SearchableSelect<Value extends string | number>({
         aria-required="true"
         aria-invalid={invalid}
         aria-describedby={describedBy}
-        className="flex h-12 w-full min-w-0 items-center justify-between gap-2 rounded-lg border border-input bg-white px-4 text-left font-sans text-sm text-slate-700 shadow-sm outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+        className="flex h-12 w-full min-w-0 items-center justify-between gap-2 rounded-lg border border-input bg-white px-4 text-left font-sans text-sm shadow-sm outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
       >
         <span className="truncate">{selected?.label ?? placeholder}</span>
-        <ChevronDown aria-hidden="true" className="size-4 shrink-0 text-muted-foreground" />
+        <ChevronDown aria-hidden="true" className="size-4 shrink-0 " />
       </Combobox.Trigger>
       <Combobox.Portal>
         <Combobox.Positioner sideOffset={4} className="z-50">
           <Combobox.Popup
             initialFocus={inputRef}
-            className="flex max-h-[min(24rem,var(--available-height))] w-(--anchor-width) flex-col overflow-hidden rounded-xl border bg-white p-2 font-sans text-sm text-slate-800 shadow-lg"
+            className="flex max-h-[min(24rem,var(--available-height))] w-(--anchor-width) flex-col overflow-hidden rounded-xl border bg-white p-2 font-sans text-sm shadow-lg"
           >
             <div className="relative mb-2 shrink-0">
               <Search aria-hidden="true" className="pointer-events-none absolute top-1/2 left-3 size-5 -translate-y-1/2" />
@@ -73,7 +73,7 @@ export function SearchableSelect<Value extends string | number>({
                 className="h-11 w-full rounded-full border border-input bg-white pr-3 pl-10 text-sm shadow-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
               />
             </div>
-            <Combobox.Empty className="px-3 py-4 text-slate-500">
+            <Combobox.Empty className="px-3 py-4 ">
               {options.length === 0 ? emptyMessage : "Không tìm thấy kết quả phù hợp."}
             </Combobox.Empty>
             <Combobox.List className="min-h-0 overflow-y-auto overscroll-contain">

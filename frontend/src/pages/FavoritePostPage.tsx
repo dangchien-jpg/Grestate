@@ -32,7 +32,7 @@ const FavoritePostPage = () => {
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-slate-50/50 font-sans text-slate-900">
+    <div className="flex min-h-screen flex-col bg-slate-50/50 font-sans ">
       <Header />
       <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-6 sm:py-10">
         <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
@@ -40,8 +40,8 @@ const FavoritePostPage = () => {
         </h1>
         {!loading && !error && (
           <div className="mt-6 mb-5 flex flex-wrap items-center justify-between gap-3">
-            <p className="text-sm text-slate-600">
-              Tổng số <strong className="text-slate-900">{posts.length}</strong>{" "}
+            <p className="text-sm ">
+              Tổng số <strong className="">{posts.length}</strong>{" "}
               tin đăng
             </p>
           </div>
@@ -49,7 +49,7 @@ const FavoritePostPage = () => {
         {loading ? (
           <div
             role="status"
-            className="flex items-center justify-center gap-2 py-20 text-sm text-slate-500"
+            className="flex items-center justify-center gap-2 py-20 text-sm "
           >
             <LoaderCircle aria-hidden="true" className="size-5 animate-spin" />
             Đang tải tin đăng đã lưu...
@@ -77,7 +77,7 @@ const FavoritePostPage = () => {
               className="mx-auto mb-4 size-10 text-primary/40"
             />
             <h2 className="text-lg font-semibold">Bạn chưa lưu tin đăng nào</h2>
-            <p className="mt-2 text-sm text-slate-500">
+            <p className="mt-2 text-sm ">
               Các tin bạn lưu sẽ xuất hiện tại đây để tiện xem lại.
             </p>
             <Link

@@ -24,9 +24,9 @@ interface Props {
 const fieldClass =
   "mt-2 h-12 rounded-lg font-sans text-sm font-normal md:text-sm";
 const selectClass =
-  "mt-2 h-12 w-full min-w-0 rounded-lg border border-input bg-white pl-4 pr-3 font-sans text-sm font-normal text-slate-700 shadow-sm outline-none focus-visible:ring-2 focus-visible:ring-ring";
+  "mt-2 h-12 w-full min-w-0 rounded-lg border border-input bg-white pl-4 pr-3 font-sans text-sm font-normal shadow-sm outline-none focus-visible:ring-2 focus-visible:ring-ring";
 const textareaClass =
-  "mt-2 w-full resize-y rounded-lg border border-input bg-white px-4 py-3 font-sans text-sm font-normal outline-none placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring";
+  "mt-2 w-full resize-y rounded-lg border border-input bg-white px-4 py-3 font-sans text-sm font-normal outline-none focus-visible:ring-2 focus-visible:ring-ring";
 const numericFields = [
   ["frontage", "Mặt tiền (m)", 0.01, 1000, "any"],
   ["road_width", "Đường trước nhà (m)", 0, 200, "any"],
@@ -224,7 +224,7 @@ export default function PredictForm({
             >
               {locating ? "Đang tra cứu vị trí..." : "Tìm vị trí trên bản đồ"}
             </button>
-            <p className="text-xs text-slate-500">
+            <p className="text-xs ">
               Chọn phường rồi tìm vị trí hoặc ghim trực tiếp. Kiểm tra địa chỉ
               tương ứng với ghim.
             </p>
@@ -299,7 +299,7 @@ export default function PredictForm({
               {errorFor("direction")}
             </label>
           </div>
-          <p className="text-xs text-slate-500">
+          <p className="text-xs ">
             Các trường có dấu <RequiredMark /> bắt buộc nhập hoặc chọn. Số 0 chỉ
             dùng khi thực tế không có.
           </p>

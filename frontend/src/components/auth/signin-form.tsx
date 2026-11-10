@@ -103,7 +103,7 @@ export function SigninForm({
 
                   <button
                     type="button"
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 hover:text-foreground"
                     onClick={() => setShowPassword((prev) => !prev)}
                     aria-label={showPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
                   >

@@ -14,7 +14,7 @@ export const ProfilePage = () => {
           {
             icon: <Plus />,
             title: "Đăng tin",
-            link: "/dang-tin",
+            link: "/create-post",
             variant: "primary",
           },
           {
@@ -25,12 +25,12 @@ export const ProfilePage = () => {
           {
             icon: <ListChecks />,
             title: "Tin đăng",
-            link: "/tin-dang",
+            link: "/me/manager-post",
           },
           {
             icon: <CircleUserRound />,
             title: "Tài khoản",
-            link: "/profile",
+            link: "/me/profile",
           },
         ]}
       />

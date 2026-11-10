@@ -17,19 +17,44 @@ const furniture = [
 ];
 const empty = (value) => value === undefined || value === null || value === "";
 
-export const validateCreatePost = async (req, res, next) => {
+export const requirePostOwner = async (req, res, next) => {
   if (!req.user || req.user.deletedAt || req.user.trangThai !== "HOAT_DONG") {
-    return res.status(403).json({ message: "An active account is required" });
+    return res.status(403).json({ message: "Tài khoản phải đang hoạt động" });
+  }
+  const id = Number(req.params.maTinDang);
+  if (!/^\d+$/.test(req.params.maTinDang) || !Number.isSafeInteger(id) || id < 1 || id > 2147483647) {
+    return res.status(400).json({ message: "Mã tin đăng không hợp lệ" });
+  }
+  try {
+    const post = await prisma.tinDang.findFirst({
+      where: { maTinDang: id, deletedAt: null },
+      include: { hinhAnhTinDangs: true },
+    });
+    if (!post) return res.status(404).json({ message: "Không tìm thấy tin đăng" });
+    if (post.maNguoiDung !== req.user.maNguoiDung) {
+      return res.status(403).json({ message: "Bạn chỉ được sửa hoặc xóa tin đăng của mình" });
+    }
+    req.existingPost = post;
+    next();
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Không thể kiểm tra quyền truy cập tin đăng" });
+  }
+};
+
+const validatePost = (updating = false) => async (req, res, next) => {
+  if (!req.user || req.user.deletedAt || req.user.trangThai !== "HOAT_DONG") {
+    return res.status(403).json({ message: "Tài khoản phải đang hoạt động" });
   }
   let input;
   try {
     input =
       typeof req.body?.data === "string" ? JSON.parse(req.body.data) : req.body;
   } catch {
-    return res.status(400).json({ message: "data must contain valid JSON" });
+    return res.status(400).json({ message: "Trường data phải chứa dữ liệu JSON hợp lệ" });
   }
   if (!input || typeof input !== "object" || Array.isArray(input)) {
-    return res.status(400).json({ message: "Invalid post data" });
+    return res.status(400).json({ message: "Dữ liệu tin đăng không hợp lệ" });
   }
   const errors = {};
   const coordinate = (key, min, max) => {
@@ -37,7 +62,7 @@ export const validateCreatePost = async (req, res, next) => {
     if (empty(raw)) return null;
     if (!["string", "number"].includes(typeof raw) || String(raw).trim() === "" ||
         !Number.isFinite(Number(raw)) || Number(raw) < min || Number(raw) > max) {
-      errors[key] = `Expected coordinate between ${min} and ${max}`;
+      errors[key] = `Tọa độ phải là số trong khoảng từ ${min} đến ${max}`;
       return null;
     }
     return Number(raw).toFixed(7);
@@ -50,7 +75,7 @@ export const validateCreatePost = async (req, res, next) => {
       !value.trim() ||
       [...value.trim()].length > max
     ) {
-      errors[key] = `Required text, maximum ${max} characters`;
+      errors[key] = `Vui lòng nhập nội dung, tối đa ${max} ký tự`;
       return null;
     }
     return value.trim();
@@ -65,7 +90,7 @@ export const validateCreatePost = async (req, res, next) => {
       Number(raw) > 2147483647 ||
       Number(raw) < (required ? 1 : 0)
     ) {
-      errors[key] = "Invalid integer";
+      errors[key] = `Giá trị phải là số nguyên ${required ? "dương" : "không âm"}, không vượt quá 2147483647`;
       return null;
     }
     return Number(raw);
@@ -79,7 +104,7 @@ export const validateCreatePost = async (req, res, next) => {
       (!allowZero && Number(raw) === 0)
     ) {
       errors[key] =
-        `Expected ${allowZero ? "non-negative" : "positive"} decimal with up to ${digits} integer digits and 2 decimal places`;
+        `Giá trị phải là số ${allowZero ? "không âm" : "dương"}, tối đa ${digits} chữ số phần nguyên và 2 chữ số thập phân`;
       return null;
     }
     return String(raw);
@@ -87,7 +112,7 @@ export const validateCreatePost = async (req, res, next) => {
   const choice = (key, options) => {
     if (empty(input[key])) return null;
     if (!options.includes(input[key])) {
-      errors[key] = "Invalid selection";
+      errors[key] = "Giá trị được chọn không hợp lệ";
       return null;
     }
     return input[key];
@@ -114,24 +139,27 @@ export const validateCreatePost = async (req, res, next) => {
     maPhuongXa,
   };
   if ((data.viDo === null) !== (data.kinhDo === null))
-    errors.coordinates = "Provide both latitude and longitude";
+    errors.coordinates = "Vui lòng cung cấp đầy đủ cả vĩ độ và kinh độ";
   if (data.moTa && Buffer.byteLength(data.moTa, "utf8") > 65535)
-    errors.description = "Description exceeds TEXT storage limit";
+    errors.description = "Mô tả vượt quá giới hạn lưu trữ 65.535 byte";
   if (
     data.soDienThoaiLienHe &&
     !/^\+?[0-9]{9,15}$/.test(data.soDienThoaiLienHe)
   )
-    errors.soDienThoaiLienHe = "Invalid phone number";
-  if (!Array.isArray(req.files) || req.files.length < 1 || req.files.length > 6)
-    errors.images = "Provide 1 to 6 images";
+    errors.soDienThoaiLienHe = "Số điện thoại phải gồm 9–15 chữ số, có thể bắt đầu bằng dấu +";
+  const imagesCount = updating && req.files?.length === 0
+    ? req.existingPost.hinhAnhTinDangs.length
+    : req.files?.length;
+  if (!Array.isArray(req.files) || imagesCount < 1 || imagesCount > 6)
+    errors.images = "Tin đăng phải có từ 1 đến 6 hình ảnh";
   else if (
     req.files.some(
       (file) => !Buffer.isBuffer(file.buffer) || file.buffer.length === 0,
     )
   )
-    errors.images = "Empty image file";
+    errors.images = "Tệp hình ảnh bị trống hoặc không hợp lệ";
   if (Object.keys(errors).length)
-    return res.status(400).json({ message: "Invalid post data", errors });
+    return res.status(400).json({ message: "Dữ liệu tin đăng không hợp lệ", errors });
   try {
     const [category, legalDocument, ward] = await Promise.all([
       prisma.loaiBatDongSan.findFirst({
@@ -147,11 +175,11 @@ export const validateCreatePost = async (req, res, next) => {
       }),
     ]);
     if (!category)
-      errors.categoryId = "Category does not exist or has been deleted";
+      errors.categoryId = "Loại bất động sản không tồn tại hoặc đã bị xóa";
     if (maGiayTo !== null && !legalDocument)
       errors.legalDocumentId =
-        "Legal document does not exist or has been deleted";
-    if (!ward) errors.wardId = "Ward does not belong to the selected province";
+        "Giấy tờ pháp lý không tồn tại hoặc đã bị xóa";
+    if (!ward) errors.wardId = "Phường/xã không tồn tại hoặc không thuộc tỉnh/thành đã chọn";
     if (category?.nhomBatDongSan === "NHA") {
       data.soPhongNgu = integer("bedrooms", false);
       data.soPhongTam = integer("bathrooms", false);
@@ -167,11 +195,14 @@ export const validateCreatePost = async (req, res, next) => {
           null;
     }
     if (Object.keys(errors).length)
-      return res.status(400).json({ message: "Invalid post data", errors });
+      return res.status(400).json({ message: "Dữ liệu tin đăng không hợp lệ", errors });
     req.postData = data;
     next();
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: "Unable to validate post data" });
+    return res.status(500).json({ message: "Không thể kiểm tra dữ liệu tin đăng" });
   }
 };
+
+export const validateCreatePost = validatePost();
+export const validateUpdatePost = validatePost(true);

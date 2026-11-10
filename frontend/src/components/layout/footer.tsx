@@ -2,7 +2,7 @@ import { Check, Mail, MapPin, Phone, ShieldCheck } from "lucide-react";
 
 const Footer = () => {
   return (
-    <footer id="contact" className="bg-[#0a2138] text-slate-300">
+    <footer id="contact" className="bg-[#0a2138] ">
       <div className="mx-auto max-w-7xl px-5 pb-5 pt-10 sm:px-8">
         <div className="grid gap-9 pb-8 sm:grid-cols-2 lg:grid-cols-[1.8fr_0.8fr_1fr_1.2fr]">
           <div>
@@ -82,13 +82,13 @@ const Footer = () => {
                 support@grestate.vn
               </a>
             </address>
-            <p className="mt-4 flex items-center gap-1 text-[10px] text-slate-400">
+            <p className="mt-4 flex items-center gap-1 text-[10px] ">
               <Check className="size-3" />
               Thông tin liên hệ minh họa
             </p>
           </div>
         </div>
-        <div className="border-t border-white/10 pt-5 text-center text-xs text-slate-400">
+        <div className="border-t border-white/10 pt-5 text-center text-xs ">
           © {new Date().getFullYear()} Grestate. Tất cả quyền được bảo lưu.
         </div>
       </div>

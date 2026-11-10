@@ -104,7 +104,7 @@ export default function PredictMap({
   return (
     <section className="rounded-2xl border bg-white p-4">
       <h2 className="mb-3 font-semibold">Bản đồ vị trí bất động sản</h2>
-      <p className="mb-3 text-sm text-slate-500">
+      <p className="mb-3 text-sm ">
         Nhấn bản đồ hoặc kéo ghim để chọn tọa độ.
       </p>
       <div

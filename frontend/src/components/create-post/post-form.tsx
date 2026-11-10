@@ -27,8 +27,8 @@ import { Link, useNavigate } from "react-router";
 import { isAxiosError } from "axios";
 import { usePostStore } from "@/stores/postStore";
 import { toast } from "sonner";
-import HouseDetailForm from "@/components/post/house-detail-form";
-import LandDetailForm from "@/components/post/land-detail-form";
+import HouseDetailForm from "@/components/create-post/house-detail-form";
+import LandDetailForm from "@/components/create-post/land-detail-form";
 import { useAuthStore } from "@/stores/authStore";
 
 const ImagePreview = ({ file }: { file: File }) => {
@@ -245,7 +245,7 @@ const PostForm = () => {
         </div>
         <Link
           to="/"
-          className="flex justify-center items-center px-4 py-2 rounded-sm border border-gray-500 text-sm font-bold text-slate-900 bg-white hover:bg-gray-100"
+          className="flex justify-center items-center px-4 py-2 rounded-sm border border-gray-500 text-sm font-bold bg-white hover:bg-gray-100"
         >
           <X className="size-4" />
           Thoát
@@ -262,7 +262,7 @@ const PostForm = () => {
               disabled={isSubmitting}
               className="space-y-5 border-t border-gray-300 pt-6"
             >
-              <legend className="pr-3 text-lg font-bold text-slate-900">
+              <legend className="pr-3 text-lg font-bold ">
                 Địa chỉ bất động sản
               </legend>
               <div className="grid gap-5 sm:grid-cols-2">
@@ -396,8 +396,8 @@ const PostForm = () => {
                       allowFullScreen
                     />
                   ) : (
-                    <div className="flex h-72 flex-col items-center justify-center gap-3 px-6 text-center text-slate-500 sm:h-80">
-                      <MapPin className="size-8 text-slate-400" />
+                    <div className="flex h-72 flex-col items-center justify-center gap-3 px-6 text-center sm:h-80">
+                      <MapPin className="size-8 " />
                       <p className="text-sm">
                         Nhập địa chỉ để xem vị trí trên bản đồ.
                       </p>
@@ -410,7 +410,7 @@ const PostForm = () => {
               disabled={isSubmitting}
               className="space-y-5 pt-6 border-t border-gray-300"
             >
-              <legend className="pr-3 mb-5 text-lg font-bold text-slate-900">
+              <legend className="pr-3 mb-5 text-lg font-bold ">
                 Thông tin chính
               </legend>
               <div className="grid gap-5 sm:grid-cols-2">
@@ -457,7 +457,7 @@ const PostForm = () => {
                             </SelectItem>
                           ))}
                           {categories.length === 0 && (
-                            <p className="px-3 py-3 text-sm text-slate-500">
+                            <p className="px-3 py-3 text-sm ">
                               Chưa có danh mục bất động sản.
                             </p>
                           )}
@@ -522,7 +522,7 @@ const PostForm = () => {
                             </SelectItem>
                           ))}
                           {legalDocuments.length === 0 && (
-                            <p className="px-3 py-3 text-sm text-slate-500">
+                            <p className="px-3 py-3 text-sm ">
                               Chưa có danh mục giấy tờ pháp lý.
                             </p>
                           )}
@@ -650,7 +650,7 @@ const PostForm = () => {
                                     ).toLocaleString("vi-VN")}{" "}
                                     {suggestion.label}
                                   </span>
-                                  <span className="text-xs text-slate-500">
+                                  <span className="text-xs ">
                                     {suggestion.value.toLocaleString("vi-VN")}{" "}
                                     VNĐ
                                   </span>
@@ -712,7 +712,7 @@ const PostForm = () => {
               disabled={isSubmitting}
               className="space-y-5 border-t border-gray-300 pt-6"
             >
-              <legend className="pr-3 mb-5 text-lg font-bold text-slate-900">
+              <legend className="pr-3 mb-5 text-lg font-bold ">
                 Thông tin cơ bản
               </legend>
               <div className="space-y-2">
@@ -738,7 +738,7 @@ const PostForm = () => {
                     {errors.title.message}
                   </p>
                 )}
-                <p className="text-xs text-slate-500">Tối đa 200 ký tự.</p>
+                <p className="text-xs ">Tối đa 200 ký tự.</p>
               </div>
               <div className="space-y-2">
                 <Label className="text-sm font-bold" htmlFor="description">
@@ -754,7 +754,7 @@ const PostForm = () => {
                   required
                   rows={6}
                   placeholder="Giới thiệu vị trí, hiện trạng, không gian sống và những điểm nổi bật của bất động sản..."
-                  className="w-full resize-y rounded-lg border border-input bg-white px-4 py-3 text-sm outline-none placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring"
+                  className="w-full resize-y rounded-lg border border-input bg-white px-4 py-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 />
                 {errors.description && (
                   <p
@@ -772,7 +772,7 @@ const PostForm = () => {
               disabled={isSubmitting}
               className="space-y-5 border-t border-gray-300 pt-6"
             >
-              <legend className="pr-3 text-lg font-bold text-slate-900">
+              <legend className="pr-3 text-lg font-bold ">
                 Thông tin liên hệ
               </legend>
               <div className="grid gap-5 sm:grid-cols-2">
@@ -841,7 +841,7 @@ const PostForm = () => {
               disabled={isSubmitting}
               className="space-y-5 border-t border-gray-300 pt-6"
             >
-              <legend className="pr-3 text-lg font-bold text-slate-900">
+              <legend className="pr-3 text-lg font-bold ">
                 Hình ảnh bất động sản
               </legend>
               <Controller
@@ -849,7 +849,7 @@ const PostForm = () => {
                 control={control}
                 render={({ field }) => (
                   <div className="space-y-4">
-                    <p aria-live="polite" className="text-sm text-slate-600">
+                    <p aria-live="polite" className="text-sm ">
                       {field.value.length}/{MAX_IMAGES} ảnh{" "}
                       <span className="text-red-500">*</span>
                     </p>
@@ -860,7 +860,7 @@ const PostForm = () => {
                       >
                         <ImagePlus className="size-6 text-primary" />
                         <span>Chọn hình ảnh</span>
-                        <span className="text-xs text-slate-500">
+                        <span className="text-xs ">
                           JPG, PNG, WebP
                         </span>
                         <input
@@ -937,7 +937,7 @@ const PostForm = () => {
                               aria-label={
                                 "Xóa ảnh " + (index + 1) + ": " + file.name
                               }
-                              className="absolute right-2 top-2 rounded-full bg-white p-1.5 text-slate-800 shadow hover:bg-slate-100"
+                              className="absolute right-2 top-2 rounded-full bg-white p-1.5 shadow hover:bg-slate-100"
                               onClick={() => {
                                 setImageSelectionError("");
                                 setValue(

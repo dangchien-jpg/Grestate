@@ -38,7 +38,7 @@ function SelectTrigger({
       data-slot="select-trigger"
       data-size={size}
       className={cn(
-        "flex justify-between items-center h-12 min-w-0 w-full rounded-lg border border-input bg-white pl-10 pr-3 text-sm text-slate-700 outline-none focus-visible:ring-2 focus-visible:ring-ring",
+        "flex justify-between items-center h-12 min-w-0 w-full rounded-lg border border-input bg-white pl-10 pr-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring",
         className,
       )}
       {...props}
@@ -46,7 +46,7 @@ function SelectTrigger({
       {children}
       <SelectPrimitive.Icon
         render={
-          <CaretDownIcon className="pointer-events-none size-4 text-muted-foreground" />
+          <CaretDownIcon className="pointer-events-none size-4 " />
         }
       />
     </SelectPrimitive.Trigger>
@@ -102,7 +102,7 @@ function SelectLabel({
   return (
     <SelectPrimitive.GroupLabel
       data-slot="select-label"
-      className={cn("px-2 py-2 text-xs text-muted-foreground", className)}
+      className={cn("px-2 py-2 text-xs ", className)}
       {...props}
     />
   );

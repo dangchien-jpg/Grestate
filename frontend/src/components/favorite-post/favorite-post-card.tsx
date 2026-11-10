@@ -40,7 +40,7 @@ export default function FavoritePostCard({
     .join(", ");
 
   return (
-    <div className="flex flex-col overflow-hidden rounded-sm border border-slate-200 bg-white font-sans text-slate-950 shadow-sm sm:flex-row">
+    <div className="flex flex-col overflow-hidden rounded-sm border border-slate-200 bg-white font-sans shadow-sm sm:flex-row">
       <Link
         to={detailUrl}
         aria-label={`Xem tin: ${post.tieuDe}`}
@@ -66,7 +66,7 @@ export default function FavoritePostCard({
       </Link>
 
       <div className="flex min-w-0 flex-1 flex-col p-4 sm:min-h-56 sm:p-5 lg:p-6">
-        <h2 className="wrap-break-word text-lg leading-7 font-bold tracking-tight text-slate-900">
+        <h2 className="wrap-break-word text-lg leading-7 font-bold tracking-tight ">
           <Link
             to={detailUrl}
             className="line-clamp-2 rounded-sm focus-visible:outline-2 focus-visible:outline-primary"
@@ -101,7 +101,7 @@ export default function FavoritePostCard({
         </div>
 
         <p
-          className="mt-3 flex items-start gap-1 text-xs leading-relaxed text-muted-foreground"
+          className="mt-3 flex items-start gap-1 text-xs leading-relaxed "
           title={[post.diaChiChiTiet, location].filter(Boolean).join(", ")}
         >
           <MapPin aria-hidden="true" className="mt-0.5 size-3.5 shrink-0" />
@@ -109,7 +109,7 @@ export default function FavoritePostCard({
         </p>
 
         <div className="mt-auto flex items-center justify-between gap-3 pt-5">
-          <span className="text-[10px] text-muted-foreground">
+          <span className="text-[10px] ">
             {postedDate(post.ngayDang)}
           </span>
           <button

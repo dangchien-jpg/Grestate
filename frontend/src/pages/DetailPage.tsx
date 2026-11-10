@@ -62,7 +62,7 @@ function PostGallery({ post }: { post: TinDangDanhSach }) {
               type="button"
               onClick={() => move(-1)}
               aria-label="Ảnh trước"
-              className="absolute top-1/2 left-4 -translate-y-1/2 rounded bg-white p-2.5 text-slate-900 shadow-lg hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-white"
+              className="absolute top-1/2 left-4 -translate-y-1/2 rounded bg-white p-2.5 shadow-lg hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-white"
             >
               <ChevronLeft className="size-6" />
             </button>
@@ -70,7 +70,7 @@ function PostGallery({ post }: { post: TinDangDanhSach }) {
               type="button"
               onClick={() => move(1)}
               aria-label="Ảnh tiếp theo"
-              className="absolute top-1/2 right-4 -translate-y-1/2 rounded bg-white p-2.5 text-slate-900 shadow-lg hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-white"
+              className="absolute top-1/2 right-4 -translate-y-1/2 rounded bg-white p-2.5 shadow-lg hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-white"
             >
               <ChevronRight className="size-6" />
             </button>
@@ -192,12 +192,12 @@ const DetailPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-white font-sans text-slate-950">
+    <div className="min-h-screen bg-white font-sans ">
       <Header />
       <main className="mx-auto max-w-7xl px-5 py-6 sm:px-8 sm:py-8">
         <nav
           aria-label="Đường dẫn"
-          className="mb-6 flex flex-wrap items-center gap-2 text-xs text-muted-foreground sm:text-sm"
+          className="mb-6 flex flex-wrap items-center gap-2 text-xs sm:text-sm"
         >
           <a href="/" className="hover:text-primary">
             Trang chủ
@@ -205,7 +205,7 @@ const DetailPage = () => {
           <ChevronRight aria-hidden="true" className="size-3.5" />
           <span>{post.loaiBatDongSan.tenLoai}</span>
           <ChevronRight aria-hidden="true" className="size-3.5" />
-          <span aria-current="page" className="text-slate-950">
+          <span aria-current="page" className="">
             {post.tieuDe}
           </span>
         </nav>
@@ -218,23 +218,23 @@ const DetailPage = () => {
               <h1 className="text-2xl font-bold leading-snug tracking-tight sm:text-3xl">
                 {post.tieuDe}
               </h1>
-              <p className="mt-3 flex items-start gap-2 text-sm leading-relaxed text-muted-foreground">
+              <p className="mt-3 flex items-start gap-2 text-sm leading-relaxed ">
                 <MapPin className="mt-0.5 size-4 shrink-0" />
                 {address}
               </p>
               <div className="mt-5 flex flex-wrap items-end justify-between gap-4 border-y border-slate-100 py-5">
                 <div>
-                  <p className="mb-1 text-xs text-muted-foreground">Giá bán</p>
+                  <p className="mb-1 text-xs ">Giá bán</p>
                   <p className="flex flex-wrap items-baseline gap-x-3 gap-y-1 text-3xl font-bold text-red-600">
                     {formatPrice(post.giaNiemYet)}
-                    <span className="text-sm font-normal text-muted-foreground">
+                    <span className="text-sm font-normal ">
                       {post.dienTich > 0 && post.giaNiemYet > 0
                         ? `~ ${formatPrice(post.giaNiemYet / post.dienTich)}/m²`
                         : ""}
                     </span>
                   </p>
                 </div>
-                <div className="flex gap-1 text-slate-600">
+                <div className="flex gap-1 ">
                   <FavoriteButton post={post} />
                   <Button
                     type="button"
@@ -262,11 +262,11 @@ const DetailPage = () => {
                   <div key={label} className="flex items-start gap-3">
                     <Icon
                       aria-hidden="true"
-                      className="mt-0.5 size-5 shrink-0 text-slate-950"
+                      className="mt-0.5 size-5 shrink-0 "
                       strokeWidth={1.6}
                     />
                     <div>
-                      <dt className="text-xs text-muted-foreground">{label}</dt>
+                      <dt className="text-xs ">{label}</dt>
                       <dd className="mt-1 text-sm font-semibold">{value}</dd>
                     </div>
                   </div>
@@ -278,7 +278,7 @@ const DetailPage = () => {
               <h2 className="mb-4 text-xl font-bold tracking-tight sm:text-2xl">
                 Mô tả chi tiết
               </h2>
-              <p className="whitespace-pre-line break-words text-sm leading-7 text-slate-600">
+              <p className="whitespace-pre-line break-words text-sm leading-7 ">
                 {post.moTa}
               </p>
             </section>
@@ -305,7 +305,7 @@ const DetailPage = () => {
                   Xem trên bản đồ
                 </Button>
               </div>
-              <p className="mb-5 flex items-start gap-2 text-sm text-muted-foreground">
+              <p className="mb-5 flex items-start gap-2 text-sm ">
                 <MapPin className="mt-0.5 size-4 shrink-0" />
                 {address}
               </p>
@@ -325,7 +325,7 @@ const DetailPage = () => {
             className="space-y-4 lg:sticky lg:top-28"
           >
             <section className="rounded-2xl border border-gray-300 bg-white p-6">
-              <p className="mb-5 text-xs font-semibold tracking-wider text-muted-foreground">
+              <p className="mb-5 text-xs font-semibold tracking-wider ">
                 Thông tin người đăng
               </p>
               <div className="flex items-center gap-3">
@@ -369,7 +369,7 @@ const DetailPage = () => {
             </section>
             <div className="flex items-start gap-3 rounded-xl border border-emerald-100 bg-emerald-50/60 p-4">
               <ShieldCheck className="mt-0.5 size-5 shrink-0 text-emerald-600" />
-              <p className="text-xs leading-6 text-slate-600">
+              <p className="text-xs leading-6 ">
                 Nên xem nhà thực tế và kiểm tra giấy tờ pháp lý trước khi đặt
                 cọc hoặc giao dịch.
               </p>

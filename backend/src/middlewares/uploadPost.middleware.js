@@ -6,7 +6,7 @@ const receiveImages = multer({
   limits: { files: 6, fileSize: 10 * 1024 * 1024, fieldSize: 1024 * 1024, fields: 40, parts: 46 },
   fileFilter: (_req, file, done) => {
     if (!["image/jpeg", "image/png", "image/webp"].includes(file.mimetype)) {
-      return done(new Error("Only JPG, PNG and WebP images are supported"));
+      return done(Object.assign(new Error("Chỉ hỗ trợ hình ảnh JPG, PNG và WebP"), { code: "INVALID_IMAGE_TYPE" }));
     }
     done(null, true);
   },
@@ -14,10 +14,22 @@ const receiveImages = multer({
 
 export const uploadPostImages = (req, res, next) => {
   if (!req.is("multipart/form-data")) {
-    return res.status(400).json({ message: "Use multipart/form-data with images and a JSON data field" });
+    return res.status(400).json({ message: "Vui lòng gửi multipart/form-data với trường data chứa JSON và trường images chứa hình ảnh" });
   }
   receiveImages(req, res, (error) => {
-    if (error) return res.status(400).json({ message: error.message });
+    if (error) {
+      const messages = {
+        INVALID_IMAGE_TYPE: "Chỉ hỗ trợ hình ảnh JPG, PNG và WebP",
+        LIMIT_FILE_SIZE: "Mỗi hình ảnh không được vượt quá 10 MB",
+        LIMIT_FILE_COUNT: "Chỉ được tải lên tối đa 6 hình ảnh",
+        LIMIT_UNEXPECTED_FILE: "Chỉ được gửi tối đa 6 hình ảnh qua trường images",
+        LIMIT_FIELD_VALUE: "Nội dung của một trường dữ liệu vượt quá giới hạn 1 MB",
+        LIMIT_FIELD_COUNT: "Số trường dữ liệu vượt quá giới hạn cho phép",
+        LIMIT_PART_COUNT: "Tổng số trường dữ liệu và tệp tải lên vượt quá giới hạn cho phép",
+        LIMIT_FIELD_KEY: "Tên trường dữ liệu quá dài",
+      };
+      return res.status(400).json({ message: messages[error.code] ?? "Dữ liệu hoặc hình ảnh tải lên không hợp lệ" });
+    }
     next();
   });
 };

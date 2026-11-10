@@ -20,7 +20,7 @@ const HouseDetailForm = () => {
   return (
     <div>
       <fieldset className="space-y-5 border-t border-gray-300 pt-6">
-        <legend className="pr-3 text-lg font-bold text-slate-900">
+        <legend className="pr-3 text-lg font-bold ">
           Thông tin khác
         </legend>
         <div className="grid gap-5 sm:grid-cols-2">

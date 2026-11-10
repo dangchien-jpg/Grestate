@@ -1,7 +1,18 @@
 import api from "@/lib/axios";
-import type { TinDang } from "@/types/post";
+import type { FetchPostResponse, TinDang, TinDangDanhSach } from "@/types/post";
 
 export const postService = {
+  fetchPostsByUser: async (signal?: AbortSignal): Promise<FetchPostResponse> =>
+    (await api.get<FetchPostResponse>("/posts/me", { signal })).data,
+
+  updatePost: async (id: number, formData: FormData): Promise<
+    TinDang & Pick<TinDangDanhSach, "hinhAnhTinDangs" | "anhDaiDienUrl">
+  > => (await api.put(`/posts/${id}`, formData)).data.post,
+
+  deletePost: async (id: number) => {
+    await api.delete(`/posts/${id}`);
+  },
+
   fetchPost: async () => {
     const res = await api.get("/posts");
     return res.data;
