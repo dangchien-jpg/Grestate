@@ -12,6 +12,7 @@ import locationRoute from "./routes/location.route.js";
 import valuationRoute from "./routes/valuation.route.js";
 import favoriteRoute from "./routes/favorite.route.js";
 import adminRoute from "./routes/admin.route.js";
+import reportRoute from "./routes/report.route.js";
 
 import { protectedRoute } from "./middlewares/auth.middleware.js";
 import { v2 as cloudinary } from "cloudinary";
@@ -43,6 +44,7 @@ app.use("/api/legal-documents", legalDocumentRoute);
 app.use("/api/provinces", locationRoute);
 app.use("/api/favorites", favoriteRoute);
 app.use("/api/admin", adminRoute);
+app.use("/api/report", reportRoute);
 
 async function startServer() {
   try {

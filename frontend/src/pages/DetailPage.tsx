@@ -1,3 +1,4 @@
+import ReportForm from "@/components/report/report-form";
 import { useEffect, useState } from "react";
 import type { TinDangDanhSach } from "@/types/post";
 import { formatPrice } from "@/lib/format-price";
@@ -16,7 +17,6 @@ import {
   Phone,
   Share2,
   ShieldCheck,
-  TriangleAlert,
 } from "lucide-react";
 import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
@@ -236,14 +236,7 @@ const DetailPage = () => {
                 </div>
                 <div className="flex gap-1 ">
                   <FavoriteButton post={post} />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    aria-label="Báo cáo tin đăng"
-                  >
-                    <TriangleAlert className="size-5" />
-                  </Button>
+                  <ReportForm key={post.maTinDang} maTinDang={post.maTinDang} />
                   <Button
                     type="button"
                     variant="ghost"

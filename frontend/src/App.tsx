@@ -13,6 +13,7 @@ import ManagerPostPage from "@/pages/ManagerPostPage";
 import AdminDashboardPage from "@/pages/AdminDashboardPage";
 import AdminProtectedRoute from "@/components/auth/admin-protected-route";
 import AdminCensorPage from "@/pages/AdminCensorPage";
+import AdminReportPage from "@/pages/AdminReportPage";
 function App() {
   return (
     <>
@@ -35,6 +36,7 @@ function App() {
             <Route element={<AdminProtectedRoute />}>
               <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
               <Route path="/admin/censor" element={<AdminCensorPage />} />
+              <Route path="/admin/reports" element={<AdminReportPage />} />
             </Route>
           </Route>
         </Routes>

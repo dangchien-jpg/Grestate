@@ -8,7 +8,11 @@ import {
   deletePost,
 } from "../controllers/post.controller.js";
 import { uploadPostImages } from "../middlewares/uploadPost.middleware.js";
-import { requirePostOwner, validateCreatePost, validateUpdatePost } from "../middlewares/post.middleware.js";
+import {
+  requirePostOwner,
+  validateCreatePost,
+  validateUpdatePost,
+} from "../middlewares/post.middleware.js";
 import { protectedRoute } from "../middlewares/auth.middleware.js";
 
 const route = express.Router();

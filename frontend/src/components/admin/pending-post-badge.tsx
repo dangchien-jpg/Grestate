@@ -15,8 +15,8 @@ export default function PendingPostBadge() {
         .then(({ total }) => {
           if (!request.signal.aborted) setCount(total);
         })
-        .catch(() => {
-          // Keep the last known count when a refresh fails.
+        .catch((err) => {
+          console.error(err);
         });
     };
     refresh();

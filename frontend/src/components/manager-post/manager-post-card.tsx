@@ -32,6 +32,10 @@ const statuses: Record<string, { label: string; className: string }> = {
     label: "Chưa duyệt",
     className: "border-amber-200 bg-amber-50 text-amber-700",
   },
+  BI_GO: {
+    label: "Vi phạm",
+    className: "border-red-200 bg-red-50 text-red-700",
+  },
   TU_CHOI: {
     label: "Đã từ chối",
     className: "border-red-200 bg-red-50 text-red-600",
@@ -315,6 +319,7 @@ export default function ManagerPostCard() {
             <option value="DA_DUYET">Đã duyệt</option>
             <option value="CHO_KIEM_DUYET">Chưa duyệt</option>
             <option value="TU_CHOI">Đã từ chối</option>
+            <option value="BI_GO">Vi phạm</option>
           </select>
         </label>
       </div>

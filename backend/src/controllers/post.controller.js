@@ -66,7 +66,8 @@ const fetchPostList = async (res, where) => {
   }
 };
 
-export const fetchPost = (req, res) => fetchPostList(res, { deletedAt: null });
+export const fetchPost = (req, res) =>
+  fetchPostList(res, { deletedAt: null, trangThai: "DA_DUYET" });
 
 export const fetchPostsByUser = (req, res) =>
   fetchPostList(res, {
@@ -83,7 +84,7 @@ export const fetchDetailPost = async (req, res) => {
 
   try {
     const record = await prisma.tinDang.findFirst({
-      where: { maTinDang: id, deletedAt: null },
+      where: { maTinDang: id, deletedAt: null, trangThai: "DA_DUYET" },
       include: {
         nguoiDang: {
           select: {
@@ -322,7 +323,11 @@ async function cleanupPostImages(ids) {
       result.status === "rejected" ||
       !["ok", "not found"].includes(result.value?.result)
     ) {
-      console.error("Không thể xóa hình ảnh của tin đăng", imageIds[index], result);
+      console.error(
+        "Không thể xóa hình ảnh của tin đăng",
+        imageIds[index],
+        result,
+      );
     }
   });
 }
