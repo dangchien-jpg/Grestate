@@ -45,7 +45,10 @@ export function SigninForm({
 
     try {
       await signIn(data.email, data.password);
-      navigate("/");
+      const user = useAuthStore.getState().user;
+      navigate(user?.maVaiTro == 2 ? "/admin/dashboard" : "/", {
+        replace: true,
+      });
     } catch (error) {
       let message = "Có lỗi xảy ra, vui lòng thử lại";
 

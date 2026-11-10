@@ -218,6 +218,7 @@ model LichSuKiemDuyet {
   maNguoiDung   Int
   ketQua        String   @db.VarChar(50)
   ghiChu        String?  @db.Text
+  lyDoTuChoi    String?  @db.Text
   ngayKiemDuyet DateTime @default(now()) @db.DateTime(0)
 
   tinDang   TinDang   @relation(fields: [maTinDang], references: [maTinDang])

@@ -95,6 +95,7 @@ export interface LichSuKiemDuyet {
   maNguoiDung: number;
   ketQua: string;
   ghiChu: string | null;
+  lyDoTuChoi: string | null;
   ngayKiemDuyet: string;
 }
 

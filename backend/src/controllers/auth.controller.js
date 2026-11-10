@@ -79,7 +79,7 @@ export const signIn = async (req, res) => {
     // }
 
     const token = jwt.sign(
-      { userId: user.maNguoiDung },
+      { userId: user.maNguoiDung, role: user.maVaiTro },
       process.env.ACCESS_TOKEN_SECRET,
       { expiresIn: process.env.ACCESS_TOKEN_TTL },
     );
@@ -142,6 +142,13 @@ export const refreshToken = async (req, res) => {
       where: {
         refreshToken: token,
       },
+      include: {
+        nguoiDung: {
+          select: {
+            maVaiTro: true,
+          },
+        },
+      },
     });
     if (!session) {
       return res.status(403).json({ message: "Token không hợp lệ" });
@@ -152,7 +159,7 @@ export const refreshToken = async (req, res) => {
     }
 
     const accessToken = jwt.sign(
-      { userId: session.maNguoiDung },
+      { userId: session.maNguoiDung, role: session.nguoiDung.maVaiTro },
       process.env.ACCESS_TOKEN_SECRET,
       { expiresIn: process.env.ACCESS_TOKEN_TTL },
     );
