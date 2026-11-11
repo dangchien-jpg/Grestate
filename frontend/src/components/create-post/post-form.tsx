@@ -192,9 +192,9 @@ const PostForm = () => {
       const formData = new FormData();
       formData.append("data", JSON.stringify(fields));
       images.forEach((file) => formData.append("images", file));
-      const post = await createPost(formData);
+      await createPost(formData);
       toast.success("Đăng tin thành công. Tin đang chờ kiểm duyệt.");
-      navigate(`/detail/${post.maTinDang}`);
+      navigate(`/me/manager-post`);
     } catch (error) {
       const body = isAxiosError(error) ? error.response?.data : null;
       if (body?.errors && typeof body.errors === "object") {
@@ -860,9 +860,7 @@ const PostForm = () => {
                       >
                         <ImagePlus className="size-6 text-primary" />
                         <span>Chọn hình ảnh</span>
-                        <span className="text-xs ">
-                          JPG, PNG, WebP
-                        </span>
+                        <span className="text-xs ">JPG, PNG, WebP</span>
                         <input
                           id="images"
                           name={field.name}

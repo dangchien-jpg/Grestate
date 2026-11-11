@@ -1,3 +1,4 @@
+import { isAxiosError } from "axios";
 import { cn } from "cn";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -19,7 +20,7 @@ const signUpSchema = z
   .object({
     firstName: z.string().min(1, "Tên không thể để trống"),
     lastName: z.string().min(1, "Họ không thể để trống"),
-    email: z.email("Email không đúng định dạng hoặc đã tồn tại"),
+    email: z.email("Email không đúng định dạng"),
     password: z.string().min(6, "Mật khẩu phải tối thiểu 6 ký tự"),
     confirmPassword: z.string(),
   })
@@ -38,17 +39,29 @@ export function SignupForm({
   const {
     register,
     handleSubmit,
+    setError,
     formState: { errors, isSubmitting },
   } = useForm<SignUpFormValues>({
     resolver: zodResolver(signUpSchema),
   });
   const onSubmit = async (data: SignUpFormValues) => {
     const { password, email, firstName, lastName } = data;
-    await signUp(password, email, firstName, lastName);
-    navigate("/");
-    toast.success(
-      "Đăng ký thành công! Vui lòng kiểm tra email để xác minh tài khoản.",
-    );
+    try {
+      await signUp(password, email, firstName, lastName);
+      navigate("/");
+      toast.success(
+        "Đăng ký thành công! Vui lòng kiểm tra email để xác minh tài khoản.",
+      );
+    } catch (error) {
+      const message =
+        isAxiosError(error) && typeof error.response?.data?.message === "string"
+          ? error.response.data.message
+          : "Đăng ký thất bại. Vui lòng thử lại.";
+      if (isAxiosError(error) && error.response?.status === 409) {
+        setError("email", { type: "server", message }, { shouldFocus: true });
+      }
+      toast.error(message);
+    }
   };
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -82,11 +95,13 @@ export function SignupForm({
                 <Input
                   id="email"
                   type="email"
+                  aria-invalid={!!errors.email}
+                  aria-describedby={errors.email ? "signup-email-error" : undefined}
                   placeholder="m@example.com"
                   {...register("email")}
                 />
                 {errors.email && (
-                  <p className="text-destructive text-sm">
+                  <p id="signup-email-error" role="alert" className="text-destructive text-sm">
                     {errors.email.message}
                   </p>
                 )}

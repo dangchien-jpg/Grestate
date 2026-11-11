@@ -323,7 +323,7 @@ const DetailPage = () => {
               </p>
               <div className="flex items-center gap-3">
                 <img
-                  src={post.nguoiDang.anhDaiDienUrl ?? "/placeholder.png"}
+                  src={post.nguoiDang.anhDaiDienUrl ?? "/user.png"}
                   alt={post.nguoiDang.hoTen}
                   className="size-16 rounded-full object-cover"
                   loading="lazy"
