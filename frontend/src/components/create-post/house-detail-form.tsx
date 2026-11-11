@@ -10,6 +10,8 @@ import {
 import { Controller, useFormContext } from "react-hook-form";
 import type { PostFormValues } from "../../schemas/post-form-schema";
 
+const inputClassName = "h-12 rounded-full text-sm md:text-sm border border-[#ccc]";
+
 const HouseDetailForm = () => {
   const {
     register,
@@ -47,7 +49,7 @@ const HouseDetailForm = () => {
                 max={2147483647}
                 step={1}
                 placeholder="Nhập số lượng"
-                className="h-12 rounded-lg text-sm md:text-sm"
+                className={inputClassName}
               />
               {errors[field.name] && (
                 <p
@@ -77,7 +79,7 @@ const HouseDetailForm = () => {
                     id="houseDirection"
                     ref={field.ref}
                     onBlur={field.onBlur}
-                    className="pl-4 shadow-sm"
+                    className={`${inputClassName} w-full pl-4 shadow-sm`}
                   >
                     <SelectValue placeholder="Chọn hướng nhà" />
                   </SelectTrigger>
@@ -118,7 +120,7 @@ const HouseDetailForm = () => {
                     id="huongBanCong"
                     ref={field.ref}
                     onBlur={field.onBlur}
-                    className="pl-4 shadow-sm"
+                    className={`${inputClassName} w-full pl-4 shadow-sm`}
                   >
                     <SelectValue placeholder="Chọn hướng ban công" />
                   </SelectTrigger>
@@ -162,7 +164,7 @@ const HouseDetailForm = () => {
                 placeholder="Nhập chiều rộng"
                 aria-invalid={!!errors[name]}
                 aria-describedby={errors[name] ? `${name}-error` : undefined}
-                className="h-12 rounded-lg text-sm md:text-sm"
+                className={inputClassName}
               />
               {errors[name] && (
                 <p
@@ -192,7 +194,7 @@ const HouseDetailForm = () => {
                     id="noiThat"
                     ref={field.ref}
                     onBlur={field.onBlur}
-                    className="pl-4 shadow-sm"
+                    className={`${inputClassName} w-full pl-4 shadow-sm`}
                   >
                     <SelectValue placeholder="Chọn nội thất" />
                   </SelectTrigger>

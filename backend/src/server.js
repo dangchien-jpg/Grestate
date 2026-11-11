@@ -13,6 +13,7 @@ import valuationRoute from "./routes/valuation.route.js";
 import favoriteRoute from "./routes/favorite.route.js";
 import adminRoute from "./routes/admin.route.js";
 import reportRoute from "./routes/report.route.js";
+import chatRoute from "./routes/chat.route.js";
 
 import { protectedRoute } from "./middlewares/auth.middleware.js";
 import { v2 as cloudinary } from "cloudinary";
@@ -35,6 +36,7 @@ cloudinary.config({
 // public route
 app.use("/api/auth/", authRoute);
 app.use("/api/posts", postRoute);
+app.use("/api/chat", chatRoute);
 // private route
 app.use(protectedRoute);
 app.use("/api/valuation", valuationRoute);

@@ -1,6 +1,6 @@
-import { BrowserRouter, Routes, Route } from "react-router";
-import { SignInPage } from "./pages/SignInPage";
-import SignUpPage from "./pages/SignUpPage";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router";
+import AuthDialog from "@/components/auth/auth-dialog";
+
 import HomePage from "./pages/HomePage";
 import { Toaster } from "sonner";
 import ProtectedRoute from "@/components/auth/protected-route";
@@ -14,35 +14,44 @@ import AdminDashboardPage from "@/pages/AdminDashboardPage";
 import AdminProtectedRoute from "@/components/auth/admin-protected-route";
 import AdminCensorPage from "@/pages/AdminCensorPage";
 import AdminReportPage from "@/pages/AdminReportPage";
-function App() {
+import ChatWidget from "@/components/chat/chat-widget";
+function AppRoutes() {
+  const location = useLocation();
+  const authOpen =
+    location.pathname === "/signin" || location.pathname === "/signup";
   return (
     <>
       <Toaster richColors />
-      <BrowserRouter>
-        <Routes>
-          {/* Public routes */}
-          <Route path="/signin" element={<SignInPage />} />
-          <Route path="/signup" element={<SignUpPage />} />
-          <Route path="/detail/:maTinDang" element={<DetailPage />} />
-          {/* Private routes */}
-          <Route element={<ProtectedRoute />}>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/predict" element={<PredictPage />} />
-            <Route path="/me/profile" element={<ProfilePage />} />
-            <Route path="/me/create-post" element={<CreatePostPage />} />
-            <Route path="/me/favorite-post" element={<FavoritePostPage />} />
-            <Route path="/me/manager-post" element={<ManagerPostPage />} />
 
-            <Route element={<AdminProtectedRoute />}>
-              <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
-              <Route path="/admin/censor" element={<AdminCensorPage />} />
-              <Route path="/admin/reports" element={<AdminReportPage />} />
-            </Route>
+      <Routes location={authOpen ? "/" : location}>
+        {/* Public routes */}
+        <Route path="/" element={<HomePage />} />
+        <Route path="/detail/:maTinDang" element={<DetailPage />} />
+        {/* Private routes */}
+        <Route element={<ProtectedRoute />}>
+          <Route path="/predict" element={<PredictPage />} />
+          <Route path="/me/profile" element={<ProfilePage />} />
+          <Route path="/me/create-post" element={<CreatePostPage />} />
+          <Route path="/me/favorite-post" element={<FavoritePostPage />} />
+          <Route path="/me/manager-post" element={<ManagerPostPage />} />
+
+          <Route element={<AdminProtectedRoute />}>
+            <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
+            <Route path="/admin/censor" element={<AdminCensorPage />} />
+            <Route path="/admin/reports" element={<AdminReportPage />} />
           </Route>
-        </Routes>
-      </BrowserRouter>
+        </Route>
+      </Routes>
+      <ChatWidget />
+      {authOpen && <AuthDialog />}
     </>
   );
 }
 
-export default App;
+export default function App() {
+  return (
+    <BrowserRouter>
+      <AppRoutes />
+    </BrowserRouter>
+  );
+}

@@ -31,6 +31,9 @@ import HouseDetailForm from "@/components/create-post/house-detail-form";
 import LandDetailForm from "@/components/create-post/land-detail-form";
 import { useAuthStore } from "@/stores/authStore";
 
+const inputClassName =
+  "h-12 rounded-full text-sm md:text-sm border border-[#ccc]";
+
 const ImagePreview = ({ file }: { file: File }) => {
   const imageRef = useRef<HTMLImageElement>(null);
   useEffect(() => {
@@ -275,6 +278,7 @@ const PostForm = () => {
                     control={control}
                     render={({ field }) => (
                       <SearchableSelect
+                        className={inputClassName}
                         id="provinceCode"
                         name={field.name}
                         value={field.value || null}
@@ -322,6 +326,7 @@ const PostForm = () => {
                     control={control}
                     render={({ field }) => (
                       <SearchableSelect
+                        className={inputClassName}
                         id="wardId"
                         name={field.name}
                         value={field.value}
@@ -371,7 +376,7 @@ const PostForm = () => {
                   required
                   maxLength={255}
                   placeholder="Số nhà, tên đường, khu dân cư..."
-                  className="h-12 rounded-lg text-sm md:text-sm"
+                  className={inputClassName}
                 />
                 {errors.address && (
                   <p
@@ -436,7 +441,7 @@ const PostForm = () => {
                           aria-describedby={
                             errors.categoryId ? "categoryId-error" : undefined
                           }
-                          className="pl-4 shadow-sm"
+                          className={`${inputClassName} w-full pl-4 shadow-sm`}
                         >
                           <SelectValue placeholder="Chọn loại bất động sản">
                             {
@@ -502,7 +507,7 @@ const PostForm = () => {
                               ? "legalDocumentId-error"
                               : undefined
                           }
-                          className="pl-4 shadow-sm"
+                          className={`${inputClassName} w-full pl-4 shadow-sm`}
                         >
                           <SelectValue placeholder="Chọn giấy tờ pháp lý">
                             {
@@ -621,7 +626,7 @@ const PostForm = () => {
                               errors.price ? "price-error" : undefined
                             }
                             placeholder="Nhập giá"
-                            className="h-12 w-full rounded-lg border border-input bg-transparent px-4 py-3 text-sm shadow-sm outline-none focus-visible:border-ring focus-visible:ring-1 focus-visible:ring-ring/50 aria-invalid:border-destructive"
+                            className={`${inputClassName} w-full bg-transparent px-4 py-3 shadow-sm outline-none focus-visible:border-ring focus-visible:ring-1 focus-visible:ring-ring/50 aria-invalid:border-destructive`}
                           />
                           {showPriceSuggestions && suggestions.length > 0 && (
                             <div
@@ -686,7 +691,7 @@ const PostForm = () => {
                     min="0.01"
                     step="0.01"
                     placeholder="Nhập diện tích"
-                    className="h-12 rounded-lg text-sm md:text-sm"
+                    className={inputClassName}
                   />
                   {errors.area && (
                     <p
@@ -727,7 +732,7 @@ const PostForm = () => {
                   required
                   maxLength={200}
                   placeholder="Ví dụ: Bán nhà 3 tầng, đường rộng, gần trung tâm"
-                  className="h-12 rounded-lg text-sm md:text-sm"
+                  className={inputClassName}
                 />
                 {errors.title && (
                   <p
@@ -754,7 +759,7 @@ const PostForm = () => {
                   required
                   rows={6}
                   placeholder="Giới thiệu vị trí, hiện trạng, không gian sống và những điểm nổi bật của bất động sản..."
-                  className="w-full resize-y rounded-lg border border-input bg-white px-4 py-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  className="w-full resize-y rounded-lg border border-[#ccc] bg-white px-4 py-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 />
                 {errors.description && (
                   <p
@@ -820,7 +825,7 @@ const PostForm = () => {
                         aria-describedby={
                           errors[name] ? `${name}-error` : undefined
                         }
-                        className="h-12 rounded-lg text-sm md:text-sm"
+                        className={inputClassName}
                       />
                       {errors[name] && (
                         <p
@@ -984,7 +989,7 @@ const PostForm = () => {
               <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="h-12 w-full rounded-lg px-8 text-sm sm:w-auto"
+                className="h-12 w-full rounded-full px-8 text-sm font-bold "
               >
                 {isSubmitting ? "Đang đăng tin..." : "Đăng tin"}
               </Button>

@@ -1,6 +1,7 @@
 import { useRef, useState, type Ref } from "react";
 import { Combobox } from "@base-ui/react/combobox";
 import { ChevronDown, Search } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 type Option<Value> = { value: Value; label: string };
 
@@ -11,7 +12,7 @@ function normalizeSearch(value: string) {
 
 export function SearchableSelect<Value extends string | number>({
   id, name, value, options, onValueChange, onBlur, triggerRef,
-  placeholder, searchLabel, emptyMessage, disabled, invalid, describedBy,
+  placeholder, searchLabel, emptyMessage, disabled, invalid, describedBy, className,
 }: {
   id: string;
   name: string;
@@ -26,6 +27,7 @@ export function SearchableSelect<Value extends string | number>({
   disabled?: boolean;
   invalid?: boolean;
   describedBy?: string;
+  className?: string;
 }) {
   const [query, setQuery] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
@@ -53,7 +55,7 @@ export function SearchableSelect<Value extends string | number>({
         aria-required="true"
         aria-invalid={invalid}
         aria-describedby={describedBy}
-        className="flex h-12 w-full min-w-0 items-center justify-between gap-2 rounded-lg border border-input bg-white px-4 text-left font-sans text-sm shadow-sm outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+        className={cn("flex h-12 w-full min-w-0 items-center justify-between gap-2 rounded-lg border border-input bg-white px-4 text-left font-sans text-sm shadow-sm outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50", className)}
       >
         <span className="truncate">{selected?.label ?? placeholder}</span>
         <ChevronDown aria-hidden="true" className="size-4 shrink-0 " />

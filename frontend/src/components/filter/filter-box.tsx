@@ -69,7 +69,7 @@ export default function FilterBox({ posts, selected, onSelect }: {
                   {item.label}
                 </SelectItem>
               ))}
-      <div className="sm:col-start-2 sm:row-start-1"><PricePicker selected={selected} onSelect={onSelect} /></div>
+
             </SelectContent>
           </Select>
         </div>

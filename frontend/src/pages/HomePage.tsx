@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { PostFilter } from "@/services/filterService";
 import SearchPanel from "@/components/search/search-panel";
 import FilterPrice from "@/components/filter/filter-price.tsx";
@@ -121,7 +121,8 @@ function PropertyCard({ property }: { property: TinDangDanhSach }) {
 
 export default function HomePage() {
   useFavorites();
-  const { posts } = usePostStore();
+  const { posts, fetchPost } = usePostStore();
+  useEffect(() => { void fetchPost().catch(() => {}); }, [fetchPost]);
   const [filter, setFilter] = useState<(PostFilter & { page: number }) | null>(
     null,
   );

@@ -10,6 +10,8 @@ import {
 import { Controller, useFormContext } from "react-hook-form";
 import type { PostFormValues } from "../../schemas/post-form-schema";
 
+const inputClassName = "h-12 rounded-full text-sm md:text-sm border border-[#ccc]";
+
 const LandDetailForm = () => {
   const {
     register,
@@ -41,7 +43,7 @@ const LandDetailForm = () => {
                     id="houseDirection"
                     ref={field.ref}
                     onBlur={field.onBlur}
-                    className="pl-4 shadow-sm"
+                    className={`${inputClassName} w-full pl-4 shadow-sm`}
                   >
                     <SelectValue placeholder="Chọn hướng nhà" />
                   </SelectTrigger>
@@ -85,7 +87,7 @@ const LandDetailForm = () => {
                 placeholder="Nhập chiều rộng"
                 aria-invalid={!!errors[name]}
                 aria-describedby={errors[name] ? `${name}-error` : undefined}
-                className="h-12 rounded-lg text-sm md:text-sm"
+                className={inputClassName}
               />
               {errors[name] && (
                 <p

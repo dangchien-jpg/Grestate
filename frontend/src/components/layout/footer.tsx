@@ -12,7 +12,7 @@ const Footer = () => {
               className="w-44 h-auto"
             />
 
-            <p className="mt-4 max-w-sm text-sm leading-relaxed">
+            <p className="mt-4 max-w-sm text-sm leading-relaxed text-white">
               Grestate là nền tảng bất động sản uy tín, giúp bạn dễ dàng tìm
               kiếm, đăng tin và kết nối với người có nhu cầu.
             </p>
@@ -35,7 +35,7 @@ const Footer = () => {
                 ["Liên hệ", "#contact"],
               ].map(([label, href]) => (
                 <li key={label}>
-                  <a href={href} className="hover:text-white">
+                  <a href={href} className="text-white">
                     {label}
                   </a>
                 </li>
@@ -53,7 +53,7 @@ const Footer = () => {
                 "Điều khoản sử dụng",
               ].map((label) => (
                 <li key={label}>
-                  <button type="button" className="text-left hover:text-white">
+                  <button type="button" className="text-left text-white">
                     {label}
                   </button>
                 </li>
@@ -63,20 +63,20 @@ const Footer = () => {
           <div>
             <h2 className="mb-4 text-sm font-semibold text-white">Liên hệ</h2>
             <address className="space-y-3 text-sm not-italic">
-              <p className="flex items-start gap-3">
+              <p className="flex items-start gap-3 text-white">
                 <MapPin className="mt-0.5 size-4 shrink-0 text-emerald-400" />
-                123 Đường 2/9, Quận Hải Châu, Đà Nẵng
+                Đường Đinh Tiên Hoàng, Quận Hải Châu, Đà Nẵng
               </p>
               <a
                 href="tel:0123456789"
-                className="flex items-center gap-3 hover:text-white"
+                className="flex items-center gap-3 text-white"
               >
                 <Phone className="size-4 text-emerald-400" />
                 0123 456 789
               </a>
               <a
                 href="mailto:support@grestate.vn"
-                className="flex items-center gap-3 hover:text-white"
+                className="flex items-center gap-3 text-white"
               >
                 <Mail className="size-4 text-emerald-400" />
                 support@grestate.vn
@@ -88,7 +88,7 @@ const Footer = () => {
             </p>
           </div>
         </div>
-        <div className="border-t border-white/10 pt-5 text-center text-xs ">
+        <div className="border-t border-white/10 pt-5 text-center text-xs text-white">
           © {new Date().getFullYear()} Grestate. Tất cả quyền được bảo lưu.
         </div>
       </div>

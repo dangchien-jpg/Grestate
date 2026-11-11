@@ -35,7 +35,7 @@ const Header = () => {
   const handleSignout = async () => {
     try {
       await signOut();
-      navigation("/signin");
+      navigation("/");
     } catch (error) {
       console.error(error);
       toast.error("Lỗi đăng xuất");
@@ -100,52 +100,48 @@ const Header = () => {
           >
             <Bell className="size-6" />
           </Button>
-          <DropdownMenu>
-            <DropdownMenuTrigger>
-              {user ? (
+          {user ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger aria-label="Mở menu tài khoản">
                 <Avatar>
-                  {user.anhDaiDienUrl ? (
-                    <AvatarImage src={user.anhDaiDienUrl} />
-                  ) : (
-                    <AvatarImage src="/user.png" />
-                  )}
+                  <AvatarImage src={user.anhDaiDienUrl || "/user.png"} />
                 </Avatar>
-              ) : (
-                <Link
-                  to="/signin"
-                  className="hidden items-center gap-2 rounded-full border px-3 py-2 text-xs font-semibold sm:inline-flex"
-                >
-                  <UserRound className="size-4" />
-                  Đăng nhập
-                </Link>
-              )}
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuGroup>
-                <DropdownMenuLabel>{user?.hoTen}</DropdownMenuLabel>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuGroup>
+                  <DropdownMenuLabel>{user?.hoTen}</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem>
+                    <Link to="/me/profile" className="flex gap-2">
+                      <Settings /> Cài đặt tài khoản
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <Link to="/me/manager-post" className="flex gap-2">
+                      <ListCheck /> Quản lý đăng tin
+                    </Link>
+                  </DropdownMenuItem>
+                </DropdownMenuGroup>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <Link to="/me/profile" className="flex gap-2">
-                    <Settings /> Cài đặt tài khoản
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Link to="/me/manager-post" className="flex gap-2">
-                    <ListCheck /> Quản lý đăng tin
-                  </Link>
-                </DropdownMenuItem>
-              </DropdownMenuGroup>
-              <DropdownMenuSeparator />
-              <DropdownMenuGroup>
-                <DropdownMenuItem
-                  className="text-destructive"
-                  onClick={handleSignout}
-                >
-                  <LogOut /> Đăng xuất
-                </DropdownMenuItem>
-              </DropdownMenuGroup>
-            </DropdownMenuContent>
-          </DropdownMenu>
+                <DropdownMenuGroup>
+                  <DropdownMenuItem
+                    className="text-destructive"
+                    onClick={handleSignout}
+                  >
+                    <LogOut /> Đăng xuất
+                  </DropdownMenuItem>
+                </DropdownMenuGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <Link
+              to="/signin"
+              className="inline-flex items-center gap-2 rounded-full border border-[#ccc] px-3 py-2 text-xs font-semibold"
+            >
+              <UserRound className="size-4" />
+              Đăng nhập
+            </Link>
+          )}
 
           <Link
             to="/me/create-post"
@@ -177,7 +173,7 @@ const Header = () => {
               {label}
             </a>
           ))}
-          <Link to="/signin">Đăng nhập</Link>
+          {!user && <Link to="/signin">Đăng nhập</Link>}
         </nav>
       </details>
     </header>

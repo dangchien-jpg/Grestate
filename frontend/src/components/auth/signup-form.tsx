@@ -3,7 +3,7 @@ import { cn } from "cn";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -30,6 +30,9 @@ const signUpSchema = z
   });
 type SignUpFormValues = z.infer<typeof signUpSchema>;
 
+const inputClassName =
+  "h-12 rounded-full text-sm md:text-sm border border-[#ccc]";
+
 export function SignupForm({
   className,
   ...props
@@ -48,7 +51,7 @@ export function SignupForm({
     const { password, email, firstName, lastName } = data;
     try {
       await signUp(password, email, firstName, lastName);
-      navigate("/");
+      navigate("/signin", { replace: true });
       toast.success(
         "Đăng ký thành công! Vui lòng kiểm tra email để xác minh tài khoản.",
       );
@@ -73,8 +76,15 @@ export function SignupForm({
                 <h1 className="text-2xl font-bold">Tạo tài khoản</h1>
               </div>
               <Field>
-                <FieldLabel htmlFor="firstName">Họ</FieldLabel>
-                <Input id="firstName" type="text" {...register("firstName")} />
+                <FieldLabel className="font-bold text-sm" htmlFor="firstName">
+                  Họ
+                </FieldLabel>
+                <Input
+                  className={inputClassName}
+                  id="firstName"
+                  type="text"
+                  {...register("firstName")}
+                />
                 {errors.firstName && (
                   <p className="text-destructive text-sm">
                     {errors.firstName.message}
@@ -82,8 +92,15 @@ export function SignupForm({
                 )}
               </Field>
               <Field>
-                <FieldLabel htmlFor="lastName">Tên</FieldLabel>
-                <Input id="lastName" type="text" {...register("lastName")} />
+                <FieldLabel className="font-bold text-sm" htmlFor="lastName">
+                  Tên
+                </FieldLabel>
+                <Input
+                  className={inputClassName}
+                  id="lastName"
+                  type="text"
+                  {...register("lastName")}
+                />
                 {errors.lastName && (
                   <p className="text-destructive text-sm">
                     {errors.lastName.message}
@@ -91,17 +108,26 @@ export function SignupForm({
                 )}
               </Field>
               <Field>
-                <FieldLabel htmlFor="email">Email</FieldLabel>
+                <FieldLabel className="font-bold text-sm" htmlFor="email">
+                  Email
+                </FieldLabel>
                 <Input
+                  className={inputClassName}
                   id="email"
                   type="email"
                   aria-invalid={!!errors.email}
-                  aria-describedby={errors.email ? "signup-email-error" : undefined}
+                  aria-describedby={
+                    errors.email ? "signup-email-error" : undefined
+                  }
                   placeholder="m@example.com"
                   {...register("email")}
                 />
                 {errors.email && (
-                  <p id="signup-email-error" role="alert" className="text-destructive text-sm">
+                  <p
+                    id="signup-email-error"
+                    role="alert"
+                    className="text-destructive text-sm"
+                  >
                     {errors.email.message}
                   </p>
                 )}
@@ -109,8 +135,14 @@ export function SignupForm({
               <Field>
                 <Field className="grid grid-cols-2 gap-4">
                   <Field>
-                    <FieldLabel htmlFor="password">Mật khẩu</FieldLabel>
+                    <FieldLabel
+                      className="font-bold text-sm"
+                      htmlFor="password"
+                    >
+                      Mật khẩu
+                    </FieldLabel>
                     <Input
+                      className={inputClassName}
                       id="password"
                       type="password"
                       {...register("password")}
@@ -122,10 +154,14 @@ export function SignupForm({
                     )}
                   </Field>
                   <Field>
-                    <FieldLabel htmlFor="confirm-password">
+                    <FieldLabel
+                      className="font-bold text-sm"
+                      htmlFor="confirm-password"
+                    >
                       Nhập lại mật khẩu
                     </FieldLabel>
                     <Input
+                      className={inputClassName}
                       id="confirm-password"
                       type="password"
                       {...register("confirmPassword")}
@@ -142,19 +178,22 @@ export function SignupForm({
                 <Button
                   type="submit"
                   disabled={isSubmitting}
-                  className="cursor-pointer"
+                  className="cursor-pointer rounded-full h-12 text-sm font-bold"
                 >
                   Tạo tài khoản
                 </Button>
               </Field>
               <FieldDescription className="text-center">
-                Đã có tài khoản? <a href="/signin">Đăng nhập</a>
+                Đã có tài khoản?{" "}
+                <Link to="/signin" replace>
+                  Đăng nhập
+                </Link>
               </FieldDescription>
             </FieldGroup>
           </form>
           <div className="relative hidden bg-muted md:block">
             <img
-              src="placeholderSignUp.png"
+              src="/placeholderSignUp.png"
               alt="Image"
               className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
             />

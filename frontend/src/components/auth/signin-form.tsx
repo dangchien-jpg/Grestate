@@ -4,7 +4,7 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff } from "lucide-react";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -79,10 +79,13 @@ export function SigninForm({
                 <h1 className="text-2xl font-bold">Đăng nhập</h1>
               </div>
               <Field>
-                <FieldLabel htmlFor="email">Email</FieldLabel>
+                <FieldLabel className="font-bold text-sm" htmlFor="email">
+                  Email
+                </FieldLabel>
                 <Input
                   id="email"
                   type="email"
+                  className="h-12 rounded-full text-sm md:text-sm border border-[#ccc]"
                   required
                   {...register("email")}
                 />
@@ -94,12 +97,14 @@ export function SigninForm({
               </Field>
 
               <Field className="flex flex-col gap-3">
-                <FieldLabel htmlFor="password">Mật khẩu</FieldLabel>
+                <FieldLabel className="font-bold text-sm" htmlFor="password">
+                  Mật khẩu
+                </FieldLabel>
                 <div className="relative">
                   <Input
                     id="password"
                     type={showPassword ? "text" : "password"}
-                    className="pr-10"
+                    className="h-12 rounded-full text-sm md:text-sm border border-[#ccc]"
                     required
                     {...register("password")}
                   />
@@ -126,22 +131,30 @@ export function SigninForm({
               </Field>
 
               <Field>
+                <FieldDescription className="text-right text-sm mb-4 mr-2">
+                  <Link to="" replace>
+                    Quên mật khẩu?
+                  </Link>
+                </FieldDescription>
                 <Button
                   type="submit"
                   disabled={isSubmitting}
-                  className="cursor-pointer"
+                  className="cursor-pointer rounded-full h-12 text-sm font-bold"
                 >
                   Đăng nhập
                 </Button>
               </Field>
               <FieldDescription className="text-center">
-                Chưa có tài khoản? <a href="/signup">Đăng ký</a>
+                Chưa có tài khoản?{" "}
+                <Link to="/signup" replace>
+                  Đăng ký
+                </Link>
               </FieldDescription>
             </FieldGroup>
           </form>
           <div className="relative hidden bg-muted md:block">
             <img
-              src="placeholderSignUp.png"
+              src="/placeholderSignUp.png"
               alt="Image"
               className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
             />
