@@ -91,7 +91,7 @@ export default function ReportForm({ maTinDang }: { maTinDang: number }) {
       </Dialog.Trigger>
       <Dialog.Portal>
         <Dialog.Backdrop className="fixed inset-0 z-[60] bg-black/50" />
-        <Dialog.Popup className="fixed top-1/2 left-1/2 z-[61] flex max-h-[90dvh] w-[calc(100%-2rem)] max-w-xl -translate-x-1/2 -translate-y-1/2 flex-col rounded-xl bg-white font-sans shadow-xl outline-none">
+        <Dialog.Popup className="fixed top-1/2 left-1/2 z-[61] flex max-h-[90dvh] w-[calc(100%-2rem)] max-w-xl -translate-x-1/2 -translate-y-1/2 flex-col rounded-sm bg-white font-sans shadow-xl outline-none">
           <div className="flex items-center justify-between border-b px-6 py-5">
             <Dialog.Title className="text-xl font-bold">
               Báo cáo tin đăng
@@ -157,7 +157,7 @@ export default function ReportForm({ maTinDang }: { maTinDang: number }) {
               <Button
                 type="submit"
                 disabled={busy}
-                className="mt-5 w-full py-4"
+                className="mt-5 w-full h-10 text-sm font-bold"
               >
                 {busy && <LoaderCircle className="size-4 animate-spin" />}
                 {busy ? "Đang gửi..." : "Gửi báo cáo"}

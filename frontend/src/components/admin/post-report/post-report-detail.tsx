@@ -121,7 +121,10 @@ export default function PostReportDetail({
                   Ngày gửi:{" "}
                   {new Date(report.ngayBaoCao).toLocaleString("vi-VN")}
                 </p>
-                <p className="mt-3 whitespace-pre-wrap break-words">
+                <span className="block mt-3 text-sm font-semibold">
+                  Nội dung báo cáo:{" "}
+                </span>
+                <p className="mt-2 whitespace-pre-wrap break-words ">
                   {report.noiDung}
                 </p>
               </section>

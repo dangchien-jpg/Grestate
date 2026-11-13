@@ -227,7 +227,7 @@ const DetailPage = () => {
             <PostGallery key={post.maTinDang} post={post} />
 
             <section className="rounded-2xl border border-gray-300 bg-white p-5 sm:p-7">
-              <h1 className="text-2xl font-bold leading-snug tracking-tight sm:text-3xl">
+              <h1 className="text-xl font-bold leading-snug tracking-tight sm:text-xl">
                 {post.tieuDe}
               </h1>
               <p className="mt-3 flex items-start gap-2 text-sm leading-relaxed ">
@@ -259,8 +259,8 @@ const DetailPage = () => {
                   </Button>
                 </div>
               </div>
-              <h2 className="mb-5 mt-6 text-xl font-bold tracking-tight sm:text-2xl">
-                Thông tin cơ bản
+              <h2 className="mb-5 mt-6 text-xl font-bold tracking-tight sm:text-xl">
+                Thông tin bất động sản
               </h2>
               <dl className="grid grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-3 xl:grid-cols-4">
                 {specifications.map(({ icon: Icon, label, value }) => (
@@ -280,7 +280,7 @@ const DetailPage = () => {
             </section>
 
             <section className="rounded-2xl border border-gray-300 bg-white p-5 sm:p-7">
-              <h2 className="mb-4 text-xl font-bold tracking-tight sm:text-2xl">
+              <h2 className="mb-4 text-xl font-bold tracking-tight sm:text-xl">
                 Mô tả chi tiết
               </h2>
               <p className="whitespace-pre-line break-words text-sm leading-7 ">
@@ -294,7 +294,7 @@ const DetailPage = () => {
               <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
                 <h2
                   id="property-map-title"
-                  className="text-xl font-bold tracking-tight sm:text-2xl"
+                  className="text-xl font-bold tracking-tight sm:text-xl"
                 >
                   Vị trí trên bản đồ
                 </h2>

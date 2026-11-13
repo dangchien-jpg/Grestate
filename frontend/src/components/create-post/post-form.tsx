@@ -1,3 +1,4 @@
+import GenerateContentForm from "@/components/generate-content/generate-content-form";
 import { useEffect, useRef, useState } from "react";
 import { Controller, FormProvider, useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -720,6 +721,7 @@ const PostForm = () => {
               <legend className="pr-3 mb-5 text-lg font-bold ">
                 Thông tin cơ bản
               </legend>
+              <GenerateContentForm />
               <div className="space-y-2">
                 <Label className="text-sm font-bold" htmlFor="title">
                   Tiêu đề tin đăng <span className="text-red-500">*</span>
