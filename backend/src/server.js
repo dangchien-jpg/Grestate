@@ -14,6 +14,7 @@ import favoriteRoute from "./routes/favorite.route.js";
 import adminRoute from "./routes/admin.route.js";
 import reportRoute from "./routes/report.route.js";
 import chatRoute from "./routes/chat.route.js";
+import generateContentRoute from "./routes/generate-content.route.js";
 
 import { protectedRoute } from "./middlewares/auth.middleware.js";
 import { v2 as cloudinary } from "cloudinary";
@@ -39,6 +40,7 @@ app.use("/api/posts", postRoute);
 app.use("/api/chat", chatRoute);
 // private route
 app.use(protectedRoute);
+app.use("/api/generate-content", generateContentRoute);
 app.use("/api/valuation", valuationRoute);
 app.use("/api/users", userRoute);
 app.use("/api/categories", categoryRoute);

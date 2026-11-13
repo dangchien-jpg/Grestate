@@ -1,3 +1,4 @@
+import { getPostUrl } from "@/lib/post-url";
 import { Link } from "react-router";
 import { useEffect, useRef, useState } from "react";
 import { Dialog } from "@base-ui/react/dialog";
@@ -145,7 +146,7 @@ export default function PostReportDetail({
                   <p>Người đăng: {post.nguoiDang.hoTen}</p>
                   {post.trangThai === "DA_DUYET" && !post.deletedAt ? (
                     <Link
-                      to={`/detail/${post.maTinDang}`}
+                      to={getPostUrl(post)}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center justify-center rounded border px-3 py-2 text-sm font-semibold hover:bg-gray-100 focus-visible:outline-2 focus-visible:outline-primary"

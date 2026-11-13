@@ -84,7 +84,7 @@ export default function PricePicker({
       }}
     >
       <Popover.Trigger className="flex h-12 w-full min-w-0 items-center gap-3 rounded-sm border border-[#ccc] bg-white px-4 text-sm shadow-sm outline-none focus-visible:ring-2 focus-visible:ring-ring">
-        <CircleDollarSign className="size-5 shrink-0" />
+        <CircleDollarSign className="size-5 shrink-0 text-primary" />
         <span className="flex-1 truncate text-left">
           {selected?.type === "price" ? selected.label : "Tất cả mức giá"}
         </span>

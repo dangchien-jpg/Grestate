@@ -1,5 +1,5 @@
 import { useEffect, useId, useState, type FormEvent } from "react";
-import { Search, X } from "lucide-react";
+import { Map, Search, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -75,7 +75,7 @@ export default function SearchBar({
       >
         <Search
           aria-hidden="true"
-          className="pointer-events-none absolute top-4 left-4 size-4 text-primary"
+          className="pointer-events-none absolute top-4 left-4 size-5 text-primary"
         />
         <Input
           role="combobox"
@@ -163,6 +163,13 @@ export default function SearchBar({
       <Button type="submit" className="h-12 gap-2 rounded-sm px-7 text-sm">
         <Search className="size-5" />
         Tìm kiếm
+      </Button>
+      <Button
+        type="submit"
+        className="h-12 gap-2 rounded-sm px-7 text-sm bg-emerald-500 hover:bg-emerald-500/80"
+      >
+        <Map className="size-5" />
+        Bản đồ
       </Button>
     </form>
   );

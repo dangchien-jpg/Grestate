@@ -5,7 +5,7 @@ export const MAX_IMAGES = 6;
 export const IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
 const optionalDimension = z.string().trim().refine(
   (value) => value === "" || (Number.isFinite(Number(value)) && Number(value) > 0 && Number(value) <= 9999999999.99),
-  "K\u00edch th\u01b0\u1edbc ph\u1ea3i l\u1edbn h\u01a1n 0 v\u00e0 kh\u00f4ng v\u01b0\u1ee3t qu\u00e1 9.999.999.999,99 m",
+  "Kích thước phải lớn hơn 0 và không vượt quá 9.999.999.999,99 m",
 );
 
 export const createPostSchema = (categories: Pick<LoaiBatDongSan, "maLoaiBatDongSan" | "nhomBatDongSan">[]) => z.object({
@@ -18,7 +18,7 @@ export const createPostSchema = (categories: Pick<LoaiBatDongSan, "maLoaiBatDong
   bedrooms: z.string().optional(),
   bathrooms: z.string().optional(),
   floors: z.string().optional(),
-  noiThat: z.enum(["", "\u0110\u1ea7y \u0111\u1ee7 n\u1ed9i th\u1ea5t", "C\u01a1 b\u1ea3n", "Ch\u01b0a c\u00f3"]).optional(),
+  noiThat: z.enum(["", "Đầy đủ nội thất", "Cơ bản", "Chưa có"]).optional(),
   images: z
     .array(
       z
@@ -83,7 +83,7 @@ export const createPostSchema = (categories: Pick<LoaiBatDongSan, "maLoaiBatDong
   for (const name of ["bedrooms", "bathrooms", "floors"] as const) {
     const value = data[name];
     if (value && (!Number.isInteger(Number(value)) || Number(value) < 0 || Number(value) > 2147483647)) {
-      ctx.addIssue({ code: "custom", path: [name], message: "Nh\u1eadp s\u1ed1 nguy\u00ean kh\u00f4ng \u00e2m, t\u1ed1i \u0111a 2147483647" });
+      ctx.addIssue({ code: "custom", path: [name], message: "Nhập số nguyên không âm, tối đa 2147483647" });
     }
   }
 });

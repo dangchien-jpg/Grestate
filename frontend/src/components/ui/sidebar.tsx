@@ -67,8 +67,9 @@ export function Sidebar({
                   end={item.end ?? item.link === "/"}
                   className={({ isActive }) =>
                     cn(
-                      "flex min-h-25 flex-col items-center justify-center gap-2 rounded-md px-1 py-3 text-center text-[15px] leading-5 transition-colors hover:bg-gray-100 ",
-                      isActive && "font-bold",
+                      "flex min-h-25 flex-col items-center justify-center gap-2 rounded-none  px-1 py-3 text-center text-[15px] leading-5 transition-colors hover:bg-gray-100 ",
+                      isActive &&
+                        "font-bold border-r-2  border-primary text-primary",
                     )
                   }
                 >

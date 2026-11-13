@@ -1,3 +1,4 @@
+import { getPostId, getPostUrl } from "@/lib/post-url";
 import ReportForm from "@/components/report/report-form";
 import { useEffect, useState } from "react";
 import type { TinDangDanhSach } from "@/types/post";
@@ -21,7 +22,7 @@ import {
 import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
 import { Button } from "@/components/ui/button";
-import { useParams } from "react-router";
+import { Navigate, useLocation, useParams } from "react-router";
 import { usePostStore } from "@/stores/postStore";
 import FavoriteButton from "@/components/favorite-post/favorite-button";
 import { useFavorites } from "@/hooks/use-favorites";
@@ -106,7 +107,8 @@ function PostGallery({ post }: { post: TinDangDanhSach }) {
 const DetailPage = () => {
   useFavorites();
   const { maTinDang } = useParams();
-  const id = Number(maTinDang);
+  const id = getPostId(maTinDang);
+  const location = useLocation();
   const fetchDetailPost = usePostStore((state) => state.fetchDetailPost);
   const post = usePostStore((state) => state.post);
   const [request, setRequest] = useState<{
@@ -149,6 +151,16 @@ const DetailPage = () => {
   if (!post || post.maTinDang !== id) {
     return <p>Không tìm thấy tin đăng.</p>;
   }
+  const canonicalUrl = getPostUrl(post);
+  if (location.pathname !== canonicalUrl) {
+    return (
+      <Navigate
+        to={`${canonicalUrl}${location.search}${location.hash}`}
+        replace
+      />
+    );
+  }
+
   const specifications = [
     {
       icon: House,

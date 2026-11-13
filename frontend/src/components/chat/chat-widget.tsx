@@ -1,3 +1,4 @@
+import { getPostUrl } from "@/lib/post-url";
 import { useEffect, useRef, useState } from "react";
 import type { FormEvent } from "react";
 import { Link } from "react-router";
@@ -29,7 +30,7 @@ function PostCard({ post }: { post: ChatPost }) {
   const [imageFailed, setImageFailed] = useState(false);
   return (
     <Link
-      to={`/detail/${post.maTinDang}`}
+      to={getPostUrl(post)}
       className="group flex gap-3 rounded-sm border bg-card p-2.5 transition-colors hover:border-primary focus-visible:outline-2 focus-visible:outline-primary"
     >
       <div className="flex size-20 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-muted text-muted-foreground">

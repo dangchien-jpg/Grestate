@@ -1,19 +1,19 @@
 import prisma from "../libs/prisma.js";
 
 const directions = [
-  "\u0110\u00f4ng",
-  "T\u00e2y",
+  "Đông",
+  "Tây",
   "Nam",
-  "B\u1eafc",
-  "\u0110\u00f4ng B\u1eafc",
-  "\u0110\u00f4ng Nam",
-  "T\u00e2y B\u1eafc",
-  "T\u00e2y Nam",
+  "Bắc",
+  "Đông Bắc",
+  "Đông Nam",
+  "Tây Bắc",
+  "Tây Nam",
 ];
 const furniture = [
-  "\u0110\u1ea7y \u0111\u1ee7 n\u1ed9i th\u1ea5t",
-  "C\u01a1 b\u1ea3n",
-  "Ch\u01b0a c\u00f3",
+  "Đầy đủ nội thất",
+  "Cơ bản",
+  "Chưa có",
 ];
 const empty = (value) => value === undefined || value === null || value === "";
 

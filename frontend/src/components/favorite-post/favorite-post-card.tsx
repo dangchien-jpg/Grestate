@@ -1,3 +1,4 @@
+import { getPostUrl } from "@/lib/post-url";
 import {
   Bath,
   BedDouble,
@@ -31,7 +32,7 @@ export default function FavoritePostCard({
   onRemove: (id: number) => void;
   removing?: boolean;
 }) {
-  const detailUrl = `/detail/${post.maTinDang}`;
+  const detailUrl = getPostUrl(post);
   const location = [
     post.phuongXa.tenPhuongXa,
     post.phuongXa.tinhThanh.tenTinhThanh,

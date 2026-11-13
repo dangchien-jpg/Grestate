@@ -1,3 +1,4 @@
+import { getPostUrl } from "@/lib/post-url";
 import { useEffect, useState } from "react";
 import type { PostFilter } from "@/services/filterService";
 import SearchPanel from "@/components/search/search-panel";
@@ -55,7 +56,7 @@ function SafeImage({
 function PropertyCard({ property }: { property: TinDangDanhSach }) {
   return (
     <Card className="group relative min-w-0 w-full gap-0 rounded-sm py-0 shadow-sm transition-shadow hover:shadow-lg">
-      <Link to={`/detail/${property.maTinDang}`}>
+      <Link to={getPostUrl(property)}>
         <div className="relative aspect-[1.9] overflow-hidden">
           <SafeImage
             src={property.anhDaiDienUrl ?? ""}

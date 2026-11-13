@@ -1,3 +1,4 @@
+import { getPostUrl } from "@/lib/post-url";
 import { useEffect, useRef, useState } from "react";
 import { Dialog } from "@base-ui/react/dialog";
 import Backdrop from "@/components/backdrop/backdrop";
@@ -80,7 +81,7 @@ function PostCard({
   ]
     .filter(Boolean)
     .join(", ");
-  const detailUrl = `/detail/${post.maTinDang}`;
+  const detailUrl = getPostUrl(post);
   return (
     <article className="flex flex-col overflow-hidden rounded-sm border  bg-white font-sans shadow-sm sm:flex-row">
       <Link
