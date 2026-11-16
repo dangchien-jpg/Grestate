@@ -22,10 +22,12 @@ import AdminCensorPage from "@/pages/AdminCensorPage";
 import AdminReportPage from "@/pages/AdminReportPage";
 import AdminManagerUser from "@/pages/AdminManagerUser";
 import DisabledAccount from "@/pages/DisabledAccount";
+import AdminManagerCategoryPage from "@/pages/AdminManagerCategoryPage";
+import AdminManagerLegalDocumentPage from "@/pages/AdminManagerLegalDocumentPage";
 import ChatWidget from "@/components/chat/chat-widget";
 import NewsPage from "@/pages/NewsPage";
 import Contact from "@/pages/Contact";
-import ProjectPage from "@/pages/projectPage";
+import ProjectPage from "@/pages/ProjectPage";
 
 function AppRoutes() {
   const location = useLocation();
@@ -60,6 +62,14 @@ function AppRoutes() {
             <Route path="/admin/censor" element={<AdminCensorPage />} />
             <Route path="/admin/reports" element={<AdminReportPage />} />
             <Route path="/admin/users" element={<AdminManagerUser />} />
+            <Route
+              path="/admin/categories"
+              element={<AdminManagerCategoryPage />}
+            />
+            <Route
+              path="/admin/legal-documents"
+              element={<AdminManagerLegalDocumentPage />}
+            />
           </Route>
         </Route>
       </Routes>
@@ -76,5 +86,3 @@ export default function App() {
     </BrowserRouter>
   );
 }
-
-

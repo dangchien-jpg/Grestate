@@ -1,4 +1,4 @@
-import PendingReportBadge from "@/components/admin/post-report/pending-report-badge";
+﻿import PendingReportBadge from "@/components/admin/post-report/pending-report-badge";
 import PendingPostBadge from "@/components/admin/pending-post-badge";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import type { ReactNode } from "react";
@@ -6,6 +6,8 @@ import Sidebar from "@/components/ui/sidebar";
 import { useAuthStore } from "@/stores/authStore";
 import {
   ChartNoAxesCombined,
+  Building2,
+  FileText,
   CircleUserRound,
   Flag,
   ListChecks,
@@ -73,6 +75,16 @@ const AdminLayout = ({ title, children }: AdminLayoutProps) => {
             link: "/admin/users",
           },
           {
+            icon: <Building2 />,
+            title: "Loại bất động sản",
+            link: "/admin/categories",
+          },
+          {
+            icon: <FileText />,
+            title: "Giấy tờ",
+            link: "/admin/legal-documents",
+          },
+          {
             icon: <CircleUserRound />,
             title: "Tài khoản",
             link: "/me/profile",
@@ -125,3 +137,4 @@ const AdminLayout = ({ title, children }: AdminLayoutProps) => {
 };
 
 export default AdminLayout;
+

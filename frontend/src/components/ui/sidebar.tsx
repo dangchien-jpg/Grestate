@@ -36,7 +36,7 @@ export function Sidebar({
     <aside
       {...props}
       className={cn(
-        "sticky top-0 flex h-dvh w-28 shrink-0 flex-col overflow-y-auto border-r border-slate-200 bg-white font-sans text-[#15191c]",
+        "sticky top-0 flex h-dvh w-28 scrollbar-none shrink-0 flex-col overflow-y-auto border-r border-slate-200 bg-white font-sans text-[#15191c]",
         className,
       )}
     >

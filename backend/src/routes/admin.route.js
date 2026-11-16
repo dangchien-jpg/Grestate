@@ -20,6 +20,9 @@ import {
   unblockUser,
 } from "../controllers/admin-manager-user.controller.js";
 
+import { fetchCategories, createCategory, updateCategory, deleteCategory } from "../controllers/category.controller.js";
+import { fetchLegalDocuments, createLegalDocument, updateLegalDocument, deleteLegalDocument } from "../controllers/legal-document.controller.js";
+
 const route = express.Router();
 
 route.get("/dashboard/overview", fetchDashboardOverview);
@@ -38,7 +41,18 @@ route.get("/users/blocked", fetchBlockedUsers);
 route.put("/users/:maNguoiDung/block", blockUser);
 route.put("/users/:maNguoiDung/unblock", unblockUser);
 
+route.get("/categories", fetchCategories);
+route.post("/categories", createCategory);
+route.put("/categories/:maLoaiBatDongSan", updateCategory);
+route.delete("/categories/:maLoaiBatDongSan", deleteCategory);
+
+route.get("/legal-documents", fetchLegalDocuments);
+route.post("/legal-documents", createLegalDocument);
+route.put("/legal-documents/:maGiayTo", updateLegalDocument);
+route.delete("/legal-documents/:maGiayTo", deleteLegalDocument);
+
 export default route;
+
 
 
 
