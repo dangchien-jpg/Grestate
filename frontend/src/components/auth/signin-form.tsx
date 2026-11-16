@@ -4,7 +4,7 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff } from "lucide-react";
-import { Link, useNavigate } from "react-router";
+import { Link, useNavigate, useLocation, type Location } from "react-router";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -12,6 +12,7 @@ import {
   FieldDescription,
   FieldGroup,
   FieldLabel,
+  FieldSeparator,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { useAuthStore } from "@/stores/authStore";
@@ -29,6 +30,10 @@ export function SigninForm({
 }: React.ComponentProps<"div">) {
   const { signIn } = useAuthStore();
   const navigate = useNavigate();
+  const location = useLocation();
+  const backgroundLocation = (
+    location.state as { backgroundLocation?: Location } | null
+  )?.backgroundLocation;
   const [showPassword, setShowPassword] = useState(false);
 
   const {
@@ -46,9 +51,16 @@ export function SigninForm({
     try {
       await signIn(data.email, data.password);
       const user = useAuthStore.getState().user;
-      navigate(user?.maVaiTro == 2 ? "/admin/dashboard" : "/", {
-        replace: true,
-      });
+      navigate(
+        backgroundLocation
+          ? `${backgroundLocation.pathname}${backgroundLocation.search}${backgroundLocation.hash}`
+          : user?.maVaiTro == 2
+            ? "/admin/dashboard"
+            : "/",
+        {
+          replace: true,
+        },
+      );
     } catch (error) {
       let message = "Có lỗi xảy ra, vui lòng thử lại";
 
@@ -136,6 +148,23 @@ export function SigninForm({
                     Quên mật khẩu?
                   </Link>
                 </FieldDescription>
+                <FieldSeparator className="*:data-[slot=field-separator-content]:bg-card">
+                  Hoặc đăng nhập với
+                </FieldSeparator>
+                <Field className="flex justify-center">
+                  <Button
+                    variant="outline"
+                    type="button"
+                    className="rounded-full bg-white h-10 mt-4 mb-4 border border-[#ccc]"
+                  >
+                    <img
+                      src="/google.png"
+                      alt="Đăng nhập bằng tài khoản google"
+                      className="w-5"
+                    />
+                    <span className="">Tiếp tục với Google</span>
+                  </Button>
+                </Field>
                 <Button
                   type="submit"
                   disabled={isSubmitting}
@@ -146,17 +175,17 @@ export function SigninForm({
               </Field>
               <FieldDescription className="text-center">
                 Chưa có tài khoản?{" "}
-                <Link to="/signup" replace>
+                <Link to="/signup" state={location.state} replace>
                   Đăng ký
                 </Link>
               </FieldDescription>
             </FieldGroup>
           </form>
-          <div className="relative hidden bg-muted md:block">
+          <div className="relative hidden bg-white md:block">
             <img
-              src="/placeholderSignUp.png"
+              src="/House searching-bro.svg"
               alt="Image"
-              className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
+              className="absolute mt-20 inset-0 w-500 object-cover dark:brightness-[0.2] dark:grayscale"
             />
           </div>
         </CardContent>

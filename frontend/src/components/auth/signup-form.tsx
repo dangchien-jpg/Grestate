@@ -3,7 +3,7 @@ import { cn } from "cn";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Link, useNavigate } from "react-router";
+import { Link, useNavigate, useLocation } from "react-router";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -23,6 +23,10 @@ const signUpSchema = z
     email: z.email("Email không đúng định dạng"),
     password: z.string().min(6, "Mật khẩu phải tối thiểu 6 ký tự"),
     confirmPassword: z.string(),
+    acceptTerms: z.boolean().refine((accepted) => accepted, {
+      message:
+        "Vui lòng đồng ý với Điều khoản dịch vụ và Chính sách quyền riêng tư để tiếp tục.",
+    }),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Mật khẩu không khớp",
@@ -39,6 +43,7 @@ export function SignupForm({
 }: React.ComponentProps<"div">) {
   const { signUp } = useAuthStore();
   const navigate = useNavigate();
+  const location = useLocation();
   const {
     register,
     handleSubmit,
@@ -46,12 +51,13 @@ export function SignupForm({
     formState: { errors, isSubmitting },
   } = useForm<SignUpFormValues>({
     resolver: zodResolver(signUpSchema),
+    defaultValues: { acceptTerms: false },
   });
   const onSubmit = async (data: SignUpFormValues) => {
     const { password, email, firstName, lastName } = data;
     try {
       await signUp(password, email, firstName, lastName);
-      navigate("/signin", { replace: true });
+      navigate("/signin", { replace: true, state: location.state });
       toast.success(
         "Đăng ký thành công! Vui lòng kiểm tra email để xác minh tài khoản.",
       );
@@ -175,27 +181,58 @@ export function SignupForm({
                 </Field>
               </Field>
               <Field>
+                <div className="flex items-start gap-3">
+                  <input
+                    id="signup-accept-terms"
+                    type="checkbox"
+                    className="mt-1 size-4 shrink-0 cursor-pointer accent-primary"
+                    aria-invalid={!!errors.acceptTerms}
+                    aria-describedby={
+                      errors.acceptTerms ? "signup-terms-error" : undefined
+                    }
+                    {...register("acceptTerms")}
+                  />
+                  <label
+                    htmlFor="signup-accept-terms"
+                    className="cursor-pointer text-xs leading-relaxed [&_a]:underline [&_a]:underline-offset-4"
+                  >
+                    Bằng việc “Tiếp tục”, bạn đồng ý với{" "}
+                    <a href="#">Điều khoản dịch vụ</a> và{" "}
+                    <a href="#">Chính sách quyền riêng tư</a> của chúng tôi.
+                  </label>
+                </div>
+                {errors.acceptTerms && (
+                  <p
+                    id="signup-terms-error"
+                    role="alert"
+                    className="text-destructive text-sm"
+                  >
+                    {errors.acceptTerms.message}
+                  </p>
+                )}
+              </Field>
+              <Field>
                 <Button
                   type="submit"
                   disabled={isSubmitting}
                   className="cursor-pointer rounded-full h-12 text-sm font-bold"
                 >
-                  Tạo tài khoản
+                  Tiếp tục
                 </Button>
               </Field>
               <FieldDescription className="text-center">
                 Đã có tài khoản?{" "}
-                <Link to="/signin" replace>
+                <Link to="/signin" state={location.state} replace>
                   Đăng nhập
                 </Link>
               </FieldDescription>
             </FieldGroup>
           </form>
-          <div className="relative hidden bg-muted md:block">
+          <div className="relative hidden bg-white md:block">
             <img
-              src="/placeholderSignUp.png"
+              src="/House searching-amico.svg"
               alt="Image"
-              className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
+              className="mt-30 absolute inset-0 h-100 w-100 object-cover dark:brightness-[0.2] dark:grayscale"
             />
           </div>
         </CardContent>

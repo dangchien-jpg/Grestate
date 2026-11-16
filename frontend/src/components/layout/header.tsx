@@ -7,7 +7,7 @@ import {
   Settings,
   UserRound,
 } from "lucide-react";
-import { Link, useNavigate } from "react-router";
+import { Link, useNavigate, useLocation } from "react-router";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -31,6 +31,24 @@ const Header = () => {
   const savedCount = useFavoriteStore((state) => state.posts.length);
   const favoriteCount = user ? savedCount : 0;
   const navigation = useNavigate();
+  const location = useLocation();
+  const menuItems = [
+    { to: "/", label: "Nhà đất bán" },
+    { to: "/projects", label: "Dự án" },
+    { to: "/predict", label: "Định giá AI" },
+    { to: "/news", label: "Tin tức" },
+    { to: "/contact", label: "Liên hệ" },
+  ];
+  const isMenuActive = (to: string) => {
+    if (to === "/") {
+      return (
+        location.pathname.startsWith("/detail/") ||
+        (location.pathname === "/" &&
+          location.state?.salesMenuSelected === true)
+      );
+    }
+    return location.pathname === to || location.pathname.startsWith(`${to}/`);
+  };
 
   const handleSignout = async () => {
     try {
@@ -55,25 +73,17 @@ const Header = () => {
           aria-label="Điều hướng chính"
           className="hidden items-center gap-7 text-sm font-medium lg:flex"
         >
-          <a
-            href="/"
-            aria-current="page"
-            className="border-b-2 border-primary py-7 text-primary"
-          >
-            Trang chủ
-          </a>
-          <a href="#projects" className="hover:text-primary">
-            Dự án
-          </a>
-          <a href="/predict" className="hover:text-primary">
-            Định giá AI
-          </a>
-          <a href="#news" className="hover:text-primary">
-            Tin tức
-          </a>
-          <a href="#contact" className="hover:text-primary">
-            Liên hệ
-          </a>
+          {menuItems.map(({ to, label }) => (
+            <Link
+              key={to}
+              to={to}
+              state={to === "/" ? { salesMenuSelected: true } : undefined}
+              aria-current={isMenuActive(to) ? "page" : undefined}
+              className={`border-b-2 py-7 transition-colors hover:text-primary ${isMenuActive(to) ? "border-primary text-primary" : "border-transparent"}`}
+            >
+              {label}
+            </Link>
+          ))}
         </nav>
         <div className="flex items-center gap-2">
           <Link
@@ -112,12 +122,12 @@ const Header = () => {
                   <DropdownMenuLabel>{user?.hoTen}</DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem>
-                    <Link to="/me/profile" className="flex gap-2">
+                    <Link to="/me/profile" className="flex gap-2 text-sm">
                       <Settings /> Cài đặt tài khoản
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem>
-                    <Link to="/me/manager-post" className="flex gap-2">
+                    <Link to="/me/manager-post" className="flex gap-2 text-sm">
                       <ListCheck /> Quản lý đăng tin
                     </Link>
                   </DropdownMenuItem>
@@ -125,7 +135,7 @@ const Header = () => {
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
                   <DropdownMenuItem
-                    className="text-destructive"
+                    className="text-destructive text-sm"
                     onClick={handleSignout}
                   >
                     <LogOut /> Đăng xuất
@@ -138,7 +148,7 @@ const Header = () => {
               to="/signin"
               className="inline-flex items-center gap-2 rounded-full border border-[#ccc] px-3 py-2 text-xs font-semibold"
             >
-              <UserRound className="size-4" />
+              <UserRound className="size-5" />
               Đăng nhập
             </Link>
           )}
@@ -161,17 +171,16 @@ const Header = () => {
           aria-label="Điều hướng trên điện thoại"
           className="grid grid-cols-2 gap-4 border-t px-5 py-5 text-sm lg:hidden"
         >
-          {[
-            ["Trang chủ", "#"],
-            ["Tìm bất động sản", "#search"],
-            ["Dự án", "#projects"],
-            ["Định giá AI", "#valuation"],
-            ["Tin tức", "#news"],
-            ["Liên hệ", "#contact"],
-          ].map(([label, href]) => (
-            <a key={label} href={href}>
+          {menuItems.map(({ to, label }) => (
+            <Link
+              key={to}
+              to={to}
+              state={to === "/" ? { salesMenuSelected: true } : undefined}
+              aria-current={isMenuActive(to) ? "page" : undefined}
+              className={`justify-self-start border-b-2 pb-1 hover:text-primary ${isMenuActive(to) ? "border-primary text-primary" : "border-transparent"}`}
+            >
               {label}
-            </a>
+            </Link>
           ))}
           {!user && <Link to="/signin">Đăng nhập</Link>}
         </nav>

@@ -1,5 +1,5 @@
 ﻿import { useEffect, useRef } from "react";
-import { useLocation, useNavigate } from "react-router";
+import { useLocation, useNavigate, type Location } from "react-router";
 import { X } from "lucide-react";
 import Backdrop from "@/components/backdrop/backdrop";
 import { SigninForm } from "./signin-form";
@@ -10,7 +10,10 @@ export default function AuthDialog() {
   const location = useLocation();
   const navigate = useNavigate();
   const signup = location.pathname === "/signup";
-  const close = () => navigate("/", { replace: true });
+  const backgroundLocation = (location.state as { backgroundLocation?: Location } | null)?.backgroundLocation;
+  const close = () => navigate(backgroundLocation
+    ? `${backgroundLocation.pathname}${backgroundLocation.search}${backgroundLocation.hash}`
+    : "/", { replace: true });
 
   useEffect(() => {
     const element = dialog.current;

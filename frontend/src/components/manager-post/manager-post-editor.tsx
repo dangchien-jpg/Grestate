@@ -158,7 +158,7 @@ export default function ManagerPostEditor({
                     required
                     {...props}
                     aria-invalid={!!fieldErrors[name]}
-                    className="mt-2 rounded-sm text-sm font-normal md:text-sm"
+                    className="mt-2 rounded-full text-sm font-normal md:text-sm h-12 shadow-sm border border-[#ccc]"
                   />
                   {fieldErrors[name] && (
                     <span
@@ -179,7 +179,7 @@ export default function ManagerPostEditor({
                   maxLength={65535}
                   rows={5}
                   aria-invalid={!!fieldErrors.description}
-                  className="mt-2 block w-full resize-y rounded-sm border border-input bg-white p-3 text-sm font-normal outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  className="mt-2 block w-full resize-y rounded-sm border border-[#ccc] bg-white p-3 text-sm font-normal outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 />
                 {fieldErrors.description && (
                   <span

@@ -1,4 +1,10 @@
-import { BrowserRouter, Routes, Route, useLocation } from "react-router";
+﻿import {
+  BrowserRouter,
+  Routes,
+  Route,
+  useLocation,
+  type Location,
+} from "react-router";
 import AuthDialog from "@/components/auth/auth-dialog";
 
 import HomePage from "./pages/HomePage";
@@ -15,18 +21,29 @@ import AdminProtectedRoute from "@/components/auth/admin-protected-route";
 import AdminCensorPage from "@/pages/AdminCensorPage";
 import AdminReportPage from "@/pages/AdminReportPage";
 import ChatWidget from "@/components/chat/chat-widget";
+import NewsPage from "@/pages/NewsPage";
+import Contact from "@/pages/Contact";
+import ProjectPage from "@/pages/projectPage";
+
 function AppRoutes() {
   const location = useLocation();
+  const backgroundLocation = (
+    location.state as { backgroundLocation?: Location } | null
+  )?.backgroundLocation;
   const authOpen =
     location.pathname === "/signin" || location.pathname === "/signup";
   return (
     <>
       <Toaster richColors />
 
-      <Routes location={authOpen ? "/" : location}>
+      <Routes location={authOpen ? (backgroundLocation ?? "/") : location}>
         {/* Public routes */}
         <Route path="/" element={<HomePage />} />
         <Route path="/detail/:maTinDang" element={<DetailPage />} />
+        <Route path="/projects" element={<ProjectPage />} />
+        <Route path="/news" element={<NewsPage />} />
+        <Route path="/contact" element={<Contact />} />
+
         {/* Private routes */}
         <Route element={<ProtectedRoute />}>
           <Route path="/predict" element={<PredictPage />} />

@@ -22,10 +22,11 @@ import {
 import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
 import { Button } from "@/components/ui/button";
-import { Navigate, useLocation, useParams } from "react-router";
+import { Navigate, useLocation, useNavigate, useParams } from "react-router";
 import { usePostStore } from "@/stores/postStore";
 import FavoriteButton from "@/components/favorite-post/favorite-button";
 import { useFavorites } from "@/hooks/use-favorites";
+import { useAuthStore } from "@/stores/authStore";
 
 function PostGallery({ post }: { post: TinDangDanhSach }) {
   const urls = post.hinhAnhTinDangs.map((photo) => photo.hinhAnhUrl);
@@ -109,6 +110,13 @@ const DetailPage = () => {
   const { maTinDang } = useParams();
   const id = getPostId(maTinDang);
   const location = useLocation();
+  const navigate = useNavigate();
+  const user = useAuthStore((state) => state.user);
+  const [revealedContact, setRevealedContact] = useState<{
+    postId: number;
+    userId: number;
+    phone: string;
+  } | null>(null);
   const fetchDetailPost = usePostStore((state) => state.fetchDetailPost);
   const post = usePostStore((state) => state.post);
   const [request, setRequest] = useState<{
@@ -188,6 +196,28 @@ const DetailPage = () => {
   const mapQuery = encodeURIComponent(`${address}, Việt Nam`);
   const mapUrl = `https://maps.google.com/maps?q=${mapQuery}&output=embed&hl=vi&z=17`;
   const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${mapQuery}`;
+  const contactName = post.nguoiLienHe?.trim() || post.nguoiDang.hoTen;
+  const contactPhone =
+    post.soDienThoaiLienHe?.trim() || post.nguoiDang.soDienThoai?.trim();
+  const phoneVisible = Boolean(
+    user &&
+    revealedContact?.postId === id &&
+    revealedContact.userId === user.maNguoiDung &&
+    revealedContact.phone === contactPhone,
+  );
+  const showPhone = () => {
+    if (!user) {
+      navigate("/signin", { state: { backgroundLocation: location } });
+      return;
+    }
+    if (contactPhone) {
+      setRevealedContact({
+        postId: id,
+        userId: user.maNguoiDung,
+        phone: contactPhone,
+      });
+    }
+  };
   let zaloUrl: string | null = null;
   const zaloLink = post.nguoiDang.duongDanZalo?.trim();
   if (zaloLink) {
@@ -326,33 +356,60 @@ const DetailPage = () => {
           </article>
 
           <aside
-            aria-label="Thông tin người đăng"
+            aria-label="Thông tin liên hệ"
             className="space-y-4 lg:sticky lg:top-28"
           >
             <section className="rounded-2xl border border-gray-300 bg-white p-6">
-              <p className="mb-5 text-xs font-semibold tracking-wider ">
-                Thông tin người đăng
+              <p className="mb-5 text-sm font-semibold tracking-wider ">
+                Thông tin liên hệ
               </p>
               <div className="flex items-center gap-3">
                 <img
                   src={post.nguoiDang.anhDaiDienUrl ?? "/user.png"}
-                  alt={post.nguoiDang.hoTen}
+                  alt={contactName}
                   className="size-16 rounded-full object-cover"
                   loading="lazy"
                 />
                 <div>
-                  <h2 className="font-bold">{post.nguoiDang.hoTen}</h2>
+                  <h2 className="font-bold">{contactName}</h2>
                 </div>
               </div>
               <div className="mt-8 space-y-3">
-                <Button type="button" className="h-12 w-full gap-2 rounded-lg">
+                <Button
+                  type="button"
+                  className="h-12 w-full gap-2 rounded-lg"
+                  disabled={!contactPhone}
+                  onClick={showPhone}
+                  aria-label={
+                    contactPhone && !phoneVisible
+                      ? "Xem số điện thoại liên hệ"
+                      : undefined
+                  }
+                >
                   <Phone className="size-4" />
-                  {post.nguoiDang.soDienThoai ?? "Chưa có số điện thoại"}
+                  <span aria-live="polite">
+                    {contactPhone
+                      ? phoneVisible
+                        ? contactPhone
+                        : "**********"
+                      : "Chưa có số điện thoại"}
+                  </span>
+                  {contactPhone && !phoneVisible && (
+                    <span className="ml-2 underline underline-offset-4">
+                      Xem số
+                    </span>
+                  )}
                 </Button>
                 {zaloUrl ? (
                   <a
-                    href={zaloUrl}
-                    target="_blank"
+                    href={user ? zaloUrl : "/signin"}
+                    onClick={(event) => {
+                      if (!user) {
+                        event.preventDefault();
+                        navigate("/signin", { state: { backgroundLocation: location } });
+                      }
+                    }}
+                    target={user ? "_blank" : undefined}
                     rel="noopener noreferrer"
                     className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-lg border border-blue-200 bg-blue-50 px-3 text-sm font-semibold text-blue-600 transition-colors hover:bg-blue-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
                   >

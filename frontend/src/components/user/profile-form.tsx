@@ -103,7 +103,7 @@ const ProfileForm = () => {
                 type={type || "text"}
                 value={formData[key] ?? ""}
                 onChange={(e) => handleChange(key, e.target.value)}
-                className="mt-2"
+                className="mt-2 h-12 rounded-full shadow-sm border-[#ccc]"
               />
             </div>
           ))}
