@@ -1,4 +1,4 @@
-import { cn } from "cn";
+﻿import { cn } from "cn";
 import axios from "axios";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -64,7 +64,13 @@ export function SigninForm({
     } catch (error) {
       let message = "Có lỗi xảy ra, vui lòng thử lại";
 
-      if (axios.isAxiosError<{ message?: string }>(error)) {
+      if (axios.isAxiosError<{ message?: string; code?: string }>(error)) {
+        if (error.response?.status === 403 && error.response.data?.code === "ACCOUNT_BLOCKED") {
+          useAuthStore.getState().clearState();
+          navigate("/disabled-account", { replace: true });
+          return;
+        }
+
         const serverMessage = error.response?.data?.message;
         message =
           typeof serverMessage === "string" && serverMessage.trim()
@@ -193,3 +199,4 @@ export function SigninForm({
     </div>
   );
 }
+

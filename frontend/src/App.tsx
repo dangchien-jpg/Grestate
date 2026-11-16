@@ -20,6 +20,8 @@ import AdminDashboardPage from "@/pages/AdminDashboardPage";
 import AdminProtectedRoute from "@/components/auth/admin-protected-route";
 import AdminCensorPage from "@/pages/AdminCensorPage";
 import AdminReportPage from "@/pages/AdminReportPage";
+import AdminManagerUser from "@/pages/AdminManagerUser";
+import DisabledAccount from "@/pages/DisabledAccount";
 import ChatWidget from "@/components/chat/chat-widget";
 import NewsPage from "@/pages/NewsPage";
 import Contact from "@/pages/Contact";
@@ -43,6 +45,7 @@ function AppRoutes() {
         <Route path="/projects" element={<ProjectPage />} />
         <Route path="/news" element={<NewsPage />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/disabled-account" element={<DisabledAccount />} />
 
         {/* Private routes */}
         <Route element={<ProtectedRoute />}>
@@ -56,6 +59,7 @@ function AppRoutes() {
             <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
             <Route path="/admin/censor" element={<AdminCensorPage />} />
             <Route path="/admin/reports" element={<AdminReportPage />} />
+            <Route path="/admin/users" element={<AdminManagerUser />} />
           </Route>
         </Route>
       </Routes>
@@ -72,3 +76,5 @@ export default function App() {
     </BrowserRouter>
   );
 }
+
+

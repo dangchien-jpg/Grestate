@@ -13,6 +13,13 @@ import {
   fetchDashboardTopLocations,
 } from "../controllers/admin-dashboard.controller.js";
 
+import {
+  fetchActiveUsers,
+  fetchBlockedUsers,
+  blockUser,
+  unblockUser,
+} from "../controllers/admin-manager-user.controller.js";
+
 const route = express.Router();
 
 route.get("/dashboard/overview", fetchDashboardOverview);
@@ -26,6 +33,12 @@ route.get("/posts/:maTinDang", fetchCensorPostDetail);
 route.put("/accept-post/:maTinDang", acceptPost);
 route.put("/reject-post/:maTinDang", rejectPost);
 
+route.get("/users/active", fetchActiveUsers);
+route.get("/users/blocked", fetchBlockedUsers);
+route.put("/users/:maNguoiDung/block", blockUser);
+route.put("/users/:maNguoiDung/unblock", unblockUser);
+
 export default route;
+
 
 

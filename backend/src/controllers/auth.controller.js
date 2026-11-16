@@ -1,4 +1,4 @@
-import jwt from "jsonwebtoken";
+﻿import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import ms from "ms";
 import crypto from "crypto";
@@ -74,6 +74,17 @@ export const signIn = async (req, res) => {
         .json({ message: "Email hoặc mật khẩu không đúng" });
     }
 
+    if (user.trangThai === "BI_CHAN") {
+      return res.status(403).json({
+        code: "ACCOUNT_BLOCKED",
+        message: "Tài khoản của bạn đã bị chặn. Vui lòng liên hệ quản trị viên để được hỗ trợ",
+      });
+    }
+
+    if (user.deletedAt || user.trangThai !== "HOAT_DONG") {
+      return res.status(403).json({ message: "Tài khoản đã bị chặn hoặc ngừng hoạt động" });
+    }
+
     // if (!user.emailDaXacThuc) {
     //   return res.status(403).json({ message: "Email chưa được xác thực" });
     // }
@@ -146,12 +157,18 @@ export const refreshToken = async (req, res) => {
         nguoiDung: {
           select: {
             maVaiTro: true,
+            trangThai: true,
+            deletedAt: true,
           },
         },
       },
     });
     if (!session) {
       return res.status(403).json({ message: "Token không hợp lệ" });
+    }
+
+    if (session.nguoiDung.deletedAt || session.nguoiDung.trangThai !== "HOAT_DONG") {
+      return res.status(403).json({ message: "Tài khoản đã bị chặn hoặc ngừng hoạt động" });
     }
 
     if (session.expiredAt < new Date()) {
@@ -169,3 +186,5 @@ export const refreshToken = async (req, res) => {
     return res.status(500).json({ message: "Lỗi máy chủ" });
   }
 };
+
+
