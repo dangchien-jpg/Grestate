@@ -2,7 +2,7 @@ import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import Sidebar from "@/components/ui/sidebar";
 import ProfileForm from "@/components/user/profile-form";
 import { useAuthStore } from "@/stores/authStore";
-import { Plus, ChartPie, ListChecks, CircleUserRound } from "lucide-react";
+import { Plus, ListChecks, CircleUserRound } from "lucide-react";
 
 export const ProfilePage = () => {
   const { user } = useAuthStore();
@@ -16,11 +16,6 @@ export const ProfilePage = () => {
             title: "Đăng tin",
             link: "/create-post",
             variant: "primary",
-          },
-          {
-            icon: <ChartPie />,
-            title: "Tổng quan",
-            link: "/tong-quan",
           },
           {
             icon: <ListChecks />,

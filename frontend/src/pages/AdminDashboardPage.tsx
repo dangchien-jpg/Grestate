@@ -1,7 +1,11 @@
-import AdminLayout from "@/components/admin/admin-layout";
+﻿import AdminLayout from "@/components/admin/admin-layout";
+import Dashboard from "@/components/admin/dashboard/dashboard";
 
 const AdminDashboardPage = () => (
-  <AdminLayout title="Trang cá nhân" />
+  <AdminLayout title="Dashboard">
+    <Dashboard />
+  </AdminLayout>
 );
 
 export default AdminDashboardPage;
+

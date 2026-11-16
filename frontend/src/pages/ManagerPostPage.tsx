@@ -2,7 +2,7 @@ import ManagerPostCard from "@/components/manager-post/manager-post-card";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import Sidebar from "@/components/ui/sidebar";
 import { useAuthStore } from "@/stores/authStore";
-import { ChartPie, CircleUserRound, ListChecks, Plus } from "lucide-react";
+import { CircleUserRound, ListChecks, Plus } from "lucide-react";
 
 const ManagerPostPage = () => {
   const { user } = useAuthStore();
@@ -16,11 +16,6 @@ const ManagerPostPage = () => {
             title: "Đăng tin",
             link: "/me/create-post",
             variant: "primary",
-          },
-          {
-            icon: <ChartPie />,
-            title: "Tổng quan",
-            link: "/tong-quan",
           },
           {
             icon: <ListChecks />,
