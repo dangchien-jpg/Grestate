@@ -1,5 +1,4 @@
 import {
-  Bell,
   Heart,
   ListCheck,
   LogOut,
@@ -17,7 +16,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
+import Notification from "@/components/notification/notification";
 
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { useAuthStore } from "@/stores/authStore";
@@ -102,14 +101,7 @@ const Header = () => {
               </span>
             )}
           </Link>
-          <Button
-            variant="ghost"
-            size="icon"
-            aria-label="Thông báo"
-            className="hidden rounded-full sm:inline-flex"
-          >
-            <Bell className="size-6" />
-          </Button>
+          {user && <Notification key={user.maNguoiDung} />}
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger aria-label="Mở menu tài khoản">
