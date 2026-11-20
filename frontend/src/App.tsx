@@ -7,6 +7,7 @@
 } from "react-router";
 import AuthDialog from "@/components/auth/auth-dialog";
 
+import VerifyEmailPage from "./pages/VerifyEmailPage";
 import HomePage from "./pages/HomePage";
 import { Toaster } from "sonner";
 import ProtectedRoute from "@/components/auth/protected-route";
@@ -48,6 +49,8 @@ function AppRoutes() {
         <Route path="/news" element={<NewsPage />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/disabled-account" element={<DisabledAccount />} />
+
+        <Route path="/verify-email" element={<VerifyEmailPage />} />
 
         {/* Private routes */}
         <Route element={<ProtectedRoute />}>

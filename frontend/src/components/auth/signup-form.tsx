@@ -57,11 +57,16 @@ export function SignupForm({
     const { password, email, firstName, lastName } = data;
     try {
       await signUp(password, email, firstName, lastName);
-      navigate("/signin", { replace: true, state: location.state });
+      navigate("/verify-email", { replace: true, state: { ...location.state, email, resendAt: Date.now() + 30000 } });
       toast.success(
         "Đăng ký thành công! Vui lòng kiểm tra email để xác minh tài khoản.",
       );
     } catch (error) {
+      if (isAxiosError(error) && error.response?.data?.code === "OTP_DELIVERY_FAILED") {
+        toast.error(error.response.data.message);
+        navigate("/verify-email", { replace: true, state: { ...location.state, email } });
+        return;
+      }
       const message =
         isAxiosError(error) && typeof error.response?.data?.message === "string"
           ? error.response.data.message

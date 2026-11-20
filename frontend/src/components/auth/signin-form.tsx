@@ -71,6 +71,11 @@ export function SigninForm({
           return;
         }
 
+        if (error.response?.data?.code === "EMAIL_UNVERIFIED") {
+          navigate("/verify-email", { replace: true, state: { ...location.state, email: data.email } });
+          return;
+        }
+
         const serverMessage = error.response?.data?.message;
         message =
           typeof serverMessage === "string" && serverMessage.trim()

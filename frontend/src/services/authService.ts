@@ -27,14 +27,24 @@ export const authService = {
     return res.data;
   },
 
+  verifyEmail: (email: string, otp: string) =>
+    api.post("/auth/verify-email", { email, otp }),
+
+  sendVerificationOTP: (email: string) =>
+    api.post("/auth/send-verification-otp", { email }),
+
   signOut: async () => {
     return await api.post("/auth/signout", {}, { withCredentials: true });
   },
 
   refreshToken: async () => {
-    const res = await api.post("/auth/refresh_token", {}, {
-      withCredentials: true,
-    });
+    const res = await api.post(
+      "/auth/refresh_token",
+      {},
+      {
+        withCredentials: true,
+      },
+    );
     return res.data.accessToken;
   },
 
