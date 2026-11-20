@@ -1,3 +1,4 @@
+import HomePageSkeleton from "@/components/skeleton/home-page-skeleton";
 import { getPostUrl } from "@/lib/post-url";
 import { useEffect, useState } from "react";
 import type { PostFilter } from "@/services/filterService";
@@ -123,51 +124,78 @@ function PropertyCard({ property }: { property: TinDangDanhSach }) {
 export default function HomePage() {
   useFavorites();
   const { posts, fetchPost } = usePostStore();
-  useEffect(() => { void fetchPost().catch(() => {}); }, [fetchPost]);
+  const [initialLoading, setInitialLoading] = useState(true);
+  useEffect(() => {
+    let active = true;
+    void fetchPost()
+      .catch(() => {})
+      .finally(() => {
+        if (active) setInitialLoading(false);
+      });
+    return () => {
+      active = false;
+    };
+  }, [fetchPost]);
   const [filter, setFilter] = useState<(PostFilter & { page: number }) | null>(
     null,
   );
   return (
     <div className="min-h-screen ">
       <Header />
-      <div className="mx-auto grid max-w-7xl items-start gap-6 shadow-sm px-5 py-8 sm:px-8 lg:grid-cols-[210px_minmax(0,1fr)] bg-white">
-        <aside
-          aria-label="Bộ lọc bất động sản"
-          className="grid gap-4 sm:grid-cols-2 lg:sticky lg:top-24 lg:grid-cols-1"
-        >
-          <FilterPrice
-            selected={filter?.type === "price" && typeof filter.range === "string" ? filter.range : undefined}
-            onSelect={(range, label) =>
-              setFilter({ type: "price", range, label, page: 1 })
-            }
-          />
-          <FilterArea
-            selected={filter?.type === "area" ? filter.range : undefined}
-            onSelect={(range, label) =>
-              setFilter({ type: "area", range, label, page: 1 })
-            }
-          />
-        </aside>
-        <main className="min-w-0 space-y-6">
-          <SearchPanel
-            posts={posts}
-            filters={<FilterBox posts={posts} selected={filter} onSelect={(selected) => setFilter(selected ? { ...selected, page: 1 } : null)} />}
-            filter={filter}
-            onClearFilter={() => setFilter(null)}
-            onFilterPage={(page) =>
-              setFilter((current) => (current ? { ...current, page } : null))
-            }
+      {initialLoading && posts.length === 0 ? (
+        <HomePageSkeleton />
+      ) : (
+        <div className="mx-auto grid max-w-7xl items-start gap-6 shadow-sm px-5 py-8 sm:px-8 lg:grid-cols-[210px_minmax(0,1fr)] bg-white">
+          <aside
+            aria-label="Bộ lọc bất động sản"
+            className="grid gap-4 sm:grid-cols-2 lg:sticky lg:top-24 lg:grid-cols-1"
           >
-            {(results) => (
-              <div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-                {results.map((post) => (
-                  <PropertyCard key={post.maTinDang} property={post} />
-                ))}
-              </div>
-            )}
-          </SearchPanel>
-        </main>
-      </div>
+            <FilterPrice
+              selected={
+                filter?.type === "price" && typeof filter.range === "string"
+                  ? filter.range
+                  : undefined
+              }
+              onSelect={(range, label) =>
+                setFilter({ type: "price", range, label, page: 1 })
+              }
+            />
+            <FilterArea
+              selected={filter?.type === "area" ? filter.range : undefined}
+              onSelect={(range, label) =>
+                setFilter({ type: "area", range, label, page: 1 })
+              }
+            />
+          </aside>
+          <main className="min-w-0 space-y-6">
+            <SearchPanel
+              posts={posts}
+              filters={
+                <FilterBox
+                  posts={posts}
+                  selected={filter}
+                  onSelect={(selected) =>
+                    setFilter(selected ? { ...selected, page: 1 } : null)
+                  }
+                />
+              }
+              filter={filter}
+              onClearFilter={() => setFilter(null)}
+              onFilterPage={(page) =>
+                setFilter((current) => (current ? { ...current, page } : null))
+              }
+            >
+              {(results) => (
+                <div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+                  {results.map((post) => (
+                    <PropertyCard key={post.maTinDang} property={post} />
+                  ))}
+                </div>
+              )}
+            </SearchPanel>
+          </main>
+        </div>
+      )}
       <Footer />
     </div>
   );

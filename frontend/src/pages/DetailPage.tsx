@@ -18,6 +18,10 @@ import {
   Phone,
   Share2,
   ShieldCheck,
+  Sofa,
+  Ruler,
+  Split,
+  Road,
 } from "lucide-react";
 import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
@@ -183,7 +187,25 @@ const DetailPage = () => {
     { icon: BedDouble, label: "Phòng ngủ", value: post.soPhongNgu },
     { icon: Bath, label: "Phòng tắm", value: post.soPhongTam },
     { icon: Building2, label: "Số tầng", value: post.soTang },
-    { icon: Compass, label: "Hướng nhà", value: post.huongNha },
+    { icon: Split, label: "Hướng nhà", value: post.huongNha },
+    { icon: Compass, label: "Hướng ban công", value: post.huongBanCong },
+    { icon: Sofa, label: "Nội thất", value: post.noiThat },
+    {
+      icon: Ruler,
+      label: "Mặt tiền",
+      value:
+        post.matTien == null
+          ? null
+          : `${post.matTien.toLocaleString("vi-VN")} m`,
+    },
+    {
+      icon: Road,
+      label: "Đường vào",
+      value:
+        post.matDuong == null
+          ? null
+          : `${post.matDuong.toLocaleString("vi-VN")} m`,
+    },
     { icon: FileCheck2, label: "Pháp lý", value: post.giayToPhapLy?.tenGiayTo },
   ].filter(({ value }) => value != null && value !== "");
   const address = [
@@ -406,7 +428,9 @@ const DetailPage = () => {
                     onClick={(event) => {
                       if (!user) {
                         event.preventDefault();
-                        navigate("/signin", { state: { backgroundLocation: location } });
+                        navigate("/signin", {
+                          state: { backgroundLocation: location },
+                        });
                       }
                     }}
                     target={user ? "_blank" : undefined}

@@ -8,6 +8,55 @@ import {
   type SearchSuggestion,
 } from "@/services/searchService";
 
+const searchExamples = [
+  "Chung cư Vinhomes 2 phòng ngủ",
+  "Nhà phố tại Thủ Đức",
+  "Căn hộ 75 m² tại Tân Hưng",
+];
+
+function useSearchPlaceholder(paused: boolean) {
+  const [text, setText] = useState(searchExamples[0]);
+
+  useEffect(() => {
+    if (paused) return;
+    const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let timer: number;
+
+    function start() {
+      window.clearTimeout(timer);
+      if (motion.matches) {
+        setText(searchExamples[0]);
+        return;
+      }
+
+      let index = 0;
+      let length = 0;
+      function typeNext() {
+        const example = searchExamples[index];
+        length += 1;
+        setText(example.slice(0, length));
+        if (length === example.length) {
+          index = (index + 1) % searchExamples.length;
+          length = 0;
+          timer = window.setTimeout(typeNext, 2500);
+        } else {
+          timer = window.setTimeout(typeNext, 65);
+        }
+      }
+      typeNext();
+    }
+
+    start();
+    motion.addEventListener("change", start);
+    return () => {
+      window.clearTimeout(timer);
+      motion.removeEventListener("change", start);
+    };
+  }, [paused]);
+
+  return paused ? "Nhập thông tin bạn muốn tìm..." : text;
+}
+
 export default function SearchBar({
   onSearch,
 }: {
@@ -21,6 +70,7 @@ export default function SearchBar({
     items: SearchSuggestion[];
   } | null>(null);
   const [chosen, setChosen] = useState<SearchSuggestion | null>(null);
+  const placeholder = useSearchPlaceholder(open || value.length > 0);
   const id = useId();
   const keyword = value.trim();
   const suggestions = result?.keyword === keyword ? result.items : [];
@@ -88,7 +138,7 @@ export default function SearchBar({
           }
           value={value}
           maxLength={200}
-          placeholder="Nhập thông tin bạn muốn tìm..."
+          placeholder={placeholder}
           className="h-12 rounded-sm border-[#ccc] bg-white pr-10 pl-11 text-sm"
           onFocus={() => setOpen(true)}
           onChange={(event) => {
