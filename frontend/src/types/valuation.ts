@@ -23,8 +23,6 @@ export interface ValuationResult {
   unit_price_million_m2: number;
   min_price_billion: number;
   max_price_billion: number;
-  dist_center_km: number;
-  dist_beach_km: number;
   model_name: string;
   model_version: string;
   interval_nominal_coverage: number;

@@ -1,4 +1,3 @@
-"""Shared, deterministic preprocessing for training and inference (schema v2)."""
 import re
 import unicodedata
 import numpy as np
@@ -12,7 +11,6 @@ DISTRICT_COORDS = {
     "Liên Chiểu": (16.075, 108.145), "Cẩm Lệ": (16.012, 108.205),
     "Hòa Vang": (15.985, 108.12),
 }
-# Coarse service envelope, NOT administrative district polygons.
 BOUNDS = {"south": 15.7, "north": 16.3, "west": 107.7, "east": 108.4}
 AREA_MIN, AREA_MAX = 25, 1200
 OPTIONAL_NUMERIC = {
@@ -94,11 +92,4 @@ def engineer_features(frame):
     for name, pattern in AMENITIES.items():
         frame[name] = frame["amenity_text"].map(lambda value: has_term(value, pattern))
     frame["amenity_score"] = frame.near_school * 1.5 + frame.near_hospital + frame.near_market * 1.5 + frame.near_beach * 2
-    # Detailed GPS is deliberately excluded: training data has no property GPS.
     return frame[FEATURES]
-
-
-def distance_km(lat, lon, target_lat, target_lon):
-    lat, lon, target_lat, target_lon = np.radians([lat, lon, target_lat, target_lon])
-    a = np.sin((target_lat-lat)/2)**2 + np.cos(lat)*np.cos(target_lat)*np.sin((target_lon-lon)/2)**2
-    return float(6371 * 2 * np.arcsin(np.sqrt(np.clip(a, 0, 1))))

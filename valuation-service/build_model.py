@@ -1,4 +1,3 @@
-"""Train candidates, select on validation only, calibrate, then evaluate once."""
 import argparse
 from datetime import datetime, timezone
 import hashlib
@@ -7,8 +6,6 @@ import json
 import math
 import os
 from pathlib import Path
-import sys
-
 import joblib
 import numpy as np
 import pandas as pd
@@ -66,14 +63,11 @@ def prepare(raw):
     df["price_billion"] = pd.to_numeric(df.price, errors="coerce") / 1e9
     df["area"] = pd.to_numeric(df.area, errors="coerce")
     unit = df.price_billion * 1000 / df.area
-    # Fixed domain rules only. No thresholds fitted on future validation/test prices.
     df = df[df.district.ne("") & df.published_at.notna() & df.area.between(AREA_MIN, AREA_MAX)
             & df.price_billion.between(.4, 80) & unit.between(5, 320)].copy()
     report["eligible_rows"] = len(df)
     df["amenity_text"] = df["name"].fillna("") + ". " + df.description.fillna("")
     df["legal_status"] = df.amenity_text.map(infer_legal)
-    # Conservative repeated-listing grouping: same title, location, type and area.
-    # Price/date/description may change between reposts and are excluded from the key.
     keys = df[["district", "ward", "street", "property_type", "area"]].copy()
     keys["title"] = df["name"].map(text).str.casefold()
     empty_title = keys.title.eq("")
@@ -139,7 +133,6 @@ def select_winner(results):
 
 
 def conformal_quantile(residuals, coverage=COVERAGE):
-    # Finite-sample order statistic for split conformal calibration.
     rank = min(len(residuals), math.ceil((len(residuals)+1)*coverage))
     return float(np.sort(residuals)[rank-1])
 
@@ -206,7 +199,6 @@ def main():
     final_scores["interval_coverage"] = float(inside.mean())
     segments = {kind: scores(test[test.property_type.eq(kind)], pred[test.property_type.eq(kind).to_numpy()]) for kind in test.property_type.unique()}
     metrics = {"selection_metric": "validation_mape", "selected_model": winner, "validation": results, "test": final_scores, "test_by_property_type": segments}
-    # Artifact includes all dictionaries from development only, avoiding future vocabulary.
     metadata = make_metadata(development)
     version = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S%fZ")
     directory = BASE_DIR / "artifacts" / version
@@ -222,7 +214,6 @@ def main():
                 "feature_hash_format": "utf8_lf", "dataset": dataset, "data_report": report, "packages": versions}
     for name, data in [("metadata.json", metadata), ("metrics.json", metrics), ("calibration.json", calibration), ("manifest.json", manifest)]:
         (directory / name).write_text(json.dumps(data, ensure_ascii=False, indent=2, allow_nan=False), encoding="utf-8")
-    # Switch only after every artifact and reload check succeeds.
     pointer = BASE_DIR / "artifacts" / "current.json"
     temp = pointer.with_suffix(".tmp")
     temp.write_text(json.dumps({"version": version}), encoding="utf-8")

@@ -28,7 +28,7 @@
   ],
   "location_resolution": "district_ward_street",
   "model_sha256": "41a63663cce29594ae023ce36446c591790989205dfe859112d1bb455d600c7d",
-  "feature_code_sha256": "57435bddfb01b10a6d515a2ef7787e23f01b109e83a3c761030d5268f1f5e49c",
+  "feature_code_sha256": "b3492d62be604601755562765061c3b8229493a5d1b889b0325689b0961d9a9f",
   "dataset": {
     "dataset": "tinixai/vietnam-real-estates",
     "cache_revision": "ca3fedcbb089bf65f7e4cfb03316cce4bd0d779f",

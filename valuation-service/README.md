@@ -56,7 +56,7 @@ Pháp lý/hướng cần được chọn rõ ràng; vẫn có thể chủ độn
 được điền sẵn. Khi chọn đất, các trường phòng/tầng được ẩn và gửi 0 tự động.
 API kiểm tra danh mục và các giới hạn số. Không nhận trường `length`.
 Dữ liệu train chưa có GPS từng tài sản nên model không dùng lat/lon và khoảng
-cách làm đặc trưng. Ghim chỉ phục vụ khoảng cách tham khảo. Phạm vi bản đồ là
+cách làm đặc trưng. Phạm vi bản đồ là
 bounding box rộng của khu vực, không thay thế kiểm tra đa giác địa giới; người dùng
 cần xác nhận quận/phường phù hợp với ghim. Danh mục dùng địa chỉ cũ theo dataset.
 

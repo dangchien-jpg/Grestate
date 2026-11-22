@@ -5,7 +5,6 @@ import sys
 import unittest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-import numpy as np
 import pandas as pd
 from sklearn.linear_model import Ridge
 from app import app, load_bundle
@@ -171,7 +170,8 @@ class ApiTests(unittest.TestCase):
         a = self.call(self.base)[1]
         b = self.call(self.base | {"lat": 16.1, "lon": 108.25})[1]
         self.assertEqual(a["total_price_billion"], b["total_price_billion"])
-        self.assertNotEqual(a["dist_center_km"], b["dist_center_km"])
+        self.assertEqual(a, b)
+        self.assertTrue({"dist_center_km", "dist_beach_km"}.isdisjoint(a))
 
     def test_metadata_matches_selected_artifact(self):
         status, body = asyncio.run(request("/api/metadata", method="GET"))

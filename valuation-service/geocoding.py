@@ -1,4 +1,3 @@
-"""Bounded, cached Nominatim access. Run one API worker for the global rate limit."""
 from collections import OrderedDict
 import json
 import os
@@ -18,7 +17,6 @@ _TTL = 86400
 def lookup(kind, params):
     global _last_call
     key = (kind, tuple(sorted(params.items())))
-    # Reject excess concurrency instead of creating an unbounded queue.
     if not _lock.acquire(timeout=2):
         raise HTTPException(429, "Tra cứu địa chỉ đang bận. Vui lòng thử lại.")
     try:

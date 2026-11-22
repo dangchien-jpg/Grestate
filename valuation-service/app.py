@@ -1,4 +1,3 @@
-"""Internal prediction API. Public requests pass through the authenticated Node gateway."""
 from contextlib import asynccontextmanager
 import hashlib
 import hmac
@@ -16,8 +15,8 @@ import numpy as np
 import pandas as pd
 from fastapi import Depends, FastAPI, Header, HTTPException, Query
 from pydantic import BaseModel, ConfigDict, Field, field_validator
-from features import (AREA_MAX, AREA_MIN, BOUNDS, FEATURES, SCHEMA_VERSION, UNKNOWN,
-                      canonical_district, distance_km, engineer_features, normalize_direction, normalize_location)
+from features import (AREA_MAX, AREA_MIN, BOUNDS, FEATURES, SCHEMA_VERSION,
+                      canonical_district, engineer_features, normalize_direction, normalize_location)
 from geocoding import lookup
 
 BASE_DIR = Path(__file__).resolve().parent
@@ -115,8 +114,6 @@ class ValuationResponse(BaseModel):
     unit_price_million_m2: float
     min_price_billion: float
     max_price_billion: float
-    dist_center_km: float
-    dist_beach_km: float
     model_name: str
     model_version: str
     interval_nominal_coverage: float
@@ -167,15 +164,13 @@ def predict(payload, bundle):
         raise ValueError("Non-finite or non-positive model output")
     calibration = bundle["calibration"]
     radius = calibration["by_property_type"].get(payload.property_type, calibration["global_log_radius"])
-    warnings = ["Giá được ước tính theo quận, phường, đường và đặc điểm bất động sản. Ghim bản đồ dùng để tính khoảng cách tham khảo."]
+    warnings = ["Giá được ước tính theo quận, phường, đường và đặc điểm bất động sản."]
     if payload.street.casefold() not in {name.casefold() for name in district["streets"]}:
         warnings.append("Đường này chưa có trong danh mục huấn luyện; ước tính dùng thêm thông tin khu vực.")
     return {
         "status": "success", "total_price_billion": round(total, 6),
         "unit_price_million_m2": round(unit_price, 4),
         "min_price_billion": round(total*np.exp(-radius), 6), "max_price_billion": round(total*np.exp(radius), 6),
-        "dist_center_km": round(distance_km(payload.lat, payload.lon, 16.0611, 108.2274), 2),
-        "dist_beach_km": round(distance_km(payload.lat, payload.lon, 16.0598, 108.2458), 2),
         "model_name": bundle["manifest"]["model_name"], "model_version": bundle["manifest"]["model_version"],
         "interval_nominal_coverage": calibration["nominal_coverage"],
         "interval_test_coverage": bundle["metrics"]["test"]["interval_coverage"], "warnings": warnings,
