@@ -1,3 +1,4 @@
+import ContactPhoneButton from "@/components/contact/contact-phone-button";
 import { getPostId, getPostUrl } from "@/lib/post-url";
 import ReportForm from "@/components/report/report-form";
 import { useEffect, useState } from "react";
@@ -15,7 +16,6 @@ import {
   LandPlot,
   MapPin,
   MessageCircle,
-  Phone,
   Share2,
   ShieldCheck,
   Sofa,
@@ -116,11 +116,7 @@ const DetailPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const user = useAuthStore((state) => state.user);
-  const [revealedContact, setRevealedContact] = useState<{
-    postId: number;
-    userId: number;
-    phone: string;
-  } | null>(null);
+
   const fetchDetailPost = usePostStore((state) => state.fetchDetailPost);
   const post = usePostStore((state) => state.post);
   const [request, setRequest] = useState<{
@@ -219,27 +215,6 @@ const DetailPage = () => {
   const mapUrl = `https://maps.google.com/maps?q=${mapQuery}&output=embed&hl=vi&z=17`;
   const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${mapQuery}`;
   const contactName = post.nguoiLienHe?.trim() || post.nguoiDang.hoTen;
-  const contactPhone =
-    post.soDienThoaiLienHe?.trim() || post.nguoiDang.soDienThoai?.trim();
-  const phoneVisible = Boolean(
-    user &&
-    revealedContact?.postId === id &&
-    revealedContact.userId === user.maNguoiDung &&
-    revealedContact.phone === contactPhone,
-  );
-  const showPhone = () => {
-    if (!user) {
-      navigate("/signin", { state: { backgroundLocation: location } });
-      return;
-    }
-    if (contactPhone) {
-      setRevealedContact({
-        postId: id,
-        userId: user.maNguoiDung,
-        phone: contactPhone,
-      });
-    }
-  };
   let zaloUrl: string | null = null;
   const zaloLink = post.nguoiDang.duongDanZalo?.trim();
   if (zaloLink) {
@@ -397,31 +372,7 @@ const DetailPage = () => {
                 </div>
               </div>
               <div className="mt-8 space-y-3">
-                <Button
-                  type="button"
-                  className="h-12 w-full gap-2 rounded-lg"
-                  disabled={!contactPhone}
-                  onClick={showPhone}
-                  aria-label={
-                    contactPhone && !phoneVisible
-                      ? "Xem số điện thoại liên hệ"
-                      : undefined
-                  }
-                >
-                  <Phone className="size-4" />
-                  <span aria-live="polite">
-                    {contactPhone
-                      ? phoneVisible
-                        ? contactPhone
-                        : "**********"
-                      : "Chưa có số điện thoại"}
-                  </span>
-                  {contactPhone && !phoneVisible && (
-                    <span className="ml-2 underline underline-offset-4">
-                      Xem số
-                    </span>
-                  )}
-                </Button>
+                <ContactPhoneButton post={post} className="w-full" />
                 {zaloUrl ? (
                   <a
                     href={user ? zaloUrl : "/signin"}

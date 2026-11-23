@@ -1,4 +1,4 @@
-import { Check, Mail, MapPin, Phone, ShieldCheck } from "lucide-react";
+import { Mail, MapPin, Phone, ShieldCheck } from "lucide-react";
 
 const Footer = () => {
   return (
@@ -82,10 +82,6 @@ const Footer = () => {
                 support@grestate.vn
               </a>
             </address>
-            <p className="mt-4 flex items-center gap-1 text-[10px] ">
-              <Check className="size-3" />
-              Thông tin liên hệ minh họa
-            </p>
           </div>
         </div>
         <div className="border-t border-white/10 pt-5 text-center text-xs text-white">

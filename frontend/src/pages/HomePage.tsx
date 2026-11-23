@@ -9,7 +9,7 @@ import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
 import { usePostStore } from "@/stores/postStore";
 import { useFavorites } from "@/hooks/use-favorites";
-import { PropertyCard } from "./PropertyListPage";
+import PropertyCard from "@/components/property/property-card";
 import { useAuthStore } from "@/stores/authStore";
 
 const sampleProjects = [

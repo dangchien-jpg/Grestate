@@ -1,5 +1,5 @@
 import { useEffect, useId, useState, type FormEvent } from "react";
-import { Map, Search, X } from "lucide-react";
+import { Search, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -58,11 +58,13 @@ function useSearchPlaceholder(paused: boolean) {
 }
 
 export default function SearchBar({
+  initialValue = "",
   onSearch,
 }: {
+  initialValue?: string;
   onSearch: (query: SearchQuery | null, label: string) => void;
 }) {
-  const [value, setValue] = useState("");
+  const [value, setValue] = useState(initialValue);
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(-1);
   const [result, setResult] = useState<{
@@ -114,7 +116,7 @@ export default function SearchBar({
       id="search"
       role="search"
       onSubmit={submit}
-      className="flex flex-col gap-3 sm:flex-row"
+      className="flex items-center gap-1 rounded-sm border border-[#ccc] bg-white p-1 shadow-sm focus-within:border-primary"
     >
       <div
         className="relative min-w-0 flex-1"
@@ -123,10 +125,6 @@ export default function SearchBar({
             setOpen(false);
         }}
       >
-        <Search
-          aria-hidden="true"
-          className="pointer-events-none absolute top-4 left-4 size-5 text-primary"
-        />
         <Input
           role="combobox"
           aria-label="Địa điểm hoặc tên bất động sản"
@@ -139,7 +137,7 @@ export default function SearchBar({
           value={value}
           maxLength={200}
           placeholder={placeholder}
-          className="h-12 rounded-sm border-[#ccc] bg-white pr-10 pl-11 text-sm"
+          className="h-11 border-0 bg-transparent pr-10 text-sm shadow-none focus-visible:ring-0 placeholder:font-semibold placeholder:text-sm"
           onFocus={() => setOpen(true)}
           onChange={(event) => {
             setValue(event.target.value);
@@ -210,16 +208,9 @@ export default function SearchBar({
           </ul>
         )}
       </div>
-      <Button type="submit" className="h-12 gap-2 rounded-sm px-7 text-sm">
+      <Button type="submit" className="h-11 shrink-0 gap-2 rounded-sm px-3 text-sm sm:px-5">
         <Search className="size-5" />
         Tìm kiếm
-      </Button>
-      <Button
-        type="submit"
-        className="h-12 gap-2 rounded-sm px-7 text-sm bg-emerald-500 hover:bg-emerald-500/80"
-      >
-        <Map className="size-5" />
-        Bản đồ
       </Button>
     </form>
   );
