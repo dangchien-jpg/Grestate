@@ -1,4 +1,4 @@
-﻿import { cn } from "cn";
+import { cn } from "cn";
 import axios from "axios";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -52,7 +52,7 @@ export function SigninForm({
       await signIn(data.email, data.password);
       const user = useAuthStore.getState().user;
       navigate(
-        backgroundLocation
+        location.state?.returnTo === "/predict" ? "/predict" : backgroundLocation
           ? `${backgroundLocation.pathname}${backgroundLocation.search}${backgroundLocation.hash}`
           : user?.maVaiTro == 2
             ? "/admin/dashboard"

@@ -3,6 +3,7 @@ import {
   ListCheck,
   LogOut,
   Menu,
+  Plus,
   Settings,
   UserRound,
 } from "lucide-react";
@@ -32,20 +33,15 @@ const Header = () => {
   const navigation = useNavigate();
   const location = useLocation();
   const menuItems = [
-    { to: "/", label: "Nhà đất bán" },
+    { to: "/nha-dat-ban", label: "Nhà đất bán" },
     { to: "/projects", label: "Dự án" },
     { to: "/predict", label: "Định giá AI" },
     { to: "/news", label: "Tin tức" },
     { to: "/contact", label: "Liên hệ" },
   ];
   const isMenuActive = (to: string) => {
-    if (to === "/") {
-      return (
-        location.pathname.startsWith("/detail/") ||
-        (location.pathname === "/" &&
-          location.state?.salesMenuSelected === true)
-      );
-    }
+    if (to === "/nha-dat-ban" && location.pathname.startsWith("/detail/"))
+      return true;
     return location.pathname === to || location.pathname.startsWith(`${to}/`);
   };
 
@@ -76,7 +72,6 @@ const Header = () => {
             <Link
               key={to}
               to={to}
-              state={to === "/" ? { salesMenuSelected: true } : undefined}
               aria-current={isMenuActive(to) ? "page" : undefined}
               className={`border-b-2 py-7 transition-colors hover:text-primary ${isMenuActive(to) ? "border-primary text-primary" : "border-transparent"}`}
             >
@@ -147,8 +142,9 @@ const Header = () => {
 
           <Link
             to="/me/create-post"
-            className="rounded-full bg-primary  px-4 py-2.5 text-xs font-semibold text-white hover:bg-primary/90"
+            className="flex items-center gap-2 rounded-full bg-primary  px-4 py-2.5 text-xs font-semibold text-white hover:bg-primary/90"
           >
+            <Plus className="size-4" />
             Đăng tin
           </Link>
         </div>
@@ -167,7 +163,6 @@ const Header = () => {
             <Link
               key={to}
               to={to}
-              state={to === "/" ? { salesMenuSelected: true } : undefined}
               aria-current={isMenuActive(to) ? "page" : undefined}
               className={`justify-self-start border-b-2 pb-1 hover:text-primary ${isMenuActive(to) ? "border-primary text-primary" : "border-transparent"}`}
             >

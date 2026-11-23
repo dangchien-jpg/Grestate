@@ -1,4 +1,4 @@
-﻿import {
+import {
   BrowserRouter,
   Routes,
   Route,
@@ -8,6 +8,7 @@
 import AuthDialog from "@/components/auth/auth-dialog";
 
 import VerifyEmailPage from "./pages/VerifyEmailPage";
+import PropertyListPage from "./pages/PropertyListPage";
 import HomePage from "./pages/HomePage";
 import { Toaster } from "sonner";
 import ProtectedRoute from "@/components/auth/protected-route";
@@ -44,6 +45,7 @@ function AppRoutes() {
       <Routes location={authOpen ? (backgroundLocation ?? "/") : location}>
         {/* Public routes */}
         <Route path="/" element={<HomePage />} />
+        <Route path="/nha-dat-ban" element={<PropertyListPage key={location.key} />} />
         <Route path="/detail/:maTinDang" element={<DetailPage />} />
         <Route path="/projects" element={<ProjectPage />} />
         <Route path="/news" element={<NewsPage />} />

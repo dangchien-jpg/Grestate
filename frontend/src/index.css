@@ -722,3 +722,8 @@
     transform: translateY(0);
   }
 }
+
+@keyframes valuation-arrow {
+  0%, 60%, 100% { transform: translateX(0); }
+  80% { transform: translateX(4px); }
+}

@@ -15,10 +15,12 @@ export default function SearchPanel({
   posts,
   filters,
   children,
+  initialKeyword = "",
   filter = null,
   onClearFilter,
   onFilterPage,
 }: {
+  initialKeyword?: string;
   filter?: (PostFilter & { page: number }) | null;
   onClearFilter?: () => void;
   onFilterPage?: (page: number) => void;
@@ -30,7 +32,7 @@ export default function SearchPanel({
     query: SearchQuery;
     label: string;
     page: number;
-  } | null>(null);
+  } | null>(initialKeyword ? { query: {keyword: initialKeyword}, label: initialKeyword, page: 1 } : null);
   const [retry, setRetry] = useState(0);
   const key = JSON.stringify([search, filter, retry]);
   const [result, setResult] = useState<{
