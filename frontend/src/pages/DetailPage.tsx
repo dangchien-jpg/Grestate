@@ -1,3 +1,4 @@
+import VerifiedBadge from "@/components/verify-post/verified-badge";
 import ContactPhoneButton from "@/components/contact/contact-phone-button";
 import { getPostId, getPostUrl } from "@/lib/post-url";
 import ReportForm from "@/components/report/report-form";
@@ -255,6 +256,7 @@ const DetailPage = () => {
 
             <section className="rounded-2xl border border-gray-300 bg-white p-5 sm:p-7">
               <h1 className="text-xl font-bold leading-snug tracking-tight sm:text-xl">
+                <VerifiedBadge verified={post.daXacThuc} />
                 {post.tieuDe}
               </h1>
               <p className="mt-3 flex items-start gap-2 text-sm leading-relaxed ">

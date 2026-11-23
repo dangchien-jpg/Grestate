@@ -1,4 +1,4 @@
-﻿import PendingReportBadge from "@/components/admin/post-report/pending-report-badge";
+import PendingReportBadge from "@/components/admin/post-report/pending-report-badge";
 import PendingPostBadge from "@/components/admin/pending-post-badge";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import type { ReactNode } from "react";
@@ -11,6 +11,7 @@ import {
   CircleUserRound,
   Flag,
   ListChecks,
+  ShieldCheck,
   LogOut,
   Settings,
   Users,
@@ -49,6 +50,7 @@ const AdminLayout = ({ title, children }: AdminLayoutProps) => {
     <div className="flex min-h-screen bg-background font-sans">
       <Sidebar
         items={[
+          { icon: <ShieldCheck />, title: "Tin chờ xác thực", link: "/admin/verify-post" },
           {
             icon: <ChartNoAxesCombined />,
             title: "Dashboard",

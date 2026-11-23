@@ -1,3 +1,4 @@
+import { verificationFields, withVerification } from "../utils/post-verification.js";
 const properties = {
   province: {
     type: "string",
@@ -145,6 +146,7 @@ export async function searchProperties(prisma, filters) {
       select: {
         maTinDang: true,
         tieuDe: true,
+        ...verificationFields,
         giaNiemYet: true,
         dienTich: true,
         diaChiChiTiet: true,
@@ -170,7 +172,7 @@ export async function searchProperties(prisma, filters) {
     }),
   ]);
   const posts = records.map(({ hinhAnhTinDangs, ...post }) => ({
-    ...post,
+    ...withVerification(post),
     giaNiemYet: post.giaNiemYet.toString(),
     dienTich: post.dienTich.toString(),
     anhDaiDienUrl: hinhAnhTinDangs[0]?.hinhAnhUrl ?? null,

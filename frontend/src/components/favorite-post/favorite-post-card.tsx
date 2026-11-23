@@ -1,3 +1,4 @@
+import VerifiedBadge from "@/components/verify-post/verified-badge";
 import { getPostUrl } from "@/lib/post-url";
 import {
   Bath,
@@ -72,6 +73,7 @@ export default function FavoritePostCard({
             to={detailUrl}
             className="line-clamp-2 rounded-sm focus-visible:outline-2 focus-visible:outline-primary"
           >
+            <VerifiedBadge verified={post.daXacThuc} />
             {post.tieuDe}
           </Link>
         </h2>

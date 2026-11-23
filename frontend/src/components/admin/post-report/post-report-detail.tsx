@@ -1,3 +1,4 @@
+import VerifiedBadge from "@/components/verify-post/verified-badge";
 import { getPostUrl } from "@/lib/post-url";
 import { Link } from "react-router";
 import { useEffect, useRef, useState } from "react";
@@ -137,7 +138,7 @@ export default function PostReportDetail({
                   className="aspect-video w-full shrink-0 rounded object-cover sm:h-24 sm:w-36"
                 />
                 <div className="min-w-0 flex-1 space-y-2">
-                  <h2 className="line-clamp-2 font-bold">{post.tieuDe}</h2>
+                  <h2 className="line-clamp-2 font-bold"><VerifiedBadge verified={post.daXacThuc} />{post.tieuDe}</h2>
                   <p className="text-xs text-gray-500">
                     Mã tin: {post.maTinDang} · Trạng thái: {post.trangThai}
                     {post.deletedAt ? " · Đã xóa" : ""}

@@ -1,3 +1,4 @@
+import VerifiedBadge from "@/components/verify-post/verified-badge";
 import { getPostUrl } from "@/lib/post-url";
 import { useEffect, useRef, useState } from "react";
 import type { FormEvent } from "react";
@@ -48,7 +49,7 @@ function PostCard({ post }: { post: ChatPost }) {
       </div>
       <div className="min-w-0">
         <p className="line-clamp-2 text-xs font-semibold leading-5 group-hover:text-primary">
-          {post.tieuDe}
+          <VerifiedBadge verified={post.daXacThuc} />{post.tieuDe}
         </p>
         <p className="mt-1 text-sm font-bold text-primary">
           {formatPrice(Number(post.giaNiemYet))}{" "}

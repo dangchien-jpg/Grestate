@@ -1,4 +1,4 @@
-﻿import type { NguoiDung } from "./user";
+import type { NguoiDung } from "./user";
 
 export interface TinDang {
   maTinDang: number;
@@ -110,7 +110,15 @@ export interface ThongBao {
   createdAt: string;
 }
 
+export interface VerificationSummary {
+  maYeuCau: number;
+  trangThai: "CHO_XU_LY" | "DA_XAC_THUC" | "TU_CHOI";
+  lyDoXuLy: string | null;
+}
+
 export interface TinDangDanhSach extends TinDang {
+  daXacThuc?: boolean;
+  xacThuc?: VerificationSummary | null;
   nguoiDang: Pick<
     NguoiDung,
     "maNguoiDung" | "hoTen" | "soDienThoai" | "anhDaiDienUrl" | "duongDanZalo"

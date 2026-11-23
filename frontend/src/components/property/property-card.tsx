@@ -1,3 +1,4 @@
+import VerifiedBadge from "@/components/verify-post/verified-badge";
 import { Bath, BedDouble, Clock3, LandPlot, MapPin } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "react-router";
@@ -42,6 +43,7 @@ export default function PropertyCard({
             title={property.tieuDe}
             className={`line-clamp-2 wrap-break-word text-sm font-bold tracking-tight transition-colors ${featured ? "min-h-12 leading-6" : "min-h-10 leading-5"}`}
           >
+            <VerifiedBadge verified={property.daXacThuc} />
             {property.tieuDe}
           </h3>
           <p className="flex items-center gap-1 text-xs ">

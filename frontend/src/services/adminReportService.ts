@@ -18,7 +18,7 @@ export type AdminReport = {
   nguoiBaoCao: { hoTen: string };
   tinDang: {
     maTinDang: number;
-    tieuDe: string;
+    daXacThuc?: boolean; tieuDe: string;
     trangThai: string;
     deletedAt?: string | null;
     hinhAnhTinDangs: { hinhAnhUrl: string }[];

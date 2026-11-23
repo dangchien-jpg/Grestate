@@ -1,3 +1,4 @@
+import { latestVerification, isVerifiedPost } from "../utils/post-verification.js";
 import prisma from "../libs/prisma.js";
 
 const priceRanges = {
@@ -41,6 +42,7 @@ const fetchFilteredPosts = async (req, res, condition) => {
       take: pageSize,
       orderBy: [{ ngayDang: "desc" }, { maTinDang: "desc" }],
       include: {
+          yeuCauXacThucs: latestVerification,
         nguoiDang: {
           select: {
             maNguoiDung: true,
@@ -79,7 +81,8 @@ const fetchFilteredPosts = async (req, res, condition) => {
     }),
   ]);
 
-  const posts = records.map((post) => ({
+  const posts = records.map(({ yeuCauXacThucs, ...post }) => ({
+      daXacThuc: isVerifiedPost(post, yeuCauXacThucs[0]),
     ...post,
     giaNiemYet: Number(post.giaNiemYet),
     dienTich: Number(post.dienTich),

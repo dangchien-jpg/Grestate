@@ -3,7 +3,7 @@ import { isAxiosError } from "axios";
 
 export type ChatPost = {
   maTinDang: number;
-  tieuDe: string;
+  daXacThuc?: boolean; tieuDe: string;
   giaNiemYet: string;
   dienTich: string;
   diaChiChiTiet: string;

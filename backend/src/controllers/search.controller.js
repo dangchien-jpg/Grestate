@@ -1,3 +1,4 @@
+import { latestVerification, isVerifiedPost } from "../utils/post-verification.js";
 import prisma from "../libs/prisma.js";
 
 export const searchPost = async (req, res) => {
@@ -53,6 +54,7 @@ export const searchPost = async (req, res) => {
         take: pageSize,
         orderBy: [{ ngayDang: "desc" }, { maTinDang: "desc" }],
         include: {
+          yeuCauXacThucs: latestVerification,
           nguoiDang: {
             select: {
               maNguoiDung: true,
@@ -91,7 +93,8 @@ export const searchPost = async (req, res) => {
       }),
     ]);
 
-    const posts = records.map((post) => ({
+    const posts = records.map(({ yeuCauXacThucs, ...post }) => ({
+      daXacThuc: isVerifiedPost(post, yeuCauXacThucs[0]),
       ...post,
       giaNiemYet: Number(post.giaNiemYet),
       dienTich: Number(post.dienTich),

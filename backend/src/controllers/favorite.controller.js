@@ -1,3 +1,4 @@
+import { latestVerification, isVerifiedPost } from "../utils/post-verification.js";
 import prisma from "../libs/prisma.js";
 
 export const fetchAllFavoritePosts = async (req, res) => {
@@ -14,6 +15,8 @@ export const fetchAllFavoritePosts = async (req, res) => {
           select: {
             maTinDang: true,
             tieuDe: true,
+            phienBanXacThuc: true,
+            yeuCauXacThucs: latestVerification,
             giaNiemYet: true,
             dienTich: true,
             soPhongNgu: true,
@@ -47,9 +50,10 @@ export const fetchAllFavoritePosts = async (req, res) => {
     });
 
     const posts = records.map(({ ngayLuu, tinDang }) => {
-      const { hinhAnhTinDangs, _count, ...post } = tinDang;
+      const { hinhAnhTinDangs, _count, yeuCauXacThucs, ...post } = tinDang;
       return {
         ...post,
+        daXacThuc: isVerifiedPost(post, yeuCauXacThucs[0]),
         giaNiemYet: Number(post.giaNiemYet),
         dienTich: Number(post.dienTich),
         anhDaiDienUrl: hinhAnhTinDangs[0]?.hinhAnhUrl ?? null,

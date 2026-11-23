@@ -1,3 +1,5 @@
+import VerifiedBadge from "@/components/verify-post/verified-badge";
+import VerifyPostAction from "@/components/verify-post/verify-post-action";
 import { getPostUrl } from "@/lib/post-url";
 import { useEffect, useRef, useState } from "react";
 import { Dialog } from "@base-ui/react/dialog";
@@ -21,7 +23,7 @@ import { useAuthStore } from "@/stores/authStore";
 import { usePostStore } from "@/stores/postStore";
 import { useFavoriteStore } from "@/stores/favoriteStore";
 import { formatPrice } from "@/lib/format-price";
-import type { TinDangDanhSach } from "@/types/post";
+import type { TinDangDanhSach, VerificationSummary } from "@/types/post";
 import ManagerPostEditor from "./manager-post-editor";
 
 const statuses: Record<string, { label: string; className: string }> = {
@@ -62,11 +64,15 @@ function message(error: unknown, fallback: string) {
 function PostCard({
   post,
   deleting,
+  onVerification,
+  refresh,
   onEdit,
   onDelete,
 }: {
   post: TinDangDanhSach;
   deleting: boolean;
+  onVerification: (result: VerificationSummary) => void;
+  refresh: () => void;
   onEdit: () => void;
   onDelete: () => void;
 }) {
@@ -119,6 +125,7 @@ function PostCard({
             to={detailUrl}
             className="line-clamp-2 rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-primary"
           >
+            <VerifiedBadge verified={post.daXacThuc} />
             {post.tieuDe}
           </Link>
         </h2>
@@ -158,7 +165,8 @@ function PostCard({
         </p>
         <div className="mt-auto flex flex-wrap items-center justify-between gap-3 pt-4">
           <span className="text-[10px] ">{createdDate(post.createdAt)}</span>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
+            <VerifyPostAction post={post} onSubmitted={onVerification} onRefresh={refresh}/>
             <button
               type="button"
               onClick={onEdit}
@@ -381,6 +389,10 @@ export default function ManagerPostCard() {
               key={post.maTinDang}
               post={post}
               deleting={deletingIds.includes(post.maTinDang)}
+              refresh={() => setRetry(n => n + 1)}
+              onVerification={result => setRequest(state => state?.userId === post.maNguoiDung ? {
+                ...state, posts: state.posts.map(item => item.maTinDang === post.maTinDang ? { ...item, xacThuc: result } : item),
+              } : state)}
               onEdit={() => setEditing(post)}
               onDelete={() => {
                 setDeleteTarget(post);

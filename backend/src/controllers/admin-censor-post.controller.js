@@ -1,3 +1,4 @@
+import { latestVerification, withVerification } from "../utils/post-verification.js";
 import prisma from "../libs/prisma.js";
 
 export const acceptPost = async (req, res) => {
@@ -144,6 +145,7 @@ export const rejectPost = async (req, res) => {
 };
 
 const censorInclude = {
+  yeuCauXacThucs: latestVerification,
   nguoiDang: {
     select: {
       maNguoiDung: true,
@@ -168,7 +170,7 @@ const censorInclude = {
 };
 
 function censorPostResponse(post) {
-  const result = { ...post };
+  const result = withVerification(post);
   for (const field of [
     "giaNiemYet",
     "dienTich",

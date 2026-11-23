@@ -1,3 +1,4 @@
+import VerifiedBadge from "@/components/verify-post/verified-badge";
 import { useEffect, useState } from "react";
 import { LoaderCircle, Flag } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -132,7 +133,7 @@ export default function PostReportList() {
                       />
                       <div>
                         <p className="line-clamp-2 font-semibold">
-                          {report.tinDang.tieuDe}
+                          <VerifiedBadge verified={report.tinDang.daXacThuc} />{report.tinDang.tieuDe}
                         </p>
                         <p className="mt-1 text-xs text-gray-500">
                           Tin #{report.maTinDang} · Báo cáo #{report.maBaoCao}

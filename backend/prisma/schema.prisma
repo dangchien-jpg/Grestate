@@ -44,6 +44,9 @@ model NguoiDung {
   tinDangYeuThichs TinDangYeuThich[]
   thongBaos        ThongBao[]
 
+  yeuCauXacThucDaGuis YeuCauXacThucTinDang[] @relation("NguoiGuiXacThuc")
+  yeuCauXacThucDaXuLys YeuCauXacThucTinDang[] @relation("NguoiXuLyXacThuc")
+
   @@index([maVaiTro])
   @@index([trangThai, deletedAt])
   @@map("NGUOIDUNG")
@@ -89,6 +92,8 @@ model GiayToPhapLy {
   updatedAt DateTime  @updatedAt @db.DateTime(0)
   deletedAt DateTime? @db.DateTime(0)
   tinDangs  TinDang[]
+
+  minhChungXacThucs MinhChungXacThuc[]
 
   @@map("GIAYTOPHAPLY")
 }
@@ -152,6 +157,9 @@ model TinDang {
   phanAnhTinDangs  PhanAnhTinDang[]
   lichSuKiemDuyets LichSuKiemDuyet[]
   thongBaos        ThongBao[]
+
+  phienBanXacThuc Int @default(1)
+  yeuCauXacThucs  YeuCauXacThucTinDang[]
 
   @@index([maNguoiDung, createdAt])
   @@index([maLoaiBatDongSan])
@@ -247,3 +255,66 @@ model ThongBao {
   @@map("THONGBAO")
 }
 
+enum TrangThaiYeuCauXacThuc {
+  CHO_XU_LY
+  DA_XAC_THUC
+  TU_CHOI
+}
+
+enum NhomMinhChung {
+  HO_SO_PHAP_LY
+  BAT_DONG_SAN_THUC_TE
+}
+
+enum LoaiTepMinhChung {
+  ANH
+  VIDEO
+}
+
+model YeuCauXacThucTinDang {
+  maYeuCau         Int                 @id @default(autoincrement())
+  maTinDang        Int
+  maNguoiYeuCau    Int
+  phienBanTinLucGui Int
+  trangThai        TrangThaiYeuCauXacThuc @default(CHO_XU_LY)
+  ghiChuNguoiGui   String?             @db.Text
+  ngayGui          DateTime            @default(now()) @db.DateTime(0)
+  maNguoiXuLy      Int?
+  ngayXuLy         DateTime?           @db.DateTime(0)
+  lyDoXuLy         String?             @db.Text
+  /// Cột do database tính: 1 khi chờ xử lý, NULL khi đã có quyết định.
+  danhDauDangCho   Int?                @default(dbgenerated()) @db.TinyInt
+
+  tinDang       TinDang          @relation(fields: [maTinDang], references: [maTinDang])
+  nguoiYeuCau   NguoiDung        @relation("NguoiGuiXacThuc", fields: [maNguoiYeuCau], references: [maNguoiDung])
+  nguoiXuLy     NguoiDung?       @relation("NguoiXuLyXacThuc", fields: [maNguoiXuLy], references: [maNguoiDung], onDelete: Restrict, onUpdate: Restrict)
+  minhChungs    MinhChungXacThuc[]
+
+  @@unique([maTinDang, danhDauDangCho], map: "uq_xacthuc_tin_dangcho")
+  @@index([maTinDang, phienBanTinLucGui, trangThai])
+  @@index([trangThai, ngayGui])
+  @@index([maNguoiYeuCau])
+  @@index([maNguoiXuLy])
+  @@map("YEUCAUXACTHUCTINDANG")
+}
+
+model MinhChungXacThuc {
+  maMinhChung    Int              @id @default(autoincrement())
+  maYeuCau       Int
+  nhomMinhChung  NhomMinhChung
+  loaiTep        LoaiTepMinhChung
+  maGiayTo       Int?
+  maTepCloudinary String          @db.VarChar(255)
+  dinhDangTep    String           @db.VarChar(30)
+  dungLuongByte  BigInt           @db.UnsignedBigInt
+  moTa           String?          @db.VarChar(255)
+  thuTuHienThi   Int              @default(0)
+  ngayTaiLen     DateTime         @default(now()) @db.DateTime(0)
+
+  yeuCau YeuCauXacThucTinDang @relation(fields: [maYeuCau], references: [maYeuCau], onDelete: Cascade)
+  giayTo GiayToPhapLy?        @relation(fields: [maGiayTo], references: [maGiayTo], onDelete: Restrict, onUpdate: Restrict)
+
+  @@index([maYeuCau, thuTuHienThi])
+  @@index([maGiayTo])
+  @@map("MINHCHUNGXACTHUC")
+}

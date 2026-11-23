@@ -1,3 +1,4 @@
+import VerifiedBadge from "@/components/verify-post/verified-badge";
 import { useEffect, useState } from "react";
 import { Eye, ListChecks, LoaderCircle, MapPin } from "lucide-react";
 import {
@@ -142,7 +143,7 @@ export default function PostCensorList() {
                   </p>
                 </div>
                 <h3 className="mt-1.5 line-clamp-2 text-sm leading-5 font-bold wrap-break-word">
-                  {post.tieuDe}
+                  <VerifiedBadge verified={post.daXacThuc} />{post.tieuDe}
                 </h3>
                 <div className="mt-2 flex flex-wrap gap-3 text-sm">
                   <strong className="text-red-600">

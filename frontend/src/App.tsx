@@ -20,6 +20,7 @@ import FavoritePostPage from "@/pages/FavoritePostPage";
 import ManagerPostPage from "@/pages/ManagerPostPage";
 import AdminDashboardPage from "@/pages/AdminDashboardPage";
 import AdminProtectedRoute from "@/components/auth/admin-protected-route";
+import AdminVerifyPostPage from "@/pages/AdminVerifyPostPage";
 import AdminCensorPage from "@/pages/AdminCensorPage";
 import AdminReportPage from "@/pages/AdminReportPage";
 import AdminManagerUser from "@/pages/AdminManagerUser";
@@ -64,6 +65,7 @@ function AppRoutes() {
 
           <Route element={<AdminProtectedRoute />}>
             <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
+            <Route path="/admin/verify-post/:maYeuCau?" element={<AdminVerifyPostPage />} />
             <Route path="/admin/censor" element={<AdminCensorPage />} />
             <Route path="/admin/reports" element={<AdminReportPage />} />
             <Route path="/admin/users" element={<AdminManagerUser />} />

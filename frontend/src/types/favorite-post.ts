@@ -9,6 +9,7 @@ export type FavoritePost = Pick<
   anhDaiDienUrl: string | null;
   soHinhAnh: number;
   ngayLuu: string;
+  daXacThuc?: boolean;
   daYeuThich: boolean;
 };
 

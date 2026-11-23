@@ -1,3 +1,4 @@
+import { verificationFields, withVerification } from "../utils/post-verification.js";
 import prisma from "../libs/prisma.js";
 
 export const reportPost = async (req, res) => {
@@ -271,13 +272,13 @@ export const fetchReports = async (req, res) => {
         include: {
           nguoiBaoCao: { select: { hoTen: true } },
           tinDang: { select: {
-            maTinDang: true, tieuDe: true, trangThai: true,
+            maTinDang: true, tieuDe: true, ...verificationFields,
             hinhAnhTinDangs: { take: 1, orderBy: [{ laAnhDaiDien: "desc" }, { thuTuHienThi: "asc" }], select: { hinhAnhUrl: true } },
           } },
         },
       }),
     ]);
-    return res.status(200).json({ reports, total });
+    return res.status(200).json({ reports: reports.map(report => ({ ...report, tinDang: withVerification(report.tinDang) })), total });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Lấy danh sách báo cáo thất bại" });
@@ -297,6 +298,7 @@ export const fetchReportDetail = async (req, res) => {
       include: {
         nguoiBaoCao: { select: { hoTen: true } },
         tinDang: { include: {
+          yeuCauXacThucs: verificationFields.yeuCauXacThucs,
           nguoiDang: { select: { hoTen: true } },
           phuongXa: { include: { tinhThanh: true } },
           hinhAnhTinDangs: { orderBy: [{ laAnhDaiDien: "desc" }, { thuTuHienThi: "asc" }] },
@@ -304,7 +306,7 @@ export const fetchReportDetail = async (req, res) => {
       },
     });
     if (!report) return res.status(404).json({ message: "Không tìm thấy báo cáo" });
-    return res.status(200).json({ report });
+    return res.status(200).json({ report: { ...report, tinDang: withVerification(report.tinDang) } });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Lấy chi tiết báo cáo thất bại" });

@@ -1,0 +1,67 @@
+-- AlterTable
+ALTER TABLE `TINDANG` ADD COLUMN `phienBanXacThuc` INTEGER NOT NULL DEFAULT 1;
+
+-- CreateTable
+CREATE TABLE `YEUCAUXACTHUCTINDANG` (
+    `maYeuCau` INTEGER NOT NULL AUTO_INCREMENT,
+    `maTinDang` INTEGER NOT NULL,
+    `maNguoiYeuCau` INTEGER NOT NULL,
+    `phienBanTinLucGui` INTEGER NOT NULL,
+    `trangThai` ENUM('CHO_XU_LY', 'DA_XAC_THUC', 'TU_CHOI') NOT NULL DEFAULT 'CHO_XU_LY',
+    `ghiChuNguoiGui` TEXT NULL,
+    `ngayGui` DATETIME(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
+    `maNguoiXuLy` INTEGER NULL,
+    `ngayXuLy` DATETIME(0) NULL,
+    `lyDoXuLy` TEXT NULL,
+    `danhDauDangCho` TINYINT GENERATED ALWAYS AS (CASE WHEN `trangThai` = 'CHO_XU_LY' THEN 1 ELSE NULL END) STORED,
+    CONSTRAINT `ck_xacthuc_quyetdinh` CHECK (
+        (`trangThai` = 'CHO_XU_LY' AND `maNguoiXuLy` IS NULL AND `ngayXuLy` IS NULL AND `lyDoXuLy` IS NULL)
+        OR (`trangThai` IN ('DA_XAC_THUC', 'TU_CHOI') AND `maNguoiXuLy` IS NOT NULL AND `ngayXuLy` IS NOT NULL
+            AND `lyDoXuLy` IS NOT NULL AND CHAR_LENGTH(TRIM(`lyDoXuLy`)) > 0)
+    ),
+
+    INDEX `YEUCAUXACTHUCTINDANG_maTinDang_phienBanTinLucGui_trangThai_idx`(`maTinDang`, `phienBanTinLucGui`, `trangThai`),
+    INDEX `YEUCAUXACTHUCTINDANG_trangThai_ngayGui_idx`(`trangThai`, `ngayGui`),
+    INDEX `YEUCAUXACTHUCTINDANG_maNguoiYeuCau_idx`(`maNguoiYeuCau`),
+    INDEX `YEUCAUXACTHUCTINDANG_maNguoiXuLy_idx`(`maNguoiXuLy`),
+    UNIQUE INDEX `uq_xacthuc_tin_dangcho`(`maTinDang`, `danhDauDangCho`),
+    PRIMARY KEY (`maYeuCau`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `MINHCHUNGXACTHUC` (
+    `maMinhChung` INTEGER NOT NULL AUTO_INCREMENT,
+    `maYeuCau` INTEGER NOT NULL,
+    `nhomMinhChung` ENUM('HO_SO_PHAP_LY', 'BAT_DONG_SAN_THUC_TE') NOT NULL,
+    `loaiTep` ENUM('ANH', 'VIDEO') NOT NULL,
+    `maGiayTo` INTEGER NULL,
+    `maTepCloudinary` VARCHAR(255) NOT NULL,
+    `dinhDangTep` VARCHAR(30) NOT NULL,
+    `dungLuongByte` BIGINT UNSIGNED NOT NULL,
+    `moTa` VARCHAR(255) NULL,
+    `thuTuHienThi` INTEGER NOT NULL DEFAULT 0,
+    `ngayTaiLen` DATETIME(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
+
+    CONSTRAINT `ck_minhchung_phanloai` CHECK (
+        (`nhomMinhChung` = 'HO_SO_PHAP_LY' AND `maGiayTo` IS NOT NULL AND `loaiTep` = 'ANH')
+        OR (`nhomMinhChung` = 'BAT_DONG_SAN_THUC_TE' AND `maGiayTo` IS NULL)
+    ),
+    INDEX `MINHCHUNGXACTHUC_maYeuCau_thuTuHienThi_idx`(`maYeuCau`, `thuTuHienThi`),
+    INDEX `MINHCHUNGXACTHUC_maGiayTo_idx`(`maGiayTo`),
+    PRIMARY KEY (`maMinhChung`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- AddForeignKey
+ALTER TABLE `YEUCAUXACTHUCTINDANG` ADD CONSTRAINT `YEUCAUXACTHUCTINDANG_maTinDang_fkey` FOREIGN KEY (`maTinDang`) REFERENCES `TINDANG`(`maTinDang`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `YEUCAUXACTHUCTINDANG` ADD CONSTRAINT `YEUCAUXACTHUCTINDANG_maNguoiYeuCau_fkey` FOREIGN KEY (`maNguoiYeuCau`) REFERENCES `NGUOIDUNG`(`maNguoiDung`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `YEUCAUXACTHUCTINDANG` ADD CONSTRAINT `YEUCAUXACTHUCTINDANG_maNguoiXuLy_fkey` FOREIGN KEY (`maNguoiXuLy`) REFERENCES `NGUOIDUNG`(`maNguoiDung`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+-- AddForeignKey
+ALTER TABLE `MINHCHUNGXACTHUC` ADD CONSTRAINT `MINHCHUNGXACTHUC_maYeuCau_fkey` FOREIGN KEY (`maYeuCau`) REFERENCES `YEUCAUXACTHUCTINDANG`(`maYeuCau`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `MINHCHUNGXACTHUC` ADD CONSTRAINT `MINHCHUNGXACTHUC_maGiayTo_fkey` FOREIGN KEY (`maGiayTo`) REFERENCES `GIAYTOPHAPLY`(`maGiayTo`) ON DELETE RESTRICT ON UPDATE RESTRICT;

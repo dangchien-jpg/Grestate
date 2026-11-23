@@ -1,13 +1,18 @@
+import { latestVerification, isVerifiedPost } from "../utils/post-verification.js";
 import prisma from "../libs/prisma.js";
 import { v2 as cloudinary } from "cloudinary";
 import { uploadPostFromBuffer } from "../middlewares/uploadPost.middleware.js";
 
-const fetchPostList = async (res, where) => {
+const fetchPostList = async (res, where, includeVerification = false) => {
   try {
     const records = await prisma.tinDang.findMany({
       where,
       orderBy: [{ createdAt: "desc" }, { maTinDang: "desc" }],
       include: {
+        yeuCauXacThucs: includeVerification ? {
+          ...latestVerification,
+          select: { ...latestVerification.select, maYeuCau: true, lyDoXuLy: true },
+        } : latestVerification,
         nguoiDang: {
           select: {
             maNguoiDung: true,
@@ -45,7 +50,12 @@ const fetchPostList = async (res, where) => {
       },
     });
 
-    const posts = records.map((post) => ({
+    const posts = records.map(({ yeuCauXacThucs, ...post }) => ({
+      daXacThuc: isVerifiedPost(post, yeuCauXacThucs[0]),
+      ...(includeVerification && {
+        xacThuc: yeuCauXacThucs[0]?.trangThai === "CHO_XU_LY" || yeuCauXacThucs[0]?.phienBanTinLucGui === post.phienBanXacThuc
+          ? yeuCauXacThucs[0] : null,
+      }),
       ...post,
       giaNiemYet: Number(post.giaNiemYet),
       dienTich: Number(post.dienTich),
@@ -73,7 +83,7 @@ export const fetchPostsByUser = (req, res) =>
   fetchPostList(res, {
     maNguoiDung: req.user.maNguoiDung,
     deletedAt: null,
-  });
+  }, true);
 
 export const fetchDetailPost = async (req, res) => {
   const id = Number(req.params.maTinDang);
@@ -235,6 +245,7 @@ export const updatePost = async (req, res) => {
       },
       data: {
         ...req.postData,
+        phienBanXacThuc: { increment: 1 },
         trangThai: "CHO_KIEM_DUYET",
         ngayDang: null,
         ...(uploadedImages.length > 0 && {

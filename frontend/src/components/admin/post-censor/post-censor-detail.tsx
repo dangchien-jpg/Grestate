@@ -1,3 +1,4 @@
+import VerifiedBadge from "@/components/verify-post/verified-badge";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { Dialog } from "@base-ui/react/dialog";
 import { Check, LoaderCircle, X } from "lucide-react";
@@ -228,7 +229,7 @@ export default function PostCensorDetail({
                 Tiêu đề tin đăng
               </h3>
               <p className="mt-2 text-sm leading-6 font-semibold wrap-break-word">
-                {post.tieuDe}
+                <VerifiedBadge verified={post.daXacThuc} />{post.tieuDe}
               </p>
               <h3 className="mt-5 text-base font-bold">Mô tả tin đăng</h3>
               <p className="mt-2 whitespace-pre-wrap text-sm leading-7 wrap-break-word">

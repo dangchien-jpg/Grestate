@@ -1,3 +1,4 @@
+import VerifiedBadge from "@/components/verify-post/verified-badge";
 import { useState } from "react";
 import { Bath, BedDouble, Images, LandPlot, MapPin } from "lucide-react";
 import ContactPhoneButton from "@/components/contact/contact-phone-button";
@@ -64,6 +65,7 @@ export default function DetailedCard({ post }: { post: TinDangDanhSach }) {
       <div className="min-w-0 px-4 py-3">
         <Link to={url}>
           <h2 className="line-clamp-2 font-bold leading-snug hover:text-primary">
+            <VerifiedBadge verified={post.daXacThuc} />
             {post.tieuDe}
           </h2>
         </Link>
