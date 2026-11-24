@@ -1,7 +1,10 @@
 import api from "@/lib/axios";
-import type { FetchPostResponse, TinDang, TinDangDanhSach } from "@/types/post";
+import type { PublicAuthorPosts, FetchPostResponse, TinDang, TinDangDanhSach } from "@/types/post";
 
 export const postService = {
+  fetchPostsByUserPublic: async (id: string, signal: AbortSignal) =>
+    (await api.get<PublicAuthorPosts>(`/posts/user/${encodeURIComponent(id)}`, { signal })).data,
+
   fetchPostsByUser: async (signal?: AbortSignal): Promise<FetchPostResponse> =>
     (await api.get<FetchPostResponse>("/posts/me", { signal })).data,
 

@@ -40,8 +40,6 @@ const Header = () => {
     { to: "/contact", label: "Liên hệ" },
   ];
   const isMenuActive = (to: string) => {
-    if (to === "/nha-dat-ban" && location.pathname.startsWith("/detail/"))
-      return true;
     return location.pathname === to || location.pathname.startsWith(`${to}/`);
   };
 

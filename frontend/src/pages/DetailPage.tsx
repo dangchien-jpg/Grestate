@@ -1,5 +1,5 @@
 import VerifiedBadge from "@/components/verify-post/verified-badge";
-import ContactPhoneButton from "@/components/contact/contact-phone-button";
+import AuthorContact from "@/components/contact/author-contact";
 import { getPostId, getPostUrl } from "@/lib/post-url";
 import ReportForm from "@/components/report/report-form";
 import { useEffect, useState } from "react";
@@ -13,25 +13,27 @@ import {
   ChevronLeft,
   Compass,
   FileCheck2,
+  FileText,
+  Image as ImageIcon,
+  Check,
   House,
   LandPlot,
   MapPin,
-  MessageCircle,
   Share2,
   ShieldCheck,
   Sofa,
   Ruler,
   Split,
   Road,
+  BadgeCheck,
 } from "lucide-react";
 import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
 import { Button } from "@/components/ui/button";
-import { Navigate, useLocation, useNavigate, useParams } from "react-router";
+import { Navigate, useLocation, useParams } from "react-router";
 import { usePostStore } from "@/stores/postStore";
 import FavoriteButton from "@/components/favorite-post/favorite-button";
 import { useFavorites } from "@/hooks/use-favorites";
-import { useAuthStore } from "@/stores/authStore";
 
 function PostGallery({ post }: { post: TinDangDanhSach }) {
   const urls = post.hinhAnhTinDangs.map((photo) => photo.hinhAnhUrl);
@@ -48,7 +50,7 @@ function PostGallery({ post }: { post: TinDangDanhSach }) {
 
   return (
     <section aria-label="Hình ảnh bất động sản" className="space-y-2.5">
-      <div className="relative aspect-[16/10] overflow-hidden rounded-2xl bg-[#686660] sm:aspect-[16/9]">
+      <div className="relative aspect-[16/10] max-h-[360px] overflow-hidden rounded-sm bg-[#686660] sm:aspect-[16/9]">
         <button
           type="button"
           disabled={urls.length < 2}
@@ -95,7 +97,7 @@ function PostGallery({ post }: { post: TinDangDanhSach }) {
             onClick={() => setSelectedIndex(index)}
             aria-label={`Xem ảnh ${index + 1}`}
             aria-pressed={selectedIndex === index}
-            className={`min-w-0 basis-[calc((100%-2.5rem)/5)] shrink-0 overflow-hidden rounded-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${selectedIndex === index ? "ring-2 ring-primary ring-offset-2" : ""}`}
+            className={`min-w-0 basis-[80px] sm:basis-[96px] shrink-0 overflow-hidden rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${selectedIndex === index ? "ring-2 ring-primary ring-offset-2" : ""}`}
           >
             <img
               src={url}
@@ -115,8 +117,6 @@ const DetailPage = () => {
   const { maTinDang } = useParams();
   const id = getPostId(maTinDang);
   const location = useLocation();
-  const navigate = useNavigate();
-  const user = useAuthStore((state) => state.user);
 
   const fetchDetailPost = usePostStore((state) => state.fetchDetailPost);
   const post = usePostStore((state) => state.post);
@@ -215,57 +215,45 @@ const DetailPage = () => {
   const mapQuery = encodeURIComponent(`${address}, Việt Nam`);
   const mapUrl = `https://maps.google.com/maps?q=${mapQuery}&output=embed&hl=vi&z=17`;
   const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${mapQuery}`;
-  const contactName = post.nguoiLienHe?.trim() || post.nguoiDang.hoTen;
-  let zaloUrl: string | null = null;
-  const zaloLink = post.nguoiDang.duongDanZalo?.trim();
-  if (zaloLink) {
-    try {
-      const url = new URL(
-        /^https?:\/\//i.test(zaloLink) ? zaloLink : `https://${zaloLink}`,
-      );
-      if (url.protocol === "https:" || url.protocol === "http:") {
-        zaloUrl = url.href;
-      }
-    } catch {
-      zaloUrl = null;
-    }
-  }
-
   return (
     <div className="min-h-screen bg-white font-sans ">
       <Header />
-      <main className="mx-auto max-w-7xl px-5 py-6 sm:px-8 sm:py-8">
-        <nav
-          aria-label="Đường dẫn"
-          className="mb-6 flex flex-wrap items-center gap-2 text-xs sm:text-sm"
-        >
-          <a href="/" className="hover:text-primary">
-            Trang chủ
-          </a>
-          <ChevronRight aria-hidden="true" className="size-3.5" />
-          <span>{post.loaiBatDongSan.tenLoai}</span>
-          <ChevronRight aria-hidden="true" className="size-3.5" />
-          <span aria-current="page" className="">
-            {post.tieuDe}
-          </span>
-        </nav>
-
-        <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_320px] xl:gap-8 xl:grid-cols-[minmax(0,1fr)_350px]">
-          <article className="min-w-0 space-y-6">
+      <main className="mx-auto max-w-7xl px-5 py-6 sm:px-20 sm:py-8">
+        <div className="grid items-start gap-6 lg:justify-center lg:grid-cols-[minmax(0,640px)_320px] lg:gap-x-3 xl:grid-cols-[minmax(0,640px)_350px]">
+          <article className="w-full min-w-0 max-w-[640px] space-y-4">
             <PostGallery key={post.maTinDang} post={post} />
-
-            <section className="rounded-2xl border border-gray-300 bg-white p-5 sm:p-7">
-              <h1 className="text-xl font-bold leading-snug tracking-tight sm:text-xl">
+            <nav
+              aria-label="Đường dẫn"
+              className="flex items-center gap-1 whitespace-nowrap text-xs sm:text-sm"
+            >
+              <a
+                href="/"
+                className="shrink-0 font-medium text-[#aaa] hover:text-gray-700"
+              >
+                Trang chủ /
+              </a>
+              <span className="shrink-0 font-medium text-[#aaa] hover:text-gray-700">
+                {post.loaiBatDongSan.tenLoai} /
+              </span>
+              <span
+                aria-current="page"
+                className="min-w-0 truncate font-medium"
+              >
+                {post.tieuDe}
+              </span>
+            </nav>
+            <section className="">
+              <p className="text-xl font-semibold leading-snug tracking-tight sm:text-2xl line-clamp-3">
                 <VerifiedBadge verified={post.daXacThuc} />
                 {post.tieuDe}
-              </h1>
-              <p className="mt-3 flex items-start gap-2 text-sm leading-relaxed ">
+              </p>
+              <p className="mt-3 flex items-start gap-2 text-sm font-medium leading-relaxed ">
                 <MapPin className="mt-0.5 size-4 shrink-0" />
                 {address}
               </p>
-              <div className="mt-5 flex flex-wrap items-end justify-between gap-4 border-y border-slate-100 py-5">
+              <div className="mt-5 flex flex-wrap items-end justify-between gap-4 border-y border-[#ddd] py-5">
                 <div>
-                  <p className="mb-1 text-xs ">Giá bán</p>
+                  <p className="mb-1 text-sm font-medium">Khoảng giá</p>
                   <p className="flex flex-wrap items-baseline gap-x-3 gap-y-1 text-3xl font-bold text-red-600">
                     {formatPrice(post.giaNiemYet)}
                     <span className="text-sm font-normal ">
@@ -288,8 +276,8 @@ const DetailPage = () => {
                   </Button>
                 </div>
               </div>
-              <h2 className="mb-5 mt-6 text-xl font-bold tracking-tight sm:text-xl">
-                Thông tin bất động sản
+              <h2 className="mb-5 mt-6 text-xl font-medium tracking-tight sm:text-xl">
+                Đặc điểm bất động sản
               </h2>
               <dl className="grid grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-3 xl:grid-cols-4">
                 {specifications.map(({ icon: Icon, label, value }) => (
@@ -300,30 +288,72 @@ const DetailPage = () => {
                       strokeWidth={1.6}
                     />
                     <div>
-                      <dt className="text-xs ">{label}</dt>
-                      <dd className="mt-1 text-sm font-semibold">{value}</dd>
+                      <dt className="text-sm font-medium">{label}</dt>
+                      <dd className="mt-1 text-sm font-stretch-95%">{value}</dd>
                     </div>
                   </div>
                 ))}
               </dl>
             </section>
-
-            <section className="rounded-2xl border border-gray-300 bg-white p-5 sm:p-7">
-              <h2 className="mb-4 text-xl font-bold tracking-tight sm:text-xl">
+            {post.daXacThuc && (
+              <section className="rounded-sm bg-[#f2f2f2] px-5 py-4 text-gray-950">
+                <h2 className="flex items-center gap-2 mb-3 text-sm font-semibold">
+                  <BadgeCheck className="size-6 text-emerald-600" />
+                  Bất động sản đã được xác thực
+                </h2>
+                <div>
+                  <ul className="space-y-3">
+                    {[
+                      {
+                        icon: FileText,
+                        label: "Có sổ đỏ, hồng/hợp đồng mua bán",
+                      },
+                      {
+                        icon: ImageIcon,
+                        label: "Đúng địa chỉ, hình ảnh & đặc điểm",
+                      },
+                    ].map(({ icon: Icon, label }) => (
+                      <li key={label} className="flex items-center gap-4">
+                        <span aria-hidden="true" className="relative shrink-0">
+                          <Icon className="size-5" strokeWidth={1.6} />
+                          <Check
+                            className="absolute -right-1.5 -bottom-0.5 size-3.5 rounded-full border-2 border-white bg-emerald-600 text-white"
+                            strokeWidth={3}
+                          />
+                        </span>
+                        <span className="text-sm font-medium">{label}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <details className="group mt-5">
+                    <summary className="inline-flex cursor-pointer items-center gap-1 hover:underline">
+                      Tìm hiểu thêm về Tin xác thực
+                      <ChevronRight
+                        aria-hidden="true"
+                        className="size-4 group-open:rotate-90"
+                      />
+                    </summary>
+                    <p className="mt-2 text-sm leading-6">
+                      Tin được gắn dấu xác thực khi yêu cầu xác thực đã được
+                      duyệt cho phiên bản hiện tại của tin đăng.
+                    </p>
+                  </details>
+                </div>
+              </section>
+            )}
+            <section className="pt-4">
+              <h2 className="mb-4 text-xl font-medium tracking-tight sm:text-xl">
                 Mô tả chi tiết
               </h2>
-              <p className="whitespace-pre-line break-words text-sm leading-7 ">
+              <p className="whitespace-pre-line break-words text-sm font-stretch-95% leading-7">
                 {post.moTa}
               </p>
             </section>
-            <section
-              aria-labelledby="property-map-title"
-              className="rounded-2xl border border-gray-300 bg-white p-5 sm:p-7"
-            >
+            <section aria-labelledby="property-map-title" className="pt-4">
               <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
                 <h2
                   id="property-map-title"
-                  className="text-xl font-bold tracking-tight sm:text-xl"
+                  className="text-xl font-medium tracking-tight sm:text-xl"
                 >
                   Vị trí trên bản đồ
                 </h2>
@@ -356,57 +386,19 @@ const DetailPage = () => {
 
           <aside
             aria-label="Thông tin liên hệ"
-            className="space-y-4 lg:sticky lg:top-28"
+            className="w-full max-w-[640px] space-y-4 lg:sticky lg:top-28"
           >
-            <section className="rounded-2xl border border-gray-300 bg-white p-6">
-              <p className="mb-5 text-sm font-semibold tracking-wider ">
-                Thông tin liên hệ
-              </p>
-              <div className="flex items-center gap-3">
-                <img
-                  src={post.nguoiDang.anhDaiDienUrl ?? "/user.png"}
-                  alt={contactName}
-                  className="size-16 rounded-full object-cover"
-                  loading="lazy"
-                />
-                <div>
-                  <h2 className="font-bold">{contactName}</h2>
-                </div>
-              </div>
-              <div className="mt-8 space-y-3">
-                <ContactPhoneButton post={post} className="w-full" />
-                {zaloUrl ? (
-                  <a
-                    href={user ? zaloUrl : "/signin"}
-                    onClick={(event) => {
-                      if (!user) {
-                        event.preventDefault();
-                        navigate("/signin", {
-                          state: { backgroundLocation: location },
-                        });
-                      }
-                    }}
-                    target={user ? "_blank" : undefined}
-                    rel="noopener noreferrer"
-                    className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-lg border border-blue-200 bg-blue-50 px-3 text-sm font-semibold text-blue-600 transition-colors hover:bg-blue-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
-                  >
-                    <MessageCircle className="size-4" />
-                    Liên hệ qua Zalo
-                  </a>
-                ) : (
-                  <Button
-                    type="button"
-                    variant="outline"
-                    disabled
-                    className="h-11 w-full gap-2 rounded-lg"
-                  >
-                    <MessageCircle className="size-4" />
-                    Chưa có liên kết Zalo
-                  </Button>
-                )}
-              </div>
-            </section>
-            <div className="flex items-start gap-3 rounded-xl border border-emerald-100 bg-emerald-50/60 p-4">
+            <AuthorContact
+              key={post.maTinDang}
+              author={post.nguoiDang}
+              total={post.nguoiDang._count.tinDangs}
+              name={post.nguoiLienHe?.trim() || post.nguoiDang.hoTen}
+              phone={
+                post.soDienThoaiLienHe?.trim() || post.nguoiDang.soDienThoai
+              }
+              showLink
+            />
+            <div className="flex items-start gap-3 rounded-sm border border-emerald-100 bg-emerald-50/60 p-4">
               <ShieldCheck className="mt-0.5 size-5 shrink-0 text-emerald-600" />
               <p className="text-xs leading-6 ">
                 Nên xem nhà thực tế và kiểm tra giấy tờ pháp lý trước khi đặt

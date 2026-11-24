@@ -137,3 +137,6 @@ export interface FetchPostResponse {
   posts: TinDangDanhSach[];
   total: number;
 }
+
+export type PublicAuthor = TinDangDanhSach["nguoiDang"] & { createdAt: string; profilePath: string };
+export type PublicAuthorPosts = FetchPostResponse & { author: PublicAuthor };

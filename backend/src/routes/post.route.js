@@ -1,4 +1,9 @@
-import { filterPrice, filterArea, filterPostByCategory, filterPostByLocation } from "../controllers/filter.controller.js";
+import {
+  filterPrice,
+  filterArea,
+  filterPostByCategory,
+  filterPostByLocation,
+} from "../controllers/filter.controller.js";
 import {
   searchPost,
   suggestSearchPost,
@@ -11,6 +16,7 @@ import {
   fetchPostsByUser,
   updatePost,
   deletePost,
+  fetchPostsByUserPublic,
 } from "../controllers/post.controller.js";
 import { uploadPostImages } from "../middlewares/uploadPost.middleware.js";
 import {
@@ -30,6 +36,7 @@ route.post(
 );
 route.get("/", fetchPost);
 route.get("/me", protectedRoute, fetchPostsByUser);
+route.get("/user/:profilePath", fetchPostsByUserPublic);
 route.get("/search", searchPost);
 route.get("/suggestions", suggestSearchPost);
 route.get("/filter/price", filterPrice);

@@ -13,6 +13,7 @@ import HomePage from "./pages/HomePage";
 import { Toaster } from "sonner";
 import ProtectedRoute from "@/components/auth/protected-route";
 import { ProfilePage } from "@/pages/ProfilePage";
+import ListPostByUserPage from "@/pages/ListPostByUserPage";
 import DetailPage from "@/pages/DetailPage";
 import CreatePostPage from "@/pages/CreatePostPage";
 import PredictPage from "@/pages/PredictPage";
@@ -47,6 +48,7 @@ function AppRoutes() {
         {/* Public routes */}
         <Route path="/" element={<HomePage />} />
         <Route path="/nha-dat-ban" element={<PropertyListPage key={location.key} />} />
+        <Route path="/nguoi-dang/:profilePath" element={<ListPostByUserPage />} />
         <Route path="/detail/:maTinDang" element={<DetailPage />} />
         <Route path="/projects" element={<ProjectPage />} />
         <Route path="/news" element={<NewsPage />} />

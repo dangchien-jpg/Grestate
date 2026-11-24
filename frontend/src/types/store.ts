@@ -3,6 +3,7 @@ import type {
   LoaiBatDongSan,
   PhuongXa,
   TinDang,
+  PublicAuthor,
   TinDangDanhSach,
   TinhThanh,
 } from "@/types/post";
@@ -39,7 +40,7 @@ export interface UserState {
 
 export interface PostState {
   posts: TinDangDanhSach[];
-  post: TinDangDanhSach | null;
+  post: (TinDangDanhSach & { nguoiDang: PublicAuthor & { _count: { tinDangs: number } } }) | null;
   loading: boolean;
   fetchPost: () => Promise<void>;
   fetchDetailPost: (maTinDang: number) => Promise<void>;

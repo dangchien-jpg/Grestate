@@ -1,18 +1,31 @@
-import { latestVerification, isVerifiedPost } from "../utils/post-verification.js";
+import {
+  latestVerification,
+  isVerifiedPost,
+  withVerification,
+} from "../utils/post-verification.js";
 import prisma from "../libs/prisma.js";
 import { v2 as cloudinary } from "cloudinary";
 import { uploadPostFromBuffer } from "../middlewares/uploadPost.middleware.js";
 
-const fetchPostList = async (res, where, includeVerification = false) => {
+const visiblePosts = { deletedAt: null, trangThai: "DA_DUYET" };
+const publicAuthor = { maNguoiDung: true, hoTen: true, soDienThoai: true, anhDaiDienUrl: true, duongDanZalo: true, createdAt: true };
+
+const fetchPostList = async (res, where, includeVerification = false, author) => {
   try {
     const records = await prisma.tinDang.findMany({
       where,
       orderBy: [{ createdAt: "desc" }, { maTinDang: "desc" }],
       include: {
-        yeuCauXacThucs: includeVerification ? {
-          ...latestVerification,
-          select: { ...latestVerification.select, maYeuCau: true, lyDoXuLy: true },
-        } : latestVerification,
+        yeuCauXacThucs: includeVerification
+          ? {
+              ...latestVerification,
+              select: {
+                ...latestVerification.select,
+                maYeuCau: true,
+                lyDoXuLy: true,
+              },
+            }
+          : latestVerification,
         nguoiDang: {
           select: {
             maNguoiDung: true,
@@ -53,8 +66,11 @@ const fetchPostList = async (res, where, includeVerification = false) => {
     const posts = records.map(({ yeuCauXacThucs, ...post }) => ({
       daXacThuc: isVerifiedPost(post, yeuCauXacThucs[0]),
       ...(includeVerification && {
-        xacThuc: yeuCauXacThucs[0]?.trangThai === "CHO_XU_LY" || yeuCauXacThucs[0]?.phienBanTinLucGui === post.phienBanXacThuc
-          ? yeuCauXacThucs[0] : null,
+        xacThuc:
+          yeuCauXacThucs[0]?.trangThai === "CHO_XU_LY" ||
+          yeuCauXacThucs[0]?.phienBanTinLucGui === post.phienBanXacThuc
+            ? yeuCauXacThucs[0]
+            : null,
       }),
       ...post,
       giaNiemYet: Number(post.giaNiemYet),
@@ -69,7 +85,7 @@ const fetchPostList = async (res, where, includeVerification = false) => {
         null,
     }));
 
-    return res.status(200).json({ posts, total: posts.length });
+    return res.status(200).json({ posts, total: posts.length, author });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Lấy danh sách tin đăng thất bại" });
@@ -80,11 +96,50 @@ export const fetchPost = (req, res) =>
   fetchPostList(res, { deletedAt: null, trangThai: "DA_DUYET" });
 
 export const fetchPostsByUser = (req, res) =>
-  fetchPostList(res, {
-    maNguoiDung: req.user.maNguoiDung,
-    deletedAt: null,
-  }, true);
+  fetchPostList(
+    res,
+    {
+      maNguoiDung: req.user.maNguoiDung,
+      deletedAt: null,
+    },
+    true,
+  );
 
+async function withProfilePath(author) {
+  const first = await prisma.nguoiDung.findFirst({
+    where: { hoTen: author.hoTen, deletedAt: null },
+    orderBy: { maNguoiDung: "asc" },
+    select: { maNguoiDung: true },
+  });
+  // Escape punctuation that could be interpreted as a URL delimiter.
+  let path = author.hoTen.replace(/[^\p{L}\p{M}\p{N} ._-]/gu,
+    char => `~${char.codePointAt(0).toString(16)}~`);
+  if (!path || /^\d+$|^\.{1,2}$/.test(path)) path = `~n${path}`;
+  if (first?.maNguoiDung !== author.maNguoiDung) path += `~u${author.maNguoiDung}`;
+  return { ...author, profilePath: path };
+}
+
+export const fetchPostsByUserPublic = async (req, res) => {
+  const path = req.params.profilePath;
+  const id = /^\d+$/.test(path) ? path : path.match(/~u(\d+)$/)?.[1];
+  if (id && (!Number.isSafeInteger(Number(id)) || Number(id) <= 0)) {
+    return res.status(400).json({ message: "Mã người dùng không hợp lệ" });
+  }
+  try {
+    const name = path.replace(/^~n/, "").replace(/~([0-9a-f]{1,6})~/g,
+      (match, hex) => parseInt(hex, 16) <= 0x10ffff ? String.fromCodePoint(parseInt(hex, 16)) : match);
+    const author = await prisma.nguoiDung.findFirst({
+      where: { ...(id ? { maNguoiDung: Number(id) } : { hoTen: name }), deletedAt: null },
+      orderBy: { maNguoiDung: "asc" },
+      select: publicAuthor,
+    });
+    if (!author) return res.status(404).json({ message: "Không tìm thấy người đăng" });
+    return fetchPostList(res, { ...visiblePosts, maNguoiDung: author.maNguoiDung }, false, await withProfilePath(author));
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Không thể tải trang cá nhân" });
+  }
+};
 export const fetchDetailPost = async (req, res) => {
   const id = Number(req.params.maTinDang);
 
@@ -96,13 +151,11 @@ export const fetchDetailPost = async (req, res) => {
     const record = await prisma.tinDang.findFirst({
       where: { maTinDang: id, deletedAt: null, trangThai: "DA_DUYET" },
       include: {
+        yeuCauXacThucs: latestVerification,
         nguoiDang: {
           select: {
-            maNguoiDung: true,
-            hoTen: true,
-            soDienThoai: true,
-            anhDaiDienUrl: true,
-            duongDanZalo: true,
+            ...publicAuthor,
+            _count: { select: { tinDangs: { where: visiblePosts } } },
           },
         },
         loaiBatDongSan: {
@@ -137,11 +190,12 @@ export const fetchDetailPost = async (req, res) => {
       return res.status(404).json({ message: "Không tìm thấy tin đăng" });
     }
 
-    const post = record;
+    const post = withVerification(record);
 
     return res.status(200).json({
       post: {
         ...post,
+        nguoiDang: await withProfilePath(post.nguoiDang),
         giaNiemYet: Number(post.giaNiemYet),
         dienTich: Number(post.dienTich),
         matTien: post.matTien === null ? null : Number(post.matTien),

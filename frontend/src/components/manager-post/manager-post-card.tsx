@@ -263,7 +263,9 @@ export default function ManagerPostCard() {
       posts: state.posts.map((post) =>
         post.maTinDang === updated.maTinDang ? updated : post,
       ),
-      post: state.post?.maTinDang === updated.maTinDang ? updated : state.post,
+      post: state.post?.maTinDang === updated.maTinDang
+        ? { ...updated, nguoiDang: { ...state.post.nguoiDang, ...updated.nguoiDang } }
+        : state.post,
     }));
   }
 
