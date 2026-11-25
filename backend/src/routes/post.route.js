@@ -18,7 +18,7 @@ import {
   deletePost,
   fetchPostsByUserPublic,
 } from "../controllers/post.controller.js";
-import { uploadPostImages } from "../middlewares/uploadPost.middleware.js";
+import { uploadPostImages, uploadPostMedia } from "../middlewares/uploadPost.middleware.js";
 import {
   requirePostOwner,
   validateCreatePost,
@@ -30,7 +30,7 @@ const route = express.Router();
 route.post(
   "/",
   protectedRoute,
-  uploadPostImages,
+  uploadPostMedia,
   validateCreatePost,
   createPost,
 );

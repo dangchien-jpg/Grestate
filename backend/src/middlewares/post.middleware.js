@@ -150,8 +150,9 @@ const validatePost = (updating = false) => async (req, res, next) => {
   const imagesCount = updating && req.files?.length === 0
     ? req.existingPost.hinhAnhTinDangs.length
     : req.files?.length;
-  if (!Array.isArray(req.files) || imagesCount < 1 || imagesCount > 6)
-    errors.images = "Tin đăng phải có từ 1 đến 6 hình ảnh";
+  const minImages = updating ? 1 : 3;
+  if (!Array.isArray(req.files) || imagesCount < minImages || imagesCount > 6)
+    errors.images = `Tin đăng phải có từ ${minImages} đến 6 hình ảnh`;
   else if (
     req.files.some(
       (file) => !Buffer.isBuffer(file.buffer) || file.buffer.length === 0,

@@ -8,6 +8,7 @@ export interface TinDang {
   maPhuongXa: number;
   tieuDe: string;
   moTa: string;
+  videoUrl: string | null;
   diaChiChiTiet: string;
   viDo: number | null;
   kinhDo: number | null;

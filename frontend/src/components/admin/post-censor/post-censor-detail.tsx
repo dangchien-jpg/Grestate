@@ -12,7 +12,7 @@ import {
   censorStatusClasses,
   type CensorDetail,
 } from "@/services/adminCensorService";
-import PostCensorGallery from "./post-censor-gallery";
+import PostGallery from "@/components/property/post-gallery";
 import { formatPrice } from "@/lib/format-price";
 
 export default function PostCensorDetail({
@@ -161,9 +161,11 @@ export default function PostCensorDetail({
               </div>
               <section aria-labelledby="censor-images" className="mt-5">
                 <h3 id="censor-images" className="text-base font-bold">
-                  Hình ảnh bất động sản
+                  {post.videoUrl ? "Hình ảnh và video bất động sản" : "Hình ảnh bất động sản"}
                 </h3>
-                <PostCensorGallery key={post.maTinDang} post={post} />
+                <div className="mx-auto mt-5 max-w-lg">
+                  <PostGallery key={post.maTinDang} post={post} />
+                </div>
               </section>
               <section
                 aria-labelledby="censor-location"

@@ -8,9 +8,21 @@ import { v2 as cloudinary } from "cloudinary";
 import { uploadPostFromBuffer } from "../middlewares/uploadPost.middleware.js";
 
 const visiblePosts = { deletedAt: null, trangThai: "DA_DUYET" };
-const publicAuthor = { maNguoiDung: true, hoTen: true, soDienThoai: true, anhDaiDienUrl: true, duongDanZalo: true, createdAt: true };
+const publicAuthor = {
+  maNguoiDung: true,
+  hoTen: true,
+  soDienThoai: true,
+  anhDaiDienUrl: true,
+  duongDanZalo: true,
+  createdAt: true,
+};
 
-const fetchPostList = async (res, where, includeVerification = false, author) => {
+const fetchPostList = async (
+  res,
+  where,
+  includeVerification = false,
+  author,
+) => {
   try {
     const records = await prisma.tinDang.findMany({
       where,
@@ -111,11 +123,13 @@ async function withProfilePath(author) {
     orderBy: { maNguoiDung: "asc" },
     select: { maNguoiDung: true },
   });
-  // Escape punctuation that could be interpreted as a URL delimiter.
-  let path = author.hoTen.replace(/[^\p{L}\p{M}\p{N} ._-]/gu,
-    char => `~${char.codePointAt(0).toString(16)}~`);
+  let path = author.hoTen.replace(
+    /[^\p{L}\p{M}\p{N} ._-]/gu,
+    (char) => `~${char.codePointAt(0).toString(16)}~`,
+  );
   if (!path || /^\d+$|^\.{1,2}$/.test(path)) path = `~n${path}`;
-  if (first?.maNguoiDung !== author.maNguoiDung) path += `~u${author.maNguoiDung}`;
+  if (first?.maNguoiDung !== author.maNguoiDung)
+    path += `~u${author.maNguoiDung}`;
   return { ...author, profilePath: path };
 }
 
@@ -126,15 +140,29 @@ export const fetchPostsByUserPublic = async (req, res) => {
     return res.status(400).json({ message: "Mã người dùng không hợp lệ" });
   }
   try {
-    const name = path.replace(/^~n/, "").replace(/~([0-9a-f]{1,6})~/g,
-      (match, hex) => parseInt(hex, 16) <= 0x10ffff ? String.fromCodePoint(parseInt(hex, 16)) : match);
+    const name = path
+      .replace(/^~n/, "")
+      .replace(/~([0-9a-f]{1,6})~/g, (match, hex) =>
+        parseInt(hex, 16) <= 0x10ffff
+          ? String.fromCodePoint(parseInt(hex, 16))
+          : match,
+      );
     const author = await prisma.nguoiDung.findFirst({
-      where: { ...(id ? { maNguoiDung: Number(id) } : { hoTen: name }), deletedAt: null },
+      where: {
+        ...(id ? { maNguoiDung: Number(id) } : { hoTen: name }),
+        deletedAt: null,
+      },
       orderBy: { maNguoiDung: "asc" },
       select: publicAuthor,
     });
-    if (!author) return res.status(404).json({ message: "Không tìm thấy người đăng" });
-    return fetchPostList(res, { ...visiblePosts, maNguoiDung: author.maNguoiDung }, false, await withProfilePath(author));
+    if (!author)
+      return res.status(404).json({ message: "Không tìm thấy người đăng" });
+    return fetchPostList(
+      res,
+      { ...visiblePosts, maNguoiDung: author.maNguoiDung },
+      false,
+      await withProfilePath(author),
+    );
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Không thể tải trang cá nhân" });
@@ -217,6 +245,7 @@ export const fetchDetailPost = async (req, res) => {
 
 export const createPost = async (req, res) => {
   const uploadedImages = [];
+  let uploadedVideo;
   let post;
   try {
     for (const file of req.files) {
@@ -225,9 +254,20 @@ export const createPost = async (req, res) => {
       if (!result?.public_id || !result?.secure_url)
         throw new Error("Cloudinary trả về thông tin hình ảnh không hợp lệ");
     }
+    if (req.postVideo) {
+      uploadedVideo = await uploadPostFromBuffer(req.postVideo.buffer, {
+        resource_type: "video",
+        allowed_formats: ["mp4", "webm"],
+      });
+      if (!uploadedVideo?.public_id || !uploadedVideo.secure_url) {
+        throw new Error("Cloudinary trả về thông tin video không hợp lệ");
+      }
+    }
     post = await prisma.tinDang.create({
       data: {
         ...req.postData,
+        videoUrl: uploadedVideo?.secure_url ?? null,
+        videoId: uploadedVideo?.public_id ?? null,
         maNguoiDung: req.user.maNguoiDung,
         trangThai: "CHO_KIEM_DUYET",
         hinhAnhTinDangs: {
@@ -243,23 +283,14 @@ export const createPost = async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    const cleanup = await Promise.allSettled(
-      uploadedImages.map((image) =>
-        cloudinary.uploader.destroy(image.public_id, {
-          resource_type: "image",
-        }),
-      ),
-    );
+    const assets = uploadedImages.map(image => ({ id: image.public_id, type: "image" }));
+    if (uploadedVideo?.public_id) assets.push({ id: uploadedVideo.public_id, type: "video" });
+    const cleanup = await Promise.allSettled(assets.map(asset =>
+      cloudinary.uploader.destroy(asset.id, { resource_type: asset.type })
+    ));
     cleanup.forEach((result, index) => {
-      if (
-        result.status === "rejected" ||
-        !["ok", "not found"].includes(result.value?.result)
-      ) {
-        console.error(
-          "Không thể xóa hình ảnh của tin đăng",
-          uploadedImages[index].public_id,
-          result,
-        );
+      if (result.status === "rejected" || !["ok", "not found"].includes(result.value?.result)) {
+        console.error("Không thể xóa tệp của tin đăng", assets[index].id, result);
       }
     });
     return res

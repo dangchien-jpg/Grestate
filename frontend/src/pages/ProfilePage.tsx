@@ -1,4 +1,4 @@
-import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import AccountMenu from "@/components/layout/account-menu";
 import Sidebar from "@/components/ui/sidebar";
 import ProfileForm from "@/components/user/profile-form";
 import { useAuthStore } from "@/stores/authStore";
@@ -35,13 +35,7 @@ export const ProfilePage = () => {
           <h1 className="text-2xl font-bold">Trang cá nhân</h1>
           <div className="flex items-center gap-3">
             <h2 className="text-sm font-bold">{user?.hoTen}</h2>
-            <Avatar>
-              {user?.anhDaiDienUrl ? (
-                <AvatarImage src={user.anhDaiDienUrl} />
-              ) : (
-                <AvatarImage src="/user.png" />
-              )}
-            </Avatar>
+            <AccountMenu />
           </div>
         </header>
         <ProfileForm />

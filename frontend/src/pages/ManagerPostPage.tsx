@@ -1,5 +1,5 @@
 import ManagerPostCard from "@/components/manager-post/manager-post-card";
-import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import AccountMenu from "@/components/layout/account-menu";
 import Sidebar from "@/components/ui/sidebar";
 import { useAuthStore } from "@/stores/authStore";
 import { CircleUserRound, ListChecks, Plus } from "lucide-react";
@@ -40,16 +40,7 @@ const ManagerPostPage = () => {
               <span className="hidden text-sm font-medium sm:inline">
                 {user?.hoTen}
               </span>
-              <Avatar className="rounded-full after:rounded-full">
-                {user?.anhDaiDienUrl ? (
-                  <AvatarImage
-                    src={user.anhDaiDienUrl}
-                    className="rounded-full"
-                  />
-                ) : (
-                  <AvatarImage src="/user.png" className="rounded-full" />
-                )}
-              </Avatar>
+              <AccountMenu />
             </div>
           </div>
         </header>

@@ -1,36 +1,22 @@
 import {
   Heart,
-  ListCheck,
-  LogOut,
   Menu,
   Plus,
-  Settings,
   UserRound,
 } from "lucide-react";
-import { Link, useNavigate, useLocation } from "react-router";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { Link, useLocation } from "react-router";
+import AccountMenu from "@/components/layout/account-menu";
 import Notification from "@/components/notification/notification";
 
-import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { useAuthStore } from "@/stores/authStore";
 import { useFavoriteStore } from "@/stores/favoriteStore";
 import { useFavorites } from "@/hooks/use-favorites";
-import { toast } from "sonner";
 
 const Header = () => {
   useFavorites();
-  const { user, signOut } = useAuthStore();
+  const { user } = useAuthStore();
   const savedCount = useFavoriteStore((state) => state.posts.length);
   const favoriteCount = user ? savedCount : 0;
-  const navigation = useNavigate();
   const location = useLocation();
   const menuItems = [
     { to: "/nha-dat-ban", label: "Nhà đất bán" },
@@ -43,15 +29,6 @@ const Header = () => {
     return location.pathname === to || location.pathname.startsWith(`${to}/`);
   };
 
-  const handleSignout = async () => {
-    try {
-      await signOut();
-      navigation("/");
-    } catch (error) {
-      console.error(error);
-      toast.error("Lỗi đăng xuất");
-    }
-  };
   return (
     <header className="sticky top-0 z-50 border-b bg-white shadow-sm">
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between gap-5 px-5 sm:px-8">
@@ -96,38 +73,7 @@ const Header = () => {
           </Link>
           {user && <Notification key={user.maNguoiDung} />}
           {user ? (
-            <DropdownMenu>
-              <DropdownMenuTrigger aria-label="Mở menu tài khoản">
-                <Avatar>
-                  <AvatarImage src={user.anhDaiDienUrl || "/user.png"} />
-                </Avatar>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuGroup>
-                  <DropdownMenuLabel>{user?.hoTen}</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem>
-                    <Link to="/me/profile" className="flex gap-2 text-sm">
-                      <Settings /> Cài đặt tài khoản
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <Link to="/me/manager-post" className="flex gap-2 text-sm">
-                      <ListCheck /> Quản lý đăng tin
-                    </Link>
-                  </DropdownMenuItem>
-                </DropdownMenuGroup>
-                <DropdownMenuSeparator />
-                <DropdownMenuGroup>
-                  <DropdownMenuItem
-                    className="text-destructive text-sm"
-                    onClick={handleSignout}
-                  >
-                    <LogOut /> Đăng xuất
-                  </DropdownMenuItem>
-                </DropdownMenuGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <AccountMenu />
           ) : (
             <Link
               to="/signin"

@@ -4,6 +4,7 @@ import { Controller, FormProvider, useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   createPostSchema,
+  MIN_IMAGES,
   MAX_IMAGES,
   IMAGE_TYPES,
   type PostFormValues,
@@ -32,6 +33,8 @@ import HouseDetailForm from "@/components/create-post/house-detail-form";
 import LandDetailForm from "@/components/create-post/land-detail-form";
 import { useAuthStore } from "@/stores/authStore";
 
+const VIDEO_TYPES = ["video/mp4", "video/webm"];
+
 const inputClassName =
   "h-12 rounded-full text-sm md:text-sm border border-[#ccc]";
 
@@ -50,6 +53,19 @@ const ImagePreview = ({ file }: { file: File }) => {
     />
   );
 };
+
+function VideoPreview({ file }: { file: File }) {
+  const ref = useRef<HTMLVideoElement>(null);
+  useEffect(() => {
+    const url = URL.createObjectURL(file);
+    if (ref.current) ref.current.src = url;
+    return () => URL.revokeObjectURL(url);
+  }, [file]);
+  return (
+    <video ref={ref} controls playsInline preload="metadata" aria-label={file.name}
+      className="aspect-video w-full bg-black object-contain" />
+  );
+}
 
 const PostForm = () => {
   const { user } = useAuthStore();
@@ -74,7 +90,8 @@ const PostForm = () => {
   const [provinceCode, setProvinceCode] = useState<string | null>(null);
   const [wardId, setWardId] = useState<number | null>(null);
   const [mapAddress, setMapAddress] = useState("");
-  const [imageSelectionError, setImageSelectionError] = useState("");
+  const [video, setVideo] = useState<File | null>(null);
+  const [mediaError, setMediaError] = useState("");
 
   useEffect(() => {
     fetchCategories().catch((err) => {
@@ -196,6 +213,7 @@ const PostForm = () => {
       const formData = new FormData();
       formData.append("data", JSON.stringify(fields));
       images.forEach((file) => formData.append("images", file));
+      if (video) formData.append("video", video);
       await createPost(formData);
       toast.success("Đăng tin thành công. Tin đang chờ kiểm duyệt.");
       navigate(`/me/manager-post`);
@@ -849,7 +867,7 @@ const PostForm = () => {
               className="space-y-5 border-t border-gray-300 pt-6"
             >
               <legend className="pr-3 text-lg font-bold ">
-                Hình ảnh bất động sản
+                Hình ảnh và video bất động sản
               </legend>
               <Controller
                 name="images"
@@ -857,8 +875,9 @@ const PostForm = () => {
                 render={({ field }) => (
                   <div className="space-y-4">
                     <p aria-live="polite" className="text-sm ">
-                      {field.value.length}/{MAX_IMAGES} ảnh{" "}
+                      {field.value.length}/{MAX_IMAGES} ảnh (tối thiểu {MIN_IMAGES}){" "}
                       <span className="text-red-500">*</span>
+                      <span className="ml-4">{video ? 1 : 0}/1 video (tùy chọn)</span>
                     </p>
                     <div className="grid items-start gap-4 sm:grid-cols-[180px_minmax(0,1fr)]">
                       <Label
@@ -866,20 +885,20 @@ const PostForm = () => {
                         className="flex min-h-32 cursor-pointer flex-col items-center justify-center   gap-2 rounded-xl border-2 border-dashed border-slate-200 bg-slate-50 px-3 py-4 text-center text-sm focus-within:ring-2 focus-within:ring-ring"
                       >
                         <ImagePlus className="size-6 text-primary" />
-                        <span>Chọn hình ảnh</span>
-                        <span className="text-xs ">JPG, PNG, WebP</span>
+                        <span>Chọn ảnh và video</span>
+                        <span className="text-xs ">JPG, PNG, WebP · MP4, WebM<br />Tối đa 10 MB/tệp</span>
                         <input
                           id="images"
                           name={field.name}
                           ref={field.ref}
                           onBlur={field.onBlur}
                           type="file"
-                          accept={IMAGE_TYPES.join(",")}
+                          accept={[...IMAGE_TYPES, ...VIDEO_TYPES].join(",")}
                           multiple
                           className="sr-only"
                           aria-required="true"
                           aria-invalid={
-                            !!errors.images || !!imageSelectionError
+                            !!errors.images || !!mediaError
                           }
                           aria-describedby="images-error"
                           onChange={(event) => {
@@ -888,18 +907,22 @@ const PostForm = () => {
                             );
                             event.currentTarget.value = "";
                             if (!files.length) return;
-                            if (
-                              files.some(
-                                (file) => !IMAGE_TYPES.includes(file.type),
-                              )
-                            ) {
-                              setImageSelectionError(
-                                "Chỉ chấp nhận ảnh JPG, PNG, WebP.",
-                              );
+                            const videos = files.filter(file => VIDEO_TYPES.includes(file.type));
+                            const images = files.filter(file => IMAGE_TYPES.includes(file.type));
+                            if (images.length + videos.length !== files.length) {
+                              setMediaError("Chỉ nhận ảnh JPG, PNG, WebP và video MP4, WebM.");
+                              return;
+                            }
+                            if (files.some(file => !file.size || file.size > 10 * 1024 * 1024)) {
+                              setMediaError("Mỗi tệp phải có dữ liệu và không vượt quá 10 MB.");
+                              return;
+                            }
+                            if (videos.length + Number(Boolean(video)) > 1) {
+                              setMediaError("Chỉ được chọn 1 video. Hãy xóa video đã chọn nếu muốn thay.");
                               return;
                             }
                             const uniqueFiles = [...field.value];
-                            for (const file of files) {
+                            for (const file of images) {
                               if (
                                 !uniqueFiles.some(
                                   (existing) =>
@@ -912,13 +935,14 @@ const PostForm = () => {
                               }
                             }
                             if (uniqueFiles.length > MAX_IMAGES) {
-                              setImageSelectionError(
+                              setMediaError(
                                 "Tối đa 6 ảnh. Vui lòng chọn lại.",
                               );
                               return;
                             }
-                            setImageSelectionError("");
-                            setValue("images", uniqueFiles, {
+                            setMediaError("");
+                            if (videos.length) setVideo(videos[0]);
+                            if (images.length) setValue("images", uniqueFiles, {
                               shouldValidate: true,
                               shouldDirty: true,
                               shouldTouch: true,
@@ -944,7 +968,7 @@ const PostForm = () => {
                               }
                               className="absolute right-2 top-2 rounded-full bg-white p-1.5 shadow hover:bg-slate-100"
                               onClick={() => {
-                                setImageSelectionError("");
+                                setMediaError("");
                                 setValue(
                                   "images",
                                   field.value.filter(
@@ -968,6 +992,17 @@ const PostForm = () => {
                             </p>
                           </div>
                         ))}
+                        {video && (
+                          <div className="relative min-w-0 self-start overflow-hidden rounded-lg border border-slate-200">
+                            <VideoPreview file={video} />
+                            <p className="truncate px-2 py-1 text-xs" title={video.name}>{video.name}</p>
+                            <button type="button" aria-label={`Xóa video ${video.name}`}
+                              className="absolute right-2 top-2 rounded-full bg-white p-1.5 shadow hover:bg-slate-100"
+                              onClick={() => { setVideo(null); setMediaError(""); }}>
+                              <X className="size-4" />
+                            </button>
+                          </div>
+                        )}
                       </div>
                     </div>
                     <div
@@ -975,7 +1010,7 @@ const PostForm = () => {
                       role="alert"
                       className="text-sm text-destructive"
                     >
-                      {imageSelectionError || errors.images?.message}
+                      {mediaError || errors.images?.message}
                     </div>
                   </div>
                 )}

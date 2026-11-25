@@ -1,6 +1,7 @@
 import { z } from "zod";
 import type { LoaiBatDongSan } from "@/types/post";
 
+export const MIN_IMAGES = 3;
 export const MAX_IMAGES = 6;
 export const IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
 const optionalDimension = z.string().trim().refine(
@@ -28,7 +29,7 @@ export const createPostSchema = (categories: Pick<LoaiBatDongSan, "maLoaiBatDong
           "Chỉ chấp nhận JPG, PNG, WebP.",
         ),
     )
-    .min(1, "Vui lòng chọn ít nhất 1 ảnh.")
+    .min(MIN_IMAGES, `Vui lòng chọn ít nhất ${MIN_IMAGES} ảnh.`)
     .max(MAX_IMAGES, "Tối đa 6 ảnh."),
 
   title: z
