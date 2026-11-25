@@ -13,16 +13,6 @@ import { formatPrice } from "@/lib/format-price";
 import type { FavoritePost } from "@/types/favorite-post";
 
 const number = new Intl.NumberFormat("vi-VN", { maximumFractionDigits: 1 });
-const date = new Intl.DateTimeFormat("vi-VN", { timeZone: "Asia/Ho_Chi_Minh" });
-
-function postedDate(value: string | null) {
-  if (!value) return "Ngày đăng đang cập nhật";
-  const parsed = new Date(value);
-  if (Number.isNaN(parsed.getTime())) return "Ngày đăng đang cập nhật";
-  return date.format(parsed) === date.format(new Date())
-    ? "Đăng hôm nay"
-    : `Đăng ngày ${date.format(parsed)}`;
-}
 
 export default function FavoritePostCard({
   post,
@@ -68,7 +58,7 @@ export default function FavoritePostCard({
       </Link>
 
       <div className="flex min-w-0 flex-1 flex-col p-4 sm:min-h-56 sm:p-5 lg:p-6">
-        <h2 className="wrap-break-word text-lg leading-7 font-bold tracking-tight ">
+        <h2 className="wrap-break-word text-lg leading-7 font-semibold tracking-tight ">
           <Link
             to={detailUrl}
             className="line-clamp-2 rounded-sm focus-visible:outline-2 focus-visible:outline-primary"
@@ -111,10 +101,7 @@ export default function FavoritePostCard({
           <span className="line-clamp-2">{location || post.diaChiChiTiet}</span>
         </p>
 
-        <div className="mt-auto flex items-center justify-between gap-3 pt-5">
-          <span className="text-[10px] ">
-            {postedDate(post.ngayDang)}
-          </span>
+        <div className="mt-auto flex items-center justify-end gap-3 pt-5">
           <button
             type="button"
             disabled={removing}

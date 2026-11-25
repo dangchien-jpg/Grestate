@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Link } from "react-router";
+import { useAuthStore } from "@/stores/authStore";
+import { Link, useLocation, useNavigate } from "react-router";
 import { Phone, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { PublicAuthor } from "@/types/post";
@@ -24,14 +25,21 @@ export default function AuthorContact({
   name = author.hoTen,
   phone = author.soDienThoai,
   showLink = false,
+  requireLogin = false,
 }: {
   author: PublicAuthor;
   total: number;
   name?: string;
   phone?: string | null;
   showLink?: boolean;
+  requireLogin?: boolean;
 }) {
-  const [shown, setShown] = useState<string | null>(null);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const userId = useAuthStore((state) => state.user?.maNguoiDung);
+  const needsLogin = requireLogin && !userId;
+  const openLogin = () => navigate("/signin", { state: { backgroundLocation: location } });
+  const [shown, setShown] = useState<{ phone: string; userId?: number } | null>(null);
   let zaloUrl: string | null = null;
   const zaloLink = author.duongDanZalo?.trim();
   if (zaloLink) {
@@ -84,16 +92,24 @@ export default function AuthorContact({
         <Button
           className="w-full h-12 text-sm"
           disabled={!phone}
-          onClick={() => setShown(phone)}
+          onClick={() => {
+            if (needsLogin) openLogin();
+            else if (phone) setShown({ phone, userId });
+          }}
         >
           <Phone className="size-4" />
           {phone
-            ? shown === phone
+            ? shown?.phone === phone && (!requireLogin || (!needsLogin && shown.userId === userId))
               ? phone
               : "**********　 Xem số"
             : "Chưa có số điện thoại"}
         </Button>
-        {zaloUrl ? (
+        {zaloUrl && needsLogin ? (
+          <Button type="button" variant="outline" className="h-12 w-full gap-2" onClick={openLogin}>
+            <MessageCircle className="size-4" />
+            Liên hệ qua Zalo
+          </Button>
+        ) : zaloUrl ? (
           <a
             href={zaloUrl}
             target="_blank"

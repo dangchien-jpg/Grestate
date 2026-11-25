@@ -35,14 +35,13 @@ const FavoritePostPage = () => {
     <div className="flex min-h-screen flex-col bg-slate-50/50 font-sans ">
       <Header />
       <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-6 sm:py-10">
-        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
+        <h1 className="text-xl font-bold tracking-tight sm:text-xl">
           Bất động sản đã lưu
         </h1>
         {!loading && !error && (
           <div className="mt-6 mb-5 flex flex-wrap items-center justify-between gap-3">
             <p className="text-sm ">
-              Tổng số <strong className="">{posts.length}</strong>{" "}
-              tin đăng
+              Tổng số <strong className="">{posts.length}</strong> tin đăng
             </p>
           </div>
         )}

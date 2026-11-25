@@ -57,14 +57,23 @@ export function SignupForm({
     const { password, email, firstName, lastName } = data;
     try {
       await signUp(password, email, firstName, lastName);
-      navigate("/verify-email", { replace: true, state: { ...location.state, email, resendAt: Date.now() + 30000 } });
+      navigate("/verify-email", {
+        replace: true,
+        state: { ...location.state, email, resendAt: Date.now() + 30000 },
+      });
       toast.success(
         "Đăng ký thành công! Vui lòng kiểm tra email để xác minh tài khoản.",
       );
     } catch (error) {
-      if (isAxiosError(error) && error.response?.data?.code === "OTP_DELIVERY_FAILED") {
+      if (
+        isAxiosError(error) &&
+        error.response?.data?.code === "OTP_DELIVERY_FAILED"
+      ) {
         toast.error(error.response.data.message);
-        navigate("/verify-email", { replace: true, state: { ...location.state, email } });
+        navigate("/verify-email", {
+          replace: true,
+          state: { ...location.state, email },
+        });
         return;
       }
       const message =
@@ -81,7 +90,7 @@ export function SignupForm({
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card className="overflow-hidden p-0 rounded-sm">
         <CardContent className="grid p-0 md:grid-cols-2">
-          <form className="p-6 md:p-8" onSubmit={handleSubmit(onSubmit)}>
+          <form className="p-6 md:p-8" onSubmit={(event) => handleSubmit(onSubmit)(event)}>
             <FieldGroup>
               <div className="flex flex-col items-center gap-2 text-center">
                 <h1 className="text-2xl font-bold">Tạo tài khoản</h1>
@@ -202,8 +211,14 @@ export function SignupForm({
                     className="cursor-pointer text-xs leading-relaxed [&_a]:underline [&_a]:underline-offset-4"
                   >
                     Bằng việc “Tiếp tục”, bạn đồng ý với{" "}
-                    <a href="#">Điều khoản dịch vụ</a> và{" "}
-                    <a href="#">Chính sách quyền riêng tư</a> của chúng tôi.
+                    <a href="https://sites.google.com/view/trung-tam-tro-giup-grestate/ch%C3%ADnh-s%C3%A1ch-%C4%91i%E1%BB%81u-kho%E1%BA%A3n" target="_blank" rel="noopener noreferrer">
+                      Điều khoản dịch vụ
+                    </a>{" "}
+                    và{" "}
+                    <a href="https://sites.google.com/view/trung-tam-tro-giup-grestate/ch%C3%ADnh-s%C3%A1ch-%C4%91i%E1%BB%81u-kho%E1%BA%A3n" target="_blank" rel="noopener noreferrer">
+                      Chính sách quyền riêng tư
+                    </a>{" "}
+                    của chúng tôi.
                   </label>
                 </div>
                 {errors.acceptTerms && (

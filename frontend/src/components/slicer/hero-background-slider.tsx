@@ -16,7 +16,7 @@ export default function HeroBackgroundSlider() {
       window.clearInterval(timer);
       if (!motion.matches && !document.hidden) {
         timer = window.setInterval(() => {
-          setActive(index => (index + 1) % photos.length);
+          setActive((index) => (index + 1) % photos.length);
         }, 5000);
       }
     }
@@ -31,7 +31,10 @@ export default function HeroBackgroundSlider() {
   }, []);
 
   return (
-    <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+    <div
+      aria-hidden="true"
+      className="pointer-events-none absolute inset-0 -z-10 overflow-hidden"
+    >
       {photos.map((photo, index) => (
         <img
           key={photo}
