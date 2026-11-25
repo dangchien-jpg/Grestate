@@ -84,10 +84,10 @@ function QueueList({ status }: { status: keyof typeof verificationLabels }) {
   );
   if (newest) matches.reverse();
   return (
-    <section className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 p-4 sm:p-6">
+    <section className="overflow-hidden rounded-sm bg-white shadow-sm">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#ccc] p-4 sm:p-4">
         <div className="flex items-center gap-3">
-          <span className="grid size-11 place-items-center rounded-lg bg-blue-50 text-primary">
+          <span className="grid size-11 place-items-center rounded-sm bg-blue-50 text-primary">
             <Inbox size={22} />
           </span>
           <div>
@@ -103,7 +103,7 @@ function QueueList({ status }: { status: keyof typeof verificationLabels }) {
         </div>
         <Button
           variant="outline"
-          className="h-10"
+          className="h-10 bg-white border-[#ccc]"
           disabled={loading}
           onClick={refresh}
         >
@@ -113,7 +113,7 @@ function QueueList({ status }: { status: keyof typeof verificationLabels }) {
       </div>
       <nav
         aria-label="Trạng thái xác thực"
-        className="flex flex-wrap gap-2 border-b px-4 py-3 sm:px-6"
+        className="flex flex-wrap gap-2 border-b border-[#ccc] px-4 py-3 sm:px-6"
       >
         {Object.entries(verificationLabels).map(([key, label]) => (
           <Button
@@ -121,6 +121,7 @@ function QueueList({ status }: { status: keyof typeof verificationLabels }) {
             variant={status === key ? "default" : "outline"}
             aria-pressed={status === key}
             onClick={() => update("tab", key)}
+            className="rounded-sm border border-[#ccc]"
           >
             {label}
           </Button>
@@ -176,7 +177,7 @@ function QueueList({ status }: { status: keyof typeof verificationLabels }) {
         </div>
       ) : matches.length ? (
         <>
-          <div className="hidden grid-cols-[minmax(0,2fr)_minmax(100px,1fr)_145px_80px] gap-4 border-y bg-slate-50 px-6 py-3 text-xs font-semibold  lg:grid">
+          <div className="hidden grid-cols-[minmax(0,2fr)_minmax(100px,1fr)_145px_80px] gap-4 border-y bg-[#eee] px-6 py-3 text-xs font-semibold  lg:grid">
             <span>Tin đăng</span>
             <span>Người gửi</span>
             <span>Ngày gửi</span>
@@ -190,11 +191,12 @@ function QueueList({ status }: { status: keyof typeof verificationLabels }) {
                     pathname: reviewPath + "/" + item.maYeuCau,
                     search: params.toString(),
                   }}
-                  className="group grid items-center gap-2 px-4 py-4 hover:bg-blue-50/50 focus-visible:outline-primary sm:px-6 lg:grid-cols-[minmax(0,2fr)_minmax(100px,1fr)_145px_80px] lg:gap-4"
+                  className="group grid items-center gap-2 px-4 py-4 hover:bg-[#eee]/30 focus-visible:outline-primary sm:px-6 lg:grid-cols-[minmax(0,2fr)_minmax(100px,1fr)_145px_80px] lg:gap-4"
                 >
                   <div className="min-w-0">
                     <h3 className="text-sm font-semibold  group-hover:text-primary">
-                      <VerifiedBadge verified={item.tinDang.daXacThuc} />{item.tinDang.tieuDe}
+                      <VerifiedBadge verified={item.tinDang.daXacThuc} />
+                      {item.tinDang.tieuDe}
                     </h3>
                     <p className="mt-1 text-sm ">
                       Pháp lý:{" "}

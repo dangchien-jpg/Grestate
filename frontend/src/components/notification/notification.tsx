@@ -76,7 +76,7 @@ export default function Notification() {
         <DropdownMenuTrigger
           ref={trigger}
           aria-label={`Thông báo, ${unread} chưa đọc`}
-          className="relative inline-grid size-8 place-items-center rounded-full"
+          className="relative inline-grid size-8 place-items-center rounded-sm"
         >
           <Bell className="size-6" />
           {unread > 0 && (
@@ -113,16 +113,18 @@ export default function Notification() {
                 {!item.daDoc && (
                   <span
                     aria-label="Chưa đọc"
-                    className="size-2 shrink-0 rounded-full bg-primary"
+                    className="size-2 shrink-0 rounded-sm bg-primary"
                   />
                 )}
                 <span className="min-w-0">
                   <span
-                    className={item.daDoc ? "block" : "block font-semibold"}
+                    className={
+                      item.daDoc ? "block text-sm" : "block font-semibold"
+                    }
                   >
                     {item.tieuDe}
                   </span>
-                  <time className="text-muted-foreground">
+                  <time className="text-sm">
                     {new Date(item.createdAt).toLocaleString("vi-VN")}
                   </time>
                 </span>
@@ -145,7 +147,7 @@ export default function Notification() {
             <h2 id="notification-title" className="text-lg font-semibold">
               {detail.tieuDe}
             </h2>
-            <time className="text-xs text-muted-foreground">
+            <time className="text-xs">
               {new Date(detail.createdAt).toLocaleString("vi-VN")}
             </time>
             <p className="my-4 whitespace-pre-wrap break-words">

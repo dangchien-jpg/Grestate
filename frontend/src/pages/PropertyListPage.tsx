@@ -236,20 +236,22 @@ export default function PropertyListPage() {
                 </Dialog.Popup>
               </Dialog.Portal>
             </Dialog.Root>
-            <h1 aria-live="polite" className="text-xl font-semibold">
-              {loading && !posts.length ? "Nhà đất bán" : heading}
-            </h1>
-            {!!filterLabels.length && (
-              <div className="flex flex-wrap items-center gap-x-3">
-                <p className="text-sm" role="status">
-                  Kết quả lọc {filterLabels.join(", ")}
-                </p>
-                <Button variant="link" className="h-11 px-0" onClick={reset}>
-                  Bỏ lọc
-                </Button>
+            <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
+              <div className="min-w-0">
+                <h1 aria-live="polite" className="text-xl font-semibold">
+                  {loading && !posts.length ? "Nhà đất bán" : heading}
+                </h1>
+                {!!filterLabels.length && (
+                  <div className="flex flex-wrap items-center gap-x-3">
+                    <p className="text-sm" role="status">
+                      Kết quả lọc {filterLabels.join(", ")}
+                    </p>
+                    <Button variant="link" className="h-8 px-0" onClick={reset}>
+                      Bỏ lọc
+                    </Button>
+                  </div>
+                )}
               </div>
-            )}
-            <div className="flex flex-wrap items-center justify-end gap-2">
               <Select
                 value={sort}
                 items={{

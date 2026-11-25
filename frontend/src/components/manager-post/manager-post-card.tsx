@@ -1,21 +1,10 @@
-import VerifiedBadge from "@/components/verify-post/verified-badge";
 import VerifyPostAction from "@/components/verify-post/verify-post-action";
 import { getPostUrl } from "@/lib/post-url";
 import { useEffect, useRef, useState } from "react";
 import { Dialog } from "@base-ui/react/dialog";
 import Backdrop from "@/components/backdrop/backdrop";
 import { isAxiosError } from "axios";
-import {
-  Bath,
-  BedDouble,
-  Images,
-  LandPlot,
-  ListChecks,
-  LoaderCircle,
-  MapPin,
-  Pencil,
-  Trash2,
-} from "lucide-react";
+import { Images, ListChecks, LoaderCircle, Pencil, Trash2 } from "lucide-react";
 import { Link } from "react-router";
 import { toast } from "sonner";
 import { postService } from "@/services/postService";
@@ -44,6 +33,35 @@ const statuses: Record<string, { label: string; className: string }> = {
     className: "border-red-200 bg-red-50 text-red-600",
   },
 };
+const filters = [
+  { key: "ALL", label: "Tất cả", matches: () => true },
+  {
+    key: "VERIFY",
+    label: "Xác thực tin",
+    matches: (post: TinDangDanhSach) => Boolean(post.daXacThuc || post.xacThuc),
+  },
+  {
+    key: "LIVE",
+    label: "Đang hiển thị",
+    matches: (post: TinDangDanhSach) => post.trangThai === "DA_DUYET",
+  },
+  {
+    key: "PENDING",
+    label: "Chờ duyệt",
+    matches: (post: TinDangDanhSach) => post.trangThai === "CHO_KIEM_DUYET",
+  },
+  {
+    key: "REJECTED",
+    label: "Từ chối duyệt",
+    matches: (post: TinDangDanhSach) => post.trangThai === "TU_CHOI",
+  },
+  {
+    key: "REMOVED",
+    label: statuses.BI_GO.label,
+    matches: (post: TinDangDanhSach) => post.trangThai === "BI_GO",
+  },
+] as const;
+
 const number = new Intl.NumberFormat("vi-VN", { maximumFractionDigits: 1 });
 const date = new Intl.DateTimeFormat("vi-VN", { timeZone: "Asia/Ho_Chi_Minh" });
 
@@ -78,7 +96,7 @@ function PostCard({
 }) {
   const status = statuses[post.trangThai] ?? {
     label: "Trạng thái khác",
-    className: "border-gray-400 bg-slate-50 ",
+    className: "border-gray-400",
   };
   const address = [
     post.diaChiChiTiet,
@@ -89,11 +107,11 @@ function PostCard({
     .join(", ");
   const detailUrl = getPostUrl(post);
   return (
-    <article className="flex flex-col overflow-hidden rounded-sm border  bg-white font-sans shadow-sm sm:flex-row">
+    <article className="flex flex-col overflow-hidden rounded-sm border border-[#ccc]  bg-card text-card-foreground  sm:flex-row">
       <Link
         to={detailUrl}
         aria-label={`Xem tin: ${post.tieuDe}`}
-        className="relative block aspect-[4/3] shrink-0 overflow-hidden bg-slate-100 rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-primary sm:aspect-auto sm:w-52 lg:w-64"
+        className="relative block aspect-video shrink-0 overflow-hidden bg-muted focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary sm:aspect-auto sm:w-44 lg:w-56"
       >
         <img
           src={post.anhDaiDienUrl || "/placeholder.png"}
@@ -111,69 +129,49 @@ function PostCard({
           {post.hinhAnhTinDangs.length} ảnh
         </span>
       </Link>
-      <div className="flex min-w-0 flex-1 flex-col p-4 sm:min-h-56 sm:p-5">
+      <div className="flex min-w-0 flex-1 flex-col p-4 sm:p-5">
         <div className="mb-2 flex flex-wrap items-center gap-2">
           <span
-            className={`inline-flex rounded-sm border px-2 py-1 text-xs font-medium ${status.className}`}
+            className={`inline-flex rounded-full border px-2.5 py-0.5 text-xs font-medium ${status.className}`}
           >
             {status.label}
           </span>
-          <span className="text-[10px] ">Mã tin: {post.maTinDang}</span>
+          <VerifyPostAction
+            post={post}
+            onSubmitted={onVerification}
+            onRefresh={refresh}
+          />
         </div>
-        <h2 className="wrap-break-word text-sm leading-7 font-bold tracking-tight ">
+        <h2 className="wrap-break-word leading-snug font-semibold tracking-tight sm:text-lg">
           <Link
             to={detailUrl}
-            className="line-clamp-2 rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            className="line-clamp-2 rounded-sm transition-colors hover:opacity-90 outline-none focus-visible:ring-2 focus-visible:ring-primary"
           >
-            <VerifiedBadge verified={post.daXacThuc} />
             {post.tieuDe}
           </Link>
         </h2>
-        <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs">
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
           <span className="text-lg font-bold text-red-600">
             {formatPrice(post.giaNiemYet)}
           </span>
-          <span className="inline-flex items-center gap-1">
-            <LandPlot aria-hidden="true" className="size-3.5" />
+          <span className="inline-flex items-center gap-1 text-sm font-medium">
             {number.format(post.dienTich)} m²
           </span>
-          {post.soPhongNgu !== null && (
-            <span
-              className="inline-flex items-center gap-1"
-              aria-label={`${post.soPhongNgu} phòng ngủ`}
-            >
-              <BedDouble aria-hidden="true" className="size-3.5" />
-              {post.soPhongNgu} PN
-            </span>
-          )}
-          {post.soPhongTam !== null && (
-            <span
-              className="inline-flex items-center gap-1"
-              aria-label={`${post.soPhongTam} phòng tắm`}
-            >
-              <Bath aria-hidden="true" className="size-3.5" />
-              {post.soPhongTam} WC
-            </span>
-          )}
         </div>
-        <p
-          title={address}
-          className="mt-3 flex items-start gap-1 text-xs leading-relaxed "
-        >
-          <MapPin aria-hidden="true" className="mt-0.5 size-3.5 shrink-0" />
-          <span className="line-clamp-2">{address}</span>
-        </p>
-        <div className="mt-auto flex flex-wrap items-center justify-between gap-3 pt-4">
-          <span className="text-[10px] ">{createdDate(post.createdAt)}</span>
+        <p className="line-clamp-2 text-sm font-medium">{address}</p>
+        <div className="flex items-center gap-4 text-sm font-medium mt-1">
+          <p className="">{createdDate(post.createdAt)}</p>
+          <p className="">Mã tin: {post.maTinDang}</p>
+        </div>
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-x-3 gap-y-2 border-t  border-[#ccc] pt-3">
           <div className="flex flex-wrap items-center gap-2">
-            <VerifyPostAction post={post} onSubmitted={onVerification} onRefresh={refresh}/>
             <button
               type="button"
               onClick={onEdit}
               disabled={deleting}
               aria-label={`Chỉnh sửa tin: ${post.tieuDe}`}
               title="Chỉnh sửa tin đăng"
-              className="inline-flex size-9 items-center justify-center rounded-sm border border-gray-400 bg-white text-primary outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50"
+              className="inline-flex size-11 items-center justify-center rounded-sm border  bg-card text-primary transition-colors hover:border-primary/40 hover:bg-primary/5 outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50"
             >
               <Pencil aria-hidden="true" className="size-4" />
             </button>
@@ -184,7 +182,7 @@ function PostCard({
               aria-busy={deleting}
               aria-label={`Xóa tin: ${post.tieuDe}`}
               title="Xóa tin đăng"
-              className="inline-flex size-9 items-center justify-center rounded-sm border border-gray-400 bg-white text-red-600 outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50"
+              className="inline-flex size-11 items-center justify-center rounded-sm border  bg-card  transition-colors hover:border-red-200 hover:bg-red-50 hover:text-red-700 outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50"
             >
               {deleting ? (
                 <LoaderCircle
@@ -210,7 +208,8 @@ export default function ManagerPostCard() {
     error: string;
   } | null>(null);
   const [retry, setRetry] = useState(0);
-  const [status, setStatus] = useState("ALL");
+  const [status, setStatus] = useState<(typeof filters)[number]["key"]>("ALL");
+  const [order, setOrder] = useState("newest");
   const [editing, setEditing] = useState<TinDangDanhSach | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<TinDangDanhSach | null>(
     null,
@@ -221,10 +220,30 @@ export default function ManagerPostCard() {
   const current = request?.userId === userId ? request : null;
   const posts = current?.posts ?? [];
   const loading = !current;
-  const visiblePosts =
-    status === "ALL"
-      ? posts
-      : posts.filter((post) => post.trangThai === status);
+  const groups = filters.map((filter) => ({
+    ...filter,
+    posts: posts.filter(filter.matches),
+  }));
+  const visiblePosts = (
+    groups.find((group) => group.key === status)?.posts ?? []
+  ).sort((a, b) => {
+    const byDate =
+      Date.parse(b.createdAt) - Date.parse(a.createdAt) ||
+      b.maTinDang - a.maTinDang;
+    return order === "newest" ? byDate : -byDate;
+  });
+  const summary = [
+    { label: "Tổng tin đăng", count: posts.length },
+    ...groups
+      .filter((group) => group.key === "LIVE" || group.key === "PENDING")
+      .map((group) => ({ label: group.label, count: group.posts.length })),
+    {
+      label: "Chờ xác thực",
+      count: posts.filter((post) => post.xacThuc?.trangThai === "CHO_XU_LY")
+        .length,
+    },
+  ];
+  const hasCounts = !loading && !current?.error;
 
   useEffect(() => {
     if (!userId) return;
@@ -263,9 +282,13 @@ export default function ManagerPostCard() {
       posts: state.posts.map((post) =>
         post.maTinDang === updated.maTinDang ? updated : post,
       ),
-      post: state.post?.maTinDang === updated.maTinDang
-        ? { ...updated, nguoiDang: { ...state.post.nguoiDang, ...updated.nguoiDang } }
-        : state.post,
+      post:
+        state.post?.maTinDang === updated.maTinDang
+          ? {
+              ...updated,
+              nguoiDang: { ...state.post.nguoiDang, ...updated.nguoiDang },
+            }
+          : state.post,
     }));
   }
 
@@ -308,36 +331,53 @@ export default function ManagerPostCard() {
       aria-label="Danh sách tin đăng của bạn"
       className="mx-auto max-w-6xl p-4 font-sans sm:p-6 lg:p-8"
     >
-      <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
-        <p className="text-sm ">
-          {loading ? (
-            "Đang tải tin đăng..."
-          ) : (
-            <>
-              Tổng số <strong className="">{posts.length}</strong> tin đăng
-              {status !== "ALL" && ` · Hiển thị ${visiblePosts.length} tin`}
-            </>
-          )}
-        </p>
-        <label className="flex items-center gap-2 text-sm ">
-          Trạng thái
-          <select
-            value={status}
-            onChange={(event) => setStatus(event.target.value)}
-            className="h-10 min-w-40 rounded-sm border border-input bg-white px-3 font-sans text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      <dl className="mb-4 grid grid-cols-2 gap-3 lg:grid-cols-4">
+        {summary.map(({ label, count }) => (
+          <div
+            key={label}
+            className="rounded-sm border border-border bg-card px-4 py-3 shadow-sm"
           >
-            <option value="ALL">Tất cả</option>
-            <option value="DA_DUYET">Đã duyệt</option>
-            <option value="CHO_KIEM_DUYET">Chưa duyệt</option>
-            <option value="TU_CHOI">Đã từ chối</option>
-            <option value="BI_GO">Vi phạm</option>
+            <dt className="text-sm font-medium">{label}</dt>
+            <dd className="mt-1 text-xl font-semibold tabular-nums">
+              {hasCounts ? count : "—"}
+            </dd>
+          </div>
+        ))}
+      </dl>
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+        <div
+          role="group"
+          aria-label="Lọc tin theo trạng thái"
+          className="flex max-w-full gap-1.5 overflow-x-auto py-1"
+        >
+          {groups.map((group) => (
+            <button
+              key={group.key}
+              type="button"
+              aria-pressed={status === group.key}
+              onClick={() => setStatus(group.key)}
+              className={`shrink-0  px-3 py-2 text-sm font-medium  ${status === group.key ? "border-b-3 border-primary " : "border-border bg-card "}`}
+            >
+              {group.label} {hasCounts && `(${group.posts.length})`}
+            </button>
+          ))}
+        </div>
+        <div className="flex min-w-0 flex-wrap gap-2">
+          <select
+            aria-label="Sắp xếp theo ngày tạo"
+            value={order}
+            onChange={(event) => setOrder(event.target.value)}
+            className="h-10 rounded-sm shadow-sm bg-card px-3 text-sm"
+          >
+            <option value="newest">Mới nhất</option>
+            <option value="oldest">Cũ nhất</option>
           </select>
-        </label>
+        </div>
       </div>
       {loading ? (
         <div
           role="status"
-          className="flex items-center justify-center gap-2 rounded-sm border border-gray-400 bg-white py-16 text-sm "
+          className="flex items-center justify-center gap-2 rounded-sm border  bg-card py-16 text-sm "
         >
           <LoaderCircle aria-hidden="true" className="size-5 animate-spin" />
           Đang tải danh sách tin đăng...
@@ -345,7 +385,7 @@ export default function ManagerPostCard() {
       ) : current?.error ? (
         <div
           role="alert"
-          className="rounded-sm border border-red-200 bg-white p-5 text-sm"
+          className="rounded-sm border border-red-200 bg-card p-5 text-sm"
         >
           <p className="text-red-600">{current.error}</p>
           <button
@@ -360,12 +400,15 @@ export default function ManagerPostCard() {
           </button>
         </div>
       ) : visiblePosts.length === 0 ? (
-        <div className="rounded-sm border border-dashed border-gray-400 bg-white px-4 py-16 text-center">
-          <ListChecks aria-hidden="true" className="mx-auto mb-3 size-9 " />
+        <div className="rounded-sm border border-dashed border-input bg-card px-4 py-16 text-center">
+          <ListChecks
+            aria-hidden="true"
+            className="mx-auto mb-3 size-9 text-primary"
+          />
           <h2 className="text-sm font-semibold">
             {posts.length === 0
               ? "Bạn chưa có tin đăng nào"
-              : "Không có tin đăng thuộc trạng thái này"}
+              : "Không tìm thấy tin phù hợp với bộ lọc"}
           </h2>
           {posts.length === 0 ? (
             <Link
@@ -385,16 +428,27 @@ export default function ManagerPostCard() {
           )}
         </div>
       ) : (
-        <div className="space-y-5">
+        <div className="space-y-4">
           {visiblePosts.map((post) => (
             <PostCard
               key={post.maTinDang}
               post={post}
               deleting={deletingIds.includes(post.maTinDang)}
-              refresh={() => setRetry(n => n + 1)}
-              onVerification={result => setRequest(state => state?.userId === post.maNguoiDung ? {
-                ...state, posts: state.posts.map(item => item.maTinDang === post.maTinDang ? { ...item, xacThuc: result } : item),
-              } : state)}
+              refresh={() => setRetry((n) => n + 1)}
+              onVerification={(result) =>
+                setRequest((state) =>
+                  state?.userId === post.maNguoiDung
+                    ? {
+                        ...state,
+                        posts: state.posts.map((item) =>
+                          item.maTinDang === post.maTinDang
+                            ? { ...item, xacThuc: result }
+                            : item,
+                        ),
+                      }
+                    : state,
+                )
+              }
               onEdit={() => setEditing(post)}
               onDelete={() => {
                 setDeleteTarget(post);

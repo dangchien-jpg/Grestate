@@ -8,8 +8,9 @@ const ManagerPostPage = () => {
   const { user } = useAuthStore();
 
   return (
-    <div className="flex min-h-screen bg-slate-50/50 font-sans ">
+    <div className="flex min-h-screen flex-col bg-[#fff] font-sans text-foreground md:flex-row">
       <Sidebar
+        className="max-md:static max-md:h-auto max-md:w-full max-md:flex-row max-md:items-center max-md:border-r-0 max-md:border-b max-md:[&>a]:min-h-0 max-md:[&>a]:p-3 max-md:[&_nav]:p-0 max-md:[&_ul]:flex max-md:[&_li]:m-0 max-md:[&_li]:flex-1 max-md:[&_li]:border-0 max-md:[&_li]:p-0 max-md:[&_li_a]:min-h-14 max-md:[&_li_a]:gap-0 max-md:[&_li_a]:py-1 max-md:[&_li_a]:border-r-0 max-md:[&_li_a[aria-current=page]]:bg-primary/5"
         items={[
           {
             icon: <Plus />,
@@ -29,21 +30,27 @@ const ManagerPostPage = () => {
           },
         ]}
       />
-      <main className="min-w-0 flex-1 ">
-        <header className="flex min-h-20 w-full flex-wrap items-center justify-between gap-3 border-b border-slate-200 bg-white p-4 sm:p-6">
-          <h1 className="text-2xl font-bold">Trang quản lý tin đăng</h1>
-          <div className="flex items-center gap-3">
-            <h2 className="text-sm font-bold">{user?.hoTen}</h2>
-            <Avatar className="rounded-full after:rounded-full">
-              {user?.anhDaiDienUrl ? (
-                <AvatarImage
-                  src={user.anhDaiDienUrl}
-                  className="rounded-full"
-                />
-              ) : (
-                <AvatarImage src="/user.png" className="rounded-full" />
-              )}
-            </Avatar>
+      <main className="min-w-0 flex-1">
+        <header className="border-b border-border bg-card">
+          <div className="mx-auto flex  items-center justify-between gap-4 py-5 px-4">
+            <h1 className="text-xl font-semibold tracking-tight sm:text-xl">
+              Quản lý tin đăng
+            </h1>
+            <div className="flex items-center gap-3">
+              <span className="hidden text-sm font-medium sm:inline">
+                {user?.hoTen}
+              </span>
+              <Avatar className="rounded-full after:rounded-full">
+                {user?.anhDaiDienUrl ? (
+                  <AvatarImage
+                    src={user.anhDaiDienUrl}
+                    className="rounded-full"
+                  />
+                ) : (
+                  <AvatarImage src="/user.png" className="rounded-full" />
+                )}
+              </Avatar>
+            </div>
           </div>
         </header>
 

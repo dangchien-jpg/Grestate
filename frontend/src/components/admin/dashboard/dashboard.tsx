@@ -76,7 +76,7 @@ function TrendChart({ data }: { data: DashboardTrend[] }) {
   const step = 640 / Math.max(data.length, 1);
   return (
     <>
-      <p className="mb-3 text-sm text-slate-600">
+      <p className="mb-3 text-sm ">
         Tổng cộng{" "}
         <strong className="text-slate-900">{number.format(total)}</strong> tin
         mới
@@ -217,7 +217,7 @@ function StatusChart({
               className="size-2.5 shrink-0 rounded-full"
               style={{ backgroundColor: colors[index % colors.length] }}
             />
-            <span className="flex-1 text-slate-600">
+            <span className="flex-1 ">
               {statusLabels[item.status] ?? item.status}
             </span>
             <strong>{number.format(item.count)}</strong>
@@ -337,9 +337,7 @@ function DashboardContent({
           const content = (
             <>
               <div className="flex items-center justify-between gap-2">
-                <span className="text-sm font-medium text-slate-600">
-                  {label}
-                </span>
+                <span className="text-sm font-medium ">{label}</span>
                 <span className={"rounded-lg p-2 " + color}>
                   <Icon className="size-5" />
                 </span>
@@ -455,16 +453,6 @@ export default function Dashboard() {
   }
   return (
     <div className="space-y-5 bg-slate-50/60 p-4 sm:p-6">
-      <div className="flex flex-wrap items-end justify-end gap-4">
-        <Button
-          variant="outline"
-          className="rounded-sm bg-white"
-          onClick={refresh}
-        >
-          <RefreshCw className="size-4" />
-          Làm mới
-        </Button>
-      </div>
       <div className="rounded-sm border border-slate-200 bg-white p-4">
         <form onSubmit={applyRange} className="flex flex-wrap items-end gap-3">
           <div className="flex gap-2 self-end">
@@ -474,12 +462,13 @@ export default function Dashboard() {
                 key={days}
                 variant="outline"
                 onClick={() => selectPreset(days)}
+                className="border border-[#ccc] bg-white"
               >
                 {days} ngày
               </Button>
             ))}
           </div>
-          <label className="grid gap-1 text-xs font-medium text-slate-600">
+          <label className="grid gap-1 text-xs font-medium ">
             Từ ngày
             <input
               required
@@ -488,10 +477,10 @@ export default function Dashboard() {
               onChange={(event) =>
                 setDraft({ ...draft, startDate: event.target.value })
               }
-              className="h-8 rounded-sm border border-slate-300 bg-white px-2 text-sm"
+              className="h-8 rounded-sm border border-[#ccc] bg-white px-2 text-sm"
             />
           </label>
-          <label className="grid gap-1 text-xs font-medium text-slate-600">
+          <label className="grid gap-1 text-xs font-medium ">
             Đến ngày
             <input
               required
@@ -500,10 +489,22 @@ export default function Dashboard() {
               onChange={(event) =>
                 setDraft({ ...draft, endDate: event.target.value })
               }
-              className="h-8 rounded-sm border border-slate-300 bg-white px-2 text-sm"
+              className="h-8 rounded-sm border border-[#ccc] bg-white px-2 text-sm"
             />
           </label>
-          <Button type="submit">Áp dụng</Button>
+          <Button type="submit" className="px-4">
+            Áp dụng
+          </Button>
+          <div className="flex flex-wrap items-end justify-end gap-4">
+            <Button
+              variant="outline"
+              className="rounded-sm bg-white"
+              onClick={refresh}
+            >
+              <RefreshCw className="size-4" />
+              Làm mới
+            </Button>
+          </div>
         </form>
         {filterError && (
           <p role="alert" className="mt-2 text-sm text-red-600">

@@ -50,7 +50,6 @@ const AdminLayout = ({ title, children }: AdminLayoutProps) => {
     <div className="flex min-h-screen bg-background font-sans">
       <Sidebar
         items={[
-          { icon: <ShieldCheck />, title: "Tin chờ xác thực", link: "/admin/verify-post" },
           {
             icon: <ChartNoAxesCombined />,
             title: "Dashboard",
@@ -67,7 +66,22 @@ const AdminLayout = ({ title, children }: AdminLayoutProps) => {
             link: "/admin/censor",
           },
           {
-            icon: <span className="relative inline-flex"><Flag /><PendingReportBadge /></span>,
+            icon: (
+              <span className="relative inline-flex">
+                <ShieldCheck />
+                <PendingPostBadge verification />
+              </span>
+            ),
+            title: "Tin chờ xác thực",
+            link: "/admin/verify-post",
+          },
+          {
+            icon: (
+              <span className="relative inline-flex">
+                <Flag />
+                <PendingReportBadge />
+              </span>
+            ),
             title: "Báo cáo",
             link: "/admin/reports",
           },
@@ -139,4 +153,3 @@ const AdminLayout = ({ title, children }: AdminLayoutProps) => {
 };
 
 export default AdminLayout;
-

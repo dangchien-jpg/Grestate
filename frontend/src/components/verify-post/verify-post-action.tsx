@@ -298,7 +298,7 @@ function EvidenceForm({
         </div>
         <EvidencePicker
           title="Ảnh giấy tờ pháp lý"
-          hint="Chọn đầy đủ các mặt hoặc trang giấy tờ"
+          hint="Ảnh đầy đủ các mặt hoặc trang giấy tờ"
           buttonLabel="Thêm ảnh"
           types={imageTypes}
           files={legalFiles}
@@ -366,7 +366,7 @@ export default function VerifyPostAction({
     return (
       <span
         role="status"
-        className="inline-flex items-center gap-1 rounded-sm bg-amber-50 px-2 py-1 text-xs text-amber-800"
+        className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-1 text-xs text-amber-800"
       >
         <Clock3 size={14} />
         Đang chờ xác thực
@@ -374,7 +374,7 @@ export default function VerifyPostAction({
     );
   if (request?.trangThai === "DA_XAC_THUC")
     return (
-      <span className="inline-flex items-center gap-1 rounded-sm bg-emerald-50 px-2 py-1 text-xs text-emerald-800">
+      <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-1 text-xs font-medium text-emerald-800">
         <ShieldCheck size={14} />
         Đã xác thực
       </span>
@@ -396,7 +396,11 @@ export default function VerifyPostAction({
           <Button
             type="button"
             variant="outline"
-            className={rejected ? "text-red-700" : "text-primary"}
+            className={
+              rejected
+                ? "text-red-700 rounded-full bg-transparent"
+                : "text-primary rounded-full bg-transparent"
+            }
           />
         }
       >
@@ -411,7 +415,7 @@ export default function VerifyPostAction({
           </Dialog.Title>
           {showReason ? (
             <>
-              <p className="my-4 whitespace-pre-wrap wrap-break-word rounded-sm bg-red-50 p-3 text-sm">
+              <p className="my-4 whitespace-pre-wrap wrap-break-word rounded-sm text-sm">
                 {request.lyDoXuLy || "Chưa có lý do xử lý."}
               </p>
               <div className="flex justify-end gap-2">

@@ -1,3 +1,4 @@
+import { getPostUrl } from "@/lib/post-url";
 import VerifiedBadge from "@/components/verify-post/verified-badge";
 import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate, Link } from "react-router";
@@ -24,6 +25,12 @@ import {
 } from "@/services/verifyPostService";
 import EvidenceGallery from "./evidence-gallery";
 import { dateTime, errorMessage, reviewPath } from "./review-utils";
+
+const statusColors = {
+  CHO_XU_LY: "bg-amber-50 text-amber-800",
+  DA_XAC_THUC: "bg-emerald-50 text-emerald-800",
+  TU_CHOI: "border border-red-200 text-red-700",
+};
 
 export default function VerificationReview({ id }: { id: number }) {
   const navigate = useNavigate();
@@ -82,6 +89,7 @@ export default function VerificationReview({ id }: { id: number }) {
         choice === "accept"
           ? await verifyPostService.accept(id, reason.trim() || undefined)
           : await verifyPostService.reject(id, reason.trim());
+      window.dispatchEvent(new Event("admin-verification-updated"));
       if (mounted.current) {
         toast.success(response.message);
         const params = new URLSearchParams(search);
@@ -107,37 +115,42 @@ export default function VerificationReview({ id }: { id: number }) {
   }
   return (
     <div className="space-y-4">
-      <Link
-        to={back}
-        className="inline-flex min-h-10 items-center gap-2 text-sm font-medium text-primary hover:underline"
-      >
-        <ArrowLeft size={16} />
-        Danh sách hồ sơ
-      </Link>
       {loadError ? (
-        <div role="alert" className="rounded-lg border bg-white p-6">
+        <div role="alert" className="rounded-sm border bg-white p-6">
           <p>{loadError}</p>
           <Button variant="outline" className="mt-3" onClick={reload}>
             Tải lại hồ sơ
           </Button>
         </div>
       ) : !detail ? (
-        <div role="status" className="rounded-lg border bg-white p-8 text-sm ">
+        <div role="status" className="rounded-sm border bg-white p-8 text-sm ">
           Đang tải hồ sơ và minh chứng…
         </div>
       ) : (
         <>
-          <header className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
-            <div className="flex flex-wrap items-center gap-3 text-sm ">
-              <span>
-                Hồ sơ #{detail.maYeuCau} · Tin #{detail.maTinDang}
-              </span>
-              <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold ">
-                {verificationLabels[detail.trangThai]}
-              </span>
+          <header className="rounded-sm border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+            <div className="flex flex-wrap items-center justify-between gap-3 text-sm font-medium">
+              <div className="flex flex-wrap items-center gap-2">
+                <span>
+                  Hồ sơ #{detail.maYeuCau} · Tin #{detail.maTinDang}
+                </span>
+                <span
+                  className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold ${statusColors[detail.trangThai]}`}
+                >
+                  {verificationLabels[detail.trangThai]}
+                </span>
+              </div>
+              <Link
+                to={back}
+                className="inline-flex min-h-8 px-4 items-center gap-2 border border-[#ccc] rounded-sm text-sm font-medium hover:bg-[#eee]"
+              >
+                <ArrowLeft size={16} />
+                Danh sách hồ sơ
+              </Link>
             </div>
-            <h2 className="mt-3 text-xl font-bold leading-snug  sm:text-2xl">
-              <VerifiedBadge verified={detail.tinDang.daXacThuc} />{detail.tinDang.tieuDe}
+            <h2 className="mt-3 text-xl font-semibold leading-snug  sm:text-xl">
+              <VerifiedBadge verified={detail.tinDang.daXacThuc} />
+              {detail.tinDang.tieuDe}
             </h2>
             <div className="mt-3 flex flex-wrap gap-x-5 gap-y-2 text-sm ">
               <span className="inline-flex items-center gap-2">
@@ -155,6 +168,18 @@ export default function VerificationReview({ id }: { id: number }) {
                 </span>
               )}
             </div>
+            <Link
+              to={getPostUrl({
+                maTinDang: detail.maTinDang,
+                tieuDe: detail.tinDang.tieuDe,
+              })}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-3 inline-flex rounded-sm text-sm  underline underline-offset-4 focus-visible:outline-2 hover:text-[#aaa]"
+            >
+              Xem chi tiết tin
+              <span className="sr-only"> (mở trong tab mới)</span>
+            </Link>
             {detail.ghiChuNguoiGui && (
               <div className="mt-4 rounded-sm border-l-2 border-blue-300 bg-blue-50/60 p-3 text-sm">
                 <strong>Ghi chú của người gửi</strong>
@@ -166,14 +191,16 @@ export default function VerificationReview({ id }: { id: number }) {
           </header>
           <div className="grid items-start gap-4 xl:grid-cols-[minmax(0,1fr)_320px]">
             <EvidenceGallery files={detail.minhChungs} reload={reload} />
-            <section className="rounded-lg border bg-white shadow-sm xl:sticky xl:top-5">
+            <section className="rounded-sm border bg-white shadow-sm xl:sticky xl:top-5">
               <h2 className="flex items-center gap-2 border-b p-4 font-bold">
                 <ShieldCheck size={20} className="text-primary" />
-                Quyết định xét duyệt
+                Quyết định xác thực
               </h2>
               {detail.trangThai !== "CHO_XU_LY" ? (
                 <div className="space-y-2 p-4 text-sm">
-                  <strong>{verificationLabels[detail.trangThai]}</strong>
+                  <strong className="font-semibold">
+                    {verificationLabels[detail.trangThai]}
+                  </strong>
                   {detail.lyDoXuLy && (
                     <p className="whitespace-pre-wrap break-words">
                       Lý do xử lý: {detail.lyDoXuLy}
@@ -234,7 +261,7 @@ export default function VerificationReview({ id }: { id: number }) {
                     </Button>
                     <Button
                       variant="outline"
-                      className="h-11 text-red-700 hover:bg-red-50"
+                      className="h-11 text-red-700 bg-white border border-red-700"
                       disabled={busy}
                       onClick={() => openDecision("reject")}
                     >
@@ -254,13 +281,14 @@ export default function VerificationReview({ id }: { id: number }) {
           >
             <Dialog.Portal>
               <Dialog.Backdrop render={<Backdrop />} />
-              <Dialog.Popup className="fixed left-1/2 top-1/2 z-50 max-h-[90dvh] w-[calc(100%-2rem)] max-w-md -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-lg border bg-white p-5 shadow-xl">
+              <Dialog.Popup className="fixed left-1/2 top-1/2 z-50 max-h-[90dvh] w-[calc(100%-2rem)] max-w-md -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-sm border bg-white p-5 shadow-xl">
                 <Dialog.Title className="text-lg font-bold">
                   {choice === "reject" ? "Từ chối hồ sơ" : "Xác thực tin đăng"}{" "}
                   #{id}?
                 </Dialog.Title>
                 <Dialog.Description className="mt-2 text-sm ">
-                  <VerifiedBadge verified={detail.tinDang.daXacThuc} />{detail.tinDang.tieuDe}
+                  <VerifiedBadge verified={detail.tinDang.daXacThuc} />
+                  {detail.tinDang.tieuDe}
                 </Dialog.Description>
                 {reason.trim() && (
                   <div className="mt-4 rounded-sm bg-slate-50 p-3 text-sm">
