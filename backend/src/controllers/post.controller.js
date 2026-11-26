@@ -17,6 +17,17 @@ const publicAuthor = {
   createdAt: true,
 };
 
+function moderationReason(status, decision) {
+  if (decision?.ketQua !== status) return null;
+  if (status === "TU_CHOI") return decision.lyDoTuChoi?.trim() || null;
+  if (status === "BI_GO") {
+    return (
+      decision.ghiChu?.replace(/^Xử lý báo cáo #\d+:\s*/, "").trim() || null
+    );
+  }
+  return null;
+}
+
 const fetchPostList = async (
   res,
   where,
@@ -28,6 +39,13 @@ const fetchPostList = async (
       where,
       orderBy: [{ createdAt: "desc" }, { maTinDang: "desc" }],
       include: {
+        ...(includeVerification && {
+          lichSuKiemDuyets: {
+            orderBy: [{ ngayKiemDuyet: "desc" }, { maKiemDuyet: "desc" }],
+            take: 1,
+            select: { ketQua: true, lyDoTuChoi: true, ghiChu: true },
+          },
+        }),
         yeuCauXacThucs: includeVerification
           ? {
               ...latestVerification,
@@ -75,27 +93,34 @@ const fetchPostList = async (
       },
     });
 
-    const posts = records.map(({ yeuCauXacThucs, ...post }) => ({
-      daXacThuc: isVerifiedPost(post, yeuCauXacThucs[0]),
-      ...(includeVerification && {
-        xacThuc:
-          yeuCauXacThucs[0]?.trangThai === "CHO_XU_LY" ||
-          yeuCauXacThucs[0]?.phienBanTinLucGui === post.phienBanXacThuc
-            ? yeuCauXacThucs[0]
-            : null,
+    const posts = records.map(
+      ({ yeuCauXacThucs, lichSuKiemDuyets, ...post }) => ({
+        daXacThuc: isVerifiedPost(post, yeuCauXacThucs[0]),
+        ...(includeVerification && {
+          lyDoKiemDuyet: moderationReason(
+            post.trangThai,
+            lichSuKiemDuyets?.[0],
+          ),
+          xacThuc:
+            yeuCauXacThucs[0]?.trangThai === "CHO_XU_LY" ||
+            yeuCauXacThucs[0]?.phienBanTinLucGui === post.phienBanXacThuc
+              ? yeuCauXacThucs[0]
+              : null,
+        }),
+        ...post,
+        giaNiemYet: Number(post.giaNiemYet),
+        dienTich: Number(post.dienTich),
+        matTien: post.matTien === null ? null : Number(post.matTien),
+        matDuong: post.matDuong === null ? null : Number(post.matDuong),
+        viDo: post.viDo === null ? null : Number(post.viDo),
+        kinhDo: post.kinhDo === null ? null : Number(post.kinhDo),
+        anhDaiDienUrl:
+          post.hinhAnhTinDangs.find((image) => image.laAnhDaiDien)
+            ?.hinhAnhUrl ??
+          post.hinhAnhTinDangs[0]?.hinhAnhUrl ??
+          null,
       }),
-      ...post,
-      giaNiemYet: Number(post.giaNiemYet),
-      dienTich: Number(post.dienTich),
-      matTien: post.matTien === null ? null : Number(post.matTien),
-      matDuong: post.matDuong === null ? null : Number(post.matDuong),
-      viDo: post.viDo === null ? null : Number(post.viDo),
-      kinhDo: post.kinhDo === null ? null : Number(post.kinhDo),
-      anhDaiDienUrl:
-        post.hinhAnhTinDangs.find((image) => image.laAnhDaiDien)?.hinhAnhUrl ??
-        post.hinhAnhTinDangs[0]?.hinhAnhUrl ??
-        null,
-    }));
+    );
 
     return res.status(200).json({ posts, total: posts.length, author });
   } catch (error) {
@@ -283,14 +308,27 @@ export const createPost = async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    const assets = uploadedImages.map(image => ({ id: image.public_id, type: "image" }));
-    if (uploadedVideo?.public_id) assets.push({ id: uploadedVideo.public_id, type: "video" });
-    const cleanup = await Promise.allSettled(assets.map(asset =>
-      cloudinary.uploader.destroy(asset.id, { resource_type: asset.type })
-    ));
+    const assets = uploadedImages.map((image) => ({
+      id: image.public_id,
+      type: "image",
+    }));
+    if (uploadedVideo?.public_id)
+      assets.push({ id: uploadedVideo.public_id, type: "video" });
+    const cleanup = await Promise.allSettled(
+      assets.map((asset) =>
+        cloudinary.uploader.destroy(asset.id, { resource_type: asset.type }),
+      ),
+    );
     cleanup.forEach((result, index) => {
-      if (result.status === "rejected" || !["ok", "not found"].includes(result.value?.result)) {
-        console.error("Không thể xóa tệp của tin đăng", assets[index].id, result);
+      if (
+        result.status === "rejected" ||
+        !["ok", "not found"].includes(result.value?.result)
+      ) {
+        console.error(
+          "Không thể xóa tệp của tin đăng",
+          assets[index].id,
+          result,
+        );
       }
     });
     return res
@@ -427,3 +465,91 @@ async function cleanupPostImages(ids) {
     }
   });
 }
+
+export const hidePost = async (req, res) => {
+  const maTinDang = Number(req.params.maTinDang);
+  if (
+    !Number.isInteger(maTinDang) ||
+    maTinDang <= 0 ||
+    maTinDang > 2147483647
+  ) {
+    return res.status(400).json({ message: "Mã tin đăng không hợp lệ" });
+  }
+
+  try {
+    const maNguoiDung = req.user.maNguoiDung;
+    const { count } = await prisma.tinDang.updateMany({
+      where: { maTinDang, maNguoiDung, deletedAt: null, trangThai: "DA_DUYET" },
+      data: { trangThai: "DA_AN" },
+    });
+    if (count === 1) {
+      return res.status(200).json({ message: "Ẩn tin thành công" });
+    }
+
+    const post = await prisma.tinDang.findFirst({
+      where: { maTinDang, deletedAt: null },
+      select: { maNguoiDung: true, trangThai: true },
+    });
+    if (!post) {
+      return res.status(404).json({ message: "Không tìm thấy tin đăng" });
+    }
+    if (post.maNguoiDung !== maNguoiDung) {
+      return res
+        .status(403)
+        .json({ message: "Bạn không có quyền ẩn tin đăng này" });
+    }
+    if (post.trangThai === "DA_AN") {
+      return res.status(200).json({ message: "Tin đăng đã được ẩn" });
+    }
+    return res.status(409).json({ message: "Chỉ có thể ẩn tin đang hiển thị" });
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(500)
+      .json({ message: "Không thể ẩn tin đăng. Vui lòng thử lại." });
+  }
+};
+
+export const unHidePost = async (req, res) => {
+  const maTinDang = Number(req.params.maTinDang);
+  if (
+    !Number.isInteger(maTinDang) ||
+    maTinDang <= 0 ||
+    maTinDang > 2147483647
+  ) {
+    return res.status(400).json({ message: "Mã tin đăng không hợp lệ" });
+  }
+
+  try {
+    const maNguoiDung = req.user.maNguoiDung;
+    const { count } = await prisma.tinDang.updateMany({
+      where: { maTinDang, maNguoiDung, deletedAt: null, trangThai: "DA_AN" },
+      data: { trangThai: "DA_DUYET" },
+    });
+    if (count === 1) {
+      return res.status(200).json({ message: "Hiện lại tin thành công" });
+    }
+
+    const post = await prisma.tinDang.findFirst({
+      where: { maTinDang, deletedAt: null },
+      select: { maNguoiDung: true, trangThai: true },
+    });
+    if (!post) {
+      return res.status(404).json({ message: "Không tìm thấy tin đăng" });
+    }
+    if (post.maNguoiDung !== maNguoiDung) {
+      return res
+        .status(403)
+        .json({ message: "Bạn không có quyền hiện lại tin đăng này" });
+    }
+    if (post.trangThai === "DA_DUYET") {
+      return res.status(200).json({ message: "Tin đăng đang hiển thị" });
+    }
+    return res.status(409).json({ message: "Chỉ có thể hiện lại tin đã ẩn" });
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(500)
+      .json({ message: "Không thể hiện lại tin đăng. Vui lòng thử lại." });
+  }
+};

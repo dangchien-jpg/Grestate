@@ -6,7 +6,7 @@ export const fetchAllFavoritePosts = async (req, res) => {
     const records = await prisma.tinDangYeuThich.findMany({
       where: {
         maNguoiDung: req.user.maNguoiDung,
-        tinDang: { deletedAt: null },
+        tinDang: { deletedAt: null, trangThai: { not: "DA_AN" } },
       },
       orderBy: [{ ngayLuu: "desc" }, { maTinDang: "desc" }],
       select: {

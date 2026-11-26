@@ -16,9 +16,14 @@ import {
   fetchPostsByUser,
   updatePost,
   deletePost,
+  hidePost,
+  unHidePost,
   fetchPostsByUserPublic,
 } from "../controllers/post.controller.js";
-import { uploadPostImages, uploadPostMedia } from "../middlewares/uploadPost.middleware.js";
+import {
+  uploadPostImages,
+  uploadPostMedia,
+} from "../middlewares/uploadPost.middleware.js";
 import {
   requirePostOwner,
   validateCreatePost,
@@ -52,5 +57,7 @@ route.put(
   validateUpdatePost,
   updatePost,
 );
+route.patch("/:maTinDang/hide", protectedRoute, hidePost);
+route.patch("/:maTinDang/unhide", protectedRoute, unHidePost);
 route.delete("/:maTinDang", protectedRoute, requirePostOwner, deletePost);
 export default route;

@@ -1,3 +1,4 @@
+import PostReviewContent from "@/components/property/post-review-content";
 import VerifyPostAction from "@/components/verify-post/verify-post-action";
 import { getPostUrl } from "@/lib/post-url";
 import { useEffect, useRef, useState } from "react";
@@ -19,6 +20,7 @@ import {
   Hash,
   MapPin,
   Ellipsis,
+  Globe,
   GlobeOff,
 } from "lucide-react";
 import { Link } from "react-router";
@@ -39,6 +41,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 const statuses: Record<string, { label: string; className: string }> = {
+  DA_AN: {
+    label: "Đã ẩn",
+    className: "border-slate-200 bg-slate-50 text-slate-700",
+  },
   DA_DUYET: {
     label: "Đã duyệt",
     className: "border-emerald-200 bg-emerald-50 text-emerald-700",
@@ -83,6 +89,11 @@ const filters = [
     label: statuses.BI_GO.label,
     matches: (post: TinDangDanhSach) => post.trangThai === "BI_GO",
   },
+  {
+    key: "HIDDEN",
+    label: statuses.DA_AN.label,
+    matches: (post: TinDangDanhSach) => post.trangThai === "DA_AN",
+  },
 ] as const;
 
 const number = new Intl.NumberFormat("vi-VN", { maximumFractionDigits: 1 });
@@ -105,6 +116,7 @@ function message(error: unknown, fallback: string) {
 function PostCard({
   post,
   deleting,
+  onVisibilityChange,
   onVerification,
   refresh,
   onEdit,
@@ -112,6 +124,7 @@ function PostCard({
 }: {
   post: TinDangDanhSach;
   deleting: boolean;
+  onVisibilityChange: () => void;
   onVerification: (result: VerificationSummary) => void;
   refresh: () => void;
   onEdit: () => void;
@@ -128,7 +141,23 @@ function PostCard({
   ]
     .filter(Boolean)
     .join(", ");
-  const detailUrl = getPostUrl(post);
+  const [previewOpen, setPreviewOpen] = useState(false);
+  function viewPost(content: React.ReactNode, className: string) {
+    return post.trangThai === "DA_DUYET" ? (
+      <Link to={getPostUrl(post)} className={className}>
+        {content}
+      </Link>
+    ) : (
+      <button
+        type="button"
+        aria-haspopup="dialog"
+        onClick={() => setPreviewOpen(true)}
+        className={className}
+      >
+        {content}
+      </button>
+    );
+  }
   return (
     <article
       className="
@@ -188,12 +217,10 @@ function PostCard({
           />
         </div>
         <h2 className="text-lg leading-snug font-semibold tracking-[-0.015em] sm:text-lg">
-          <Link
-            to={detailUrl}
-            className="line-clamp-2 wrap-break-word rounded-sm transition-colors outline-none"
-          >
-            {post.tieuDe}
-          </Link>
+          {viewPost(
+            post.tieuDe,
+            "line-clamp-2 text-left wrap-break-word rounded-sm focus-visible:ring-2 focus-visible:ring-primary",
+          )}
         </h2>
 
         <div className="mt-1.5 flex flex-wrap items-center gap-3">
@@ -221,20 +248,28 @@ function PostCard({
             Mã tin: {post.maTinDang}
           </span>
         </div>
+        {(post.trangThai === "BI_GO" || post.trangThai === "TU_CHOI") && (
+          <p className="mt-3 rounded-sm border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">
+            <strong>
+              {post.trangThai === "BI_GO"
+                ? "Lý do gỡ tin"
+                : "Lý do từ chối duyệt"}
+              :{" "}
+            </strong>
+            <span className="whitespace-pre-wrap wrap-anywhere">
+              {post.lyDoKiemDuyet || "Chưa có lý do được ghi nhận."}
+            </span>
+          </p>
+        )}
       </div>
       <div className="mt-auto pt-3">
         <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2  pt-3">
-          <Link
-            to={detailUrl}
-            className="
-                inline-flex items-center gap-1.5 rounded-sm text-xs font-medium
-                transition-colors hover:text-primary outline-none focus-visible:ring-2
-                focus-visible:ring-primary
-              "
-          >
-            <ExternalLink aria-hidden="true" className="size-3.5" />
-            Xem tin
-          </Link>
+          {viewPost(
+            <>
+              <ExternalLink aria-hidden="true" className="size-3.5" /> Xem tin
+            </>,
+            "inline-flex items-center gap-1.5 rounded-sm text-xs font-medium hover:text-primary focus-visible:ring-2 focus-visible:ring-primary",
+          )}
 
           <div className="flex items-center gap-2">
             <button
@@ -260,10 +295,26 @@ function PostCard({
               </DropdownMenuTrigger>
               <DropdownMenuContent>
                 <DropdownMenuGroup>
-                  <DropdownMenuItem className="bg-white text-sm">
-                    <GlobeOff aria-hidden="true" className="size-4" /> Ẩn tin
-                    đăng
-                  </DropdownMenuItem>
+                  {(post.trangThai === "DA_DUYET" ||
+                    post.trangThai === "DA_AN") && (
+                    <DropdownMenuItem
+                      className="bg-white text-sm"
+                      onClick={onVisibilityChange}
+                      disabled={deleting}
+                    >
+                      {post.trangThai === "DA_AN" ? (
+                        <>
+                          <Globe aria-hidden="true" className="size-4" /> Bỏ ẩn
+                          tin đăng
+                        </>
+                      ) : (
+                        <>
+                          <GlobeOff aria-hidden="true" className="size-4" /> Ẩn
+                          tin đăng
+                        </>
+                      )}
+                    </DropdownMenuItem>
+                  )}
                   <DropdownMenuItem
                     className="bg-white text-sm text-destructive"
                     onClick={onDelete}
@@ -279,6 +330,35 @@ function PostCard({
           </div>
         </div>
       </div>
+      {previewOpen && post.trangThai !== "DA_DUYET" && (
+        <Dialog.Root open onOpenChange={setPreviewOpen}>
+          <Dialog.Portal>
+            <Dialog.Backdrop render={<Backdrop />} />
+            <Dialog.Popup className="fixed top-1/2 left-1/2 z-50 max-h-[90dvh] w-[calc(100%-2rem)] max-w-3xl -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-sm border bg-white p-5 shadow-lg sm:p-6">
+              <div className="flex items-center justify-between gap-3">
+                <Dialog.Title className="text-lg font-bold">
+                  Xem trước tin đăng · #{post.maTinDang}
+                </Dialog.Title>
+                <Dialog.Close className="rounded-sm border px-3 py-1 text-sm">
+                  Đóng
+                </Dialog.Close>
+              </div>
+              <PostReviewContent post={post} />
+              {(post.trangThai === "BI_GO" || post.trangThai === "TU_CHOI") && (
+                <p className="mt-4 whitespace-pre-wrap wrap-anywhere text-sm text-red-800">
+                  <strong>
+                    {post.trangThai === "BI_GO"
+                      ? "Lý do gỡ tin"
+                      : "Lý do từ chối duyệt"}
+                    :{" "}
+                  </strong>
+                  {post.lyDoKiemDuyet || "Chưa có lý do được ghi nhận."}
+                </p>
+              )}
+            </Dialog.Popup>
+          </Dialog.Portal>
+        </Dialog.Root>
+      )}
     </article>
   );
 }
@@ -393,6 +473,52 @@ export default function ManagerPostCard() {
             }
           : state.post,
     }));
+  }
+
+  async function changeVisibility(post: TinDangDanhSach) {
+    const id = post.maTinDang;
+    if (pending.current.has(id)) return;
+    const hide = post.trangThai === "DA_DUYET";
+    if (!hide && post.trangThai !== "DA_AN") return;
+    pending.current.add(id);
+    setDeletingIds([...pending.current]);
+    try {
+      if (hide) await postService.hidePost(id);
+      else await postService.unHidePost(id);
+      if (useAuthStore.getState().user?.maNguoiDung !== post.maNguoiDung)
+        return;
+
+      setRequest((state) =>
+        state?.userId === post.maNguoiDung
+          ? {
+              ...state,
+              posts: state.posts.map((item) =>
+                item.maTinDang === id
+                  ? { ...item, trangThai: hide ? "DA_AN" : "DA_DUYET" }
+                  : item,
+              ),
+            }
+          : state,
+      );
+      if (hide) {
+        usePostStore.setState((state) => ({
+          posts: state.posts.filter((item) => item.maTinDang !== id),
+          post: state.post?.maTinDang === id ? null : state.post,
+        }));
+      }
+      useFavoriteStore.setState({ loaded: false });
+      toast.success(hide ? "Đã ẩn tin đăng" : "Tin đăng đã hiển thị trở lại");
+    } catch (error) {
+      if (useAuthStore.getState().user?.maNguoiDung !== post.maNguoiDung)
+        return;
+      toast.error(
+        message(error, "Không thể thay đổi trạng thái hiển thị của tin"),
+      );
+    } finally {
+      pending.current.delete(id);
+      setDeletingIds([...pending.current]);
+      setRetry((value) => value + 1);
+    }
   }
 
   async function remove(post: TinDangDanhSach) {
@@ -563,6 +689,7 @@ export default function ManagerPostCard() {
                       : state,
                   )
                 }
+                onVisibilityChange={() => void changeVisibility(post)}
                 onEdit={() => setEditing(post)}
                 onDelete={() => {
                   setDeleteTarget(post);

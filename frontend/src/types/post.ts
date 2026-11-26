@@ -118,6 +118,7 @@ export interface VerificationSummary {
 }
 
 export interface TinDangDanhSach extends TinDang {
+  lyDoKiemDuyet?: string | null;
   daXacThuc?: boolean;
   xacThuc?: VerificationSummary | null;
   nguoiDang: Pick<

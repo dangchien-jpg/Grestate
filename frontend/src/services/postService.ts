@@ -12,6 +12,14 @@ export const postService = {
     TinDang & Pick<TinDangDanhSach, "hinhAnhTinDangs" | "anhDaiDienUrl">
   > => (await api.put(`/posts/${id}`, formData)).data.post,
 
+  hidePost: async (id: number) => {
+    await api.patch(`/posts/${id}/hide`);
+  },
+
+  unHidePost: async (id: number) => {
+    await api.patch(`/posts/${id}/unhide`);
+  },
+
   deletePost: async (id: number) => {
     await api.delete(`/posts/${id}`);
   },
