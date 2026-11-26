@@ -90,13 +90,19 @@ export function SignupForm({
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card className="overflow-hidden p-0 rounded-sm">
         <CardContent className="grid p-0 md:grid-cols-2">
-          <form className="p-6 md:p-8" onSubmit={(event) => handleSubmit(onSubmit)(event)}>
+          <form
+            className="p-6 md:p-8"
+            onSubmit={(event) => handleSubmit(onSubmit)(event)}
+          >
             <FieldGroup>
               <div className="flex flex-col items-center gap-2 text-center">
-                <h1 className="text-2xl font-bold">Tạo tài khoản</h1>
+                <h1 className="text-2xl font-semibold">Tạo tài khoản</h1>
               </div>
               <Field>
-                <FieldLabel className="font-bold text-sm" htmlFor="firstName">
+                <FieldLabel
+                  className="font-semibold text-sm"
+                  htmlFor="firstName"
+                >
                   Họ
                 </FieldLabel>
                 <Input
@@ -112,7 +118,10 @@ export function SignupForm({
                 )}
               </Field>
               <Field>
-                <FieldLabel className="font-bold text-sm" htmlFor="lastName">
+                <FieldLabel
+                  className="font-semibold text-sm"
+                  htmlFor="lastName"
+                >
                   Tên
                 </FieldLabel>
                 <Input
@@ -128,7 +137,7 @@ export function SignupForm({
                 )}
               </Field>
               <Field>
-                <FieldLabel className="font-bold text-sm" htmlFor="email">
+                <FieldLabel className="font-semibold text-sm" htmlFor="email">
                   Email
                 </FieldLabel>
                 <Input
@@ -156,7 +165,7 @@ export function SignupForm({
                 <Field className="grid grid-cols-2 gap-4">
                   <Field>
                     <FieldLabel
-                      className="font-bold text-sm"
+                      className="font-semibold text-sm"
                       htmlFor="password"
                     >
                       Mật khẩu
@@ -175,7 +184,7 @@ export function SignupForm({
                   </Field>
                   <Field>
                     <FieldLabel
-                      className="font-bold text-sm"
+                      className="font-semibold text-sm"
                       htmlFor="confirm-password"
                     >
                       Nhập lại mật khẩu
@@ -211,11 +220,19 @@ export function SignupForm({
                     className="cursor-pointer text-xs leading-relaxed [&_a]:underline [&_a]:underline-offset-4"
                   >
                     Bằng việc “Tiếp tục”, bạn đồng ý với{" "}
-                    <a href="https://sites.google.com/view/trung-tam-tro-giup-grestate/ch%C3%ADnh-s%C3%A1ch-%C4%91i%E1%BB%81u-kho%E1%BA%A3n" target="_blank" rel="noopener noreferrer">
+                    <a
+                      href="https://sites.google.com/view/trung-tam-tro-giup-grestate/ch%C3%ADnh-s%C3%A1ch-%C4%91i%E1%BB%81u-kho%E1%BA%A3n"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
                       Điều khoản dịch vụ
                     </a>{" "}
                     và{" "}
-                    <a href="https://sites.google.com/view/trung-tam-tro-giup-grestate/ch%C3%ADnh-s%C3%A1ch-%C4%91i%E1%BB%81u-kho%E1%BA%A3n" target="_blank" rel="noopener noreferrer">
+                    <a
+                      href="https://sites.google.com/view/trung-tam-tro-giup-grestate/ch%C3%ADnh-s%C3%A1ch-%C4%91i%E1%BB%81u-kho%E1%BA%A3n"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
                       Chính sách quyền riêng tư
                     </a>{" "}
                     của chúng tôi.

@@ -123,7 +123,7 @@ export default function ManagerPostEditor({
         <Dialog.Backdrop className="fixed inset-0 z-50 bg-slate-950/40" />
         <Dialog.Popup className="fixed top-1/2 left-1/2 z-50 max-h-[90dvh] w-[calc(100%-2rem)] max-w-2xl -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-sm border border-slate-200 bg-white p-5 font-sans shadow-lg outline-none sm:p-6">
           <div className="flex items-center justify-between gap-3">
-            <Dialog.Title className="text-lg font-bold">
+            <Dialog.Title className="text-lg font-semibold">
               Chỉnh sửa thông tin cơ bản
             </Dialog.Title>
             <button

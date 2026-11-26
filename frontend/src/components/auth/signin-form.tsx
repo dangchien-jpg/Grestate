@@ -52,11 +52,13 @@ export function SigninForm({
       await signIn(data.email, data.password);
       const user = useAuthStore.getState().user;
       navigate(
-        location.state?.returnTo === "/predict" ? "/predict" : backgroundLocation
-          ? `${backgroundLocation.pathname}${backgroundLocation.search}${backgroundLocation.hash}`
-          : user?.maVaiTro == 2
-            ? "/admin/dashboard"
-            : "/",
+        location.state?.returnTo === "/predict"
+          ? "/predict"
+          : backgroundLocation
+            ? `${backgroundLocation.pathname}${backgroundLocation.search}${backgroundLocation.hash}`
+            : user?.maVaiTro == 2
+              ? "/admin/dashboard"
+              : "/",
         {
           replace: true,
         },
@@ -65,14 +67,20 @@ export function SigninForm({
       let message = "Có lỗi xảy ra, vui lòng thử lại";
 
       if (axios.isAxiosError<{ message?: string; code?: string }>(error)) {
-        if (error.response?.status === 403 && error.response.data?.code === "ACCOUNT_BLOCKED") {
+        if (
+          error.response?.status === 403 &&
+          error.response.data?.code === "ACCOUNT_BLOCKED"
+        ) {
           useAuthStore.getState().clearState();
           navigate("/disabled-account", { replace: true });
           return;
         }
 
         if (error.response?.data?.code === "EMAIL_UNVERIFIED") {
-          navigate("/verify-email", { replace: true, state: { ...location.state, email: data.email } });
+          navigate("/verify-email", {
+            replace: true,
+            state: { ...location.state, email: data.email },
+          });
           return;
         }
 
@@ -99,10 +107,10 @@ export function SigninForm({
           >
             <FieldGroup>
               <div className="flex flex-col items-center gap-2 text-center">
-                <h1 className="text-2xl font-bold">Đăng nhập</h1>
+                <h1 className="text-2xl font-semibold">Đăng nhập</h1>
               </div>
               <Field>
-                <FieldLabel className="font-bold text-sm" htmlFor="email">
+                <FieldLabel className="font-semibold text-sm" htmlFor="email">
                   Email
                 </FieldLabel>
                 <Input
@@ -120,7 +128,10 @@ export function SigninForm({
               </Field>
 
               <Field className="flex flex-col gap-3">
-                <FieldLabel className="font-bold text-sm" htmlFor="password">
+                <FieldLabel
+                  className="font-semibold text-sm"
+                  htmlFor="password"
+                >
                   Mật khẩu
                 </FieldLabel>
                 <div className="relative">
@@ -179,7 +190,7 @@ export function SigninForm({
                 <Button
                   type="submit"
                   disabled={isSubmitting}
-                  className="cursor-pointer rounded-full h-12 text-sm font-bold"
+                  className="cursor-pointer rounded-full h-12 text-sm font-semibold"
                 >
                   Đăng nhập
                 </Button>
@@ -204,4 +215,3 @@ export function SigninForm({
     </div>
   );
 }
-

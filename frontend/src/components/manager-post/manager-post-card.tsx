@@ -4,7 +4,23 @@ import { useEffect, useRef, useState } from "react";
 import { Dialog } from "@base-ui/react/dialog";
 import Backdrop from "@/components/backdrop/backdrop";
 import { isAxiosError } from "axios";
-import { Images, ListChecks, LoaderCircle, Pencil, Trash2 } from "lucide-react";
+import {
+  CircleCheck,
+  Clock3,
+  Layers,
+  Shield,
+  Images,
+  ListChecks,
+  LoaderCircle,
+  Pencil,
+  Trash2,
+  ExternalLink,
+  CalendarDays,
+  Hash,
+  MapPin,
+  Ellipsis,
+  GlobeOff,
+} from "lucide-react";
 import { Link } from "react-router";
 import { toast } from "sonner";
 import { postService } from "@/services/postService";
@@ -14,6 +30,13 @@ import { useFavoriteStore } from "@/stores/favoriteStore";
 import { formatPrice } from "@/lib/format-price";
 import type { TinDangDanhSach, VerificationSummary } from "@/types/post";
 import ManagerPostEditor from "./manager-post-editor";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const statuses: Record<string, { label: string; className: string }> = {
   DA_DUYET: {
@@ -107,11 +130,19 @@ function PostCard({
     .join(", ");
   const detailUrl = getPostUrl(post);
   return (
-    <article className="flex flex-col overflow-hidden rounded-sm border border-[#ccc]  bg-card text-card-foreground  sm:flex-row">
-      <Link
-        to={detailUrl}
+    <article
+      className="
+        group flex flex-col gap-4 rounded-sm border border-slate-200 bg-card p-3.5
+        text-card-foreground shadow-[0_1px_2px_rgba(15,23,42,0.03)] transition-colors
+        duration-200 hover:border-slate-300 sm:flex-row sm:p-4
+      "
+    >
+      <div
         aria-label={`Xem tin: ${post.tieuDe}`}
-        className="relative block aspect-video shrink-0 overflow-hidden bg-muted focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary sm:aspect-auto sm:w-44 lg:w-56"
+        className="
+          relative block aspect-video shrink-0 self-start overflow-hidden rounded-md
+          bg-slate-100 w-full sm:aspect-[4/3] sm:w-48 lg:w-56
+        "
       >
         <img
           src={post.anhDaiDienUrl || "/placeholder.png"}
@@ -122,77 +153,129 @@ function PostCard({
             if (!event.currentTarget.src.endsWith("/placeholder.png"))
               event.currentTarget.src = "/placeholder.png";
           }}
-          className="h-full w-full object-cover sm:absolute sm:inset-0"
+          className="absolute inset-0 h-full w-full object-cover"
         />
-        <span className="absolute right-3 bottom-3 inline-flex items-center gap-1.5 rounded-sm bg-slate-900/70 px-2 py-1 text-xs font-medium text-white">
-          <Images aria-hidden="true" className="size-4" />
+        <span
+          className="
+            absolute right-2.5 bottom-2.5 inline-flex items-center gap-1.5 rounded
+            bg-slate-950/70 px-2 py-1 text-[11px] font-medium text-white backdrop-blur-sm
+          "
+        >
+          <Images aria-hidden="true" className="size-3.5" />
           {post.hinhAnhTinDangs.length} ảnh
         </span>
-      </Link>
-      <div className="flex min-w-0 flex-1 flex-col p-4 sm:p-5">
+      </div>
+
+      <div className="flex min-w-0 flex-1 flex-col">
         <div className="mb-2 flex flex-wrap items-center gap-2">
           <span
-            className={`inline-flex rounded-full border px-2.5 py-0.5 text-xs font-medium ${status.className}`}
+            className={`
+              inline-flex items-center gap-1.5 rounded-md border px-2 py-1 text-[11px]
+              leading-none font-medium ${status.className}
+            `}
           >
+            <span
+              aria-hidden="true"
+              className="size-1.5 shrink-0 rounded-full bg-current"
+            />
             {status.label}
           </span>
+
           <VerifyPostAction
             post={post}
             onSubmitted={onVerification}
             onRefresh={refresh}
           />
         </div>
-        <h2 className="wrap-break-word leading-snug font-semibold tracking-tight sm:text-lg">
+        <h2 className="text-lg leading-snug font-semibold tracking-[-0.015em] sm:text-lg">
           <Link
             to={detailUrl}
-            className="line-clamp-2 rounded-sm transition-colors hover:opacity-90 outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            className="line-clamp-2 wrap-break-word rounded-sm transition-colors outline-none"
           >
             {post.tieuDe}
           </Link>
         </h2>
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
-          <span className="text-lg font-bold text-red-600">
+
+        <div className="mt-1.5 flex flex-wrap items-center gap-3">
+          <span className="text-xl leading-tight font-bold tracking-tight text-red-600">
             {formatPrice(post.giaNiemYet)}
           </span>
-          <span className="inline-flex items-center gap-1 text-sm font-medium">
+          <span className="inline-flex items-center gap-1.5 text-[16px]">
             {number.format(post.dienTich)} m²
           </span>
         </div>
-        <p className="line-clamp-2 text-sm font-medium">{address}</p>
-        <div className="flex items-center gap-4 text-sm font-medium mt-1">
-          <p className="">{createdDate(post.createdAt)}</p>
-          <p className="">Mã tin: {post.maTinDang}</p>
+
+        <div className="mt-2 flex items-start gap-1.5">
+          <MapPin aria-hidden="true" className="mt-0.5 size-4 shrink-0" />
+
+          <p className="line-clamp-2 text-[14px] leading-relaxed">{address}</p>
         </div>
-        <div className="mt-4 flex flex-wrap items-center justify-between gap-x-3 gap-y-2 border-t  border-[#ccc] pt-3">
-          <div className="flex flex-wrap items-center gap-2">
+        <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs">
+          <span className="inline-flex items-center gap-1.5">
+            <CalendarDays aria-hidden="true" className="size-3.5" />
+            {createdDate(post.createdAt)}
+          </span>
+
+          <span className="inline-flex items-center gap-1.5">
+            <Hash aria-hidden="true" className="size-3.5" />
+            Mã tin: {post.maTinDang}
+          </span>
+        </div>
+      </div>
+      <div className="mt-auto pt-3">
+        <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2  pt-3">
+          <Link
+            to={detailUrl}
+            className="
+                inline-flex items-center gap-1.5 rounded-sm text-xs font-medium
+                transition-colors hover:text-primary outline-none focus-visible:ring-2
+                focus-visible:ring-primary
+              "
+          >
+            <ExternalLink aria-hidden="true" className="size-3.5" />
+            Xem tin
+          </Link>
+
+          <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={onEdit}
               disabled={deleting}
               aria-label={`Chỉnh sửa tin: ${post.tieuDe}`}
               title="Chỉnh sửa tin đăng"
-              className="inline-flex size-11 items-center justify-center rounded-sm border  bg-card text-primary transition-colors hover:border-primary/40 hover:bg-primary/5 outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50"
+              className="
+                  inline-flex h-9 items-center justify-center gap-2 rounded-sm 
+                   bg-card px-3 text-xs font-medium text-primary
+                  transition-colors  outline-none
+                  focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed
+                  disabled:opacity-50 cursor-pointer
+                "
             >
-              <Pencil aria-hidden="true" className="size-4" />
+              <Pencil aria-hidden="true" className="size-3.5" />
+              Chỉnh sửa
             </button>
-            <button
-              type="button"
-              onClick={onDelete}
-              disabled={deleting}
-              aria-busy={deleting}
-              aria-label={`Xóa tin: ${post.tieuDe}`}
-              title="Xóa tin đăng"
-              className="inline-flex size-11 items-center justify-center rounded-sm border  bg-card  transition-colors hover:border-red-200 hover:bg-red-50 hover:text-red-700 outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50"
-            >
-              {deleting ? (
-                <LoaderCircle
-                  aria-hidden="true"
-                  className="size-4 animate-spin"
-                />
-              ) : (
-                <Trash2 aria-hidden="true" className="size-4" />
-              )}
-            </button>
+            <DropdownMenu>
+              <DropdownMenuTrigger>
+                <Ellipsis className="" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuGroup>
+                  <DropdownMenuItem className="bg-white text-sm">
+                    <GlobeOff aria-hidden="true" className="size-4" /> Ẩn tin
+                    đăng
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    className="bg-white text-sm text-destructive"
+                    onClick={onDelete}
+                    disabled={deleting}
+                    aria-busy={deleting}
+                    aria-label={`Xóa tin: ${post.tieuDe}`}
+                  >
+                    <Trash2 aria-hidden="true" className="size-4" /> Xóa tin
+                  </DropdownMenuItem>
+                </DropdownMenuGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </div>
@@ -233,12 +316,32 @@ export default function ManagerPostCard() {
     return order === "newest" ? byDate : -byDate;
   });
   const summary = [
-    { label: "Tổng tin đăng", count: posts.length },
-    ...groups
-      .filter((group) => group.key === "LIVE" || group.key === "PENDING")
-      .map((group) => ({ label: group.label, count: group.posts.length })),
+    {
+      label: "Tổng tin đăng",
+      count: posts.length,
+      icon: Layers,
+      description: "Tất cả tin đăng của bạn",
+      color: "bg-blue-50 text-blue-700",
+    },
+    {
+      label: "Đang hiển thị",
+      count: groups.find((group) => group.key === "LIVE")?.posts.length ?? 0,
+      icon: CircleCheck,
+      description: "Tin đăng hoạt động",
+      color: "bg-emerald-50 text-emerald-700",
+    },
+    {
+      label: "Chờ duyệt",
+      count: groups.find((group) => group.key === "PENDING")?.posts.length ?? 0,
+      icon: Clock3,
+      description: "Đang chờ kiểm duyệt",
+      color: "bg-amber-50 text-amber-700",
+    },
     {
       label: "Chờ xác thực",
+      icon: Shield,
+      description: "Hồ sơ đang chờ xác thực",
+      color: "bg-violet-50 text-violet-700",
       count: posts.filter((post) => post.xacThuc?.trangThai === "CHO_XU_LY")
         .length,
     },
@@ -332,37 +435,49 @@ export default function ManagerPostCard() {
       className="mx-auto max-w-6xl p-4 font-sans sm:p-6 lg:p-8"
     >
       <dl className="mb-4 grid grid-cols-2 gap-3 lg:grid-cols-4">
-        {summary.map(({ label, count }) => (
+        {summary.map(({ label, count, icon: Icon, description, color }) => (
           <div
             key={label}
-            className="rounded-sm border border-border bg-card px-4 py-3 shadow-sm"
+            className="relative rounded-sm shadow-sm bg-card p-3 sm:p-4"
           >
-            <dt className="text-sm font-medium">{label}</dt>
+            <dt className="pr-9 text-sm font-medium">
+              {label}
+              <span
+                className={`absolute right-3 top-3 grid size-8 place-items-center rounded-sm sm:right-4 sm:top-4 ${color}`}
+              >
+                <Icon aria-hidden="true" className="size-4" />
+              </span>
+            </dt>
             <dd className="mt-1 text-xl font-semibold tabular-nums">
               {hasCounts ? count : "—"}
+              <span className="mt-2 block text-xs font-normal leading-5 ">
+                {description}
+              </span>
             </dd>
           </div>
         ))}
       </dl>
-      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-        <div
-          role="group"
-          aria-label="Lọc tin theo trạng thái"
-          className="flex max-w-full gap-1.5 overflow-x-auto py-1"
-        >
-          {groups.map((group) => (
-            <button
-              key={group.key}
-              type="button"
-              aria-pressed={status === group.key}
-              onClick={() => setStatus(group.key)}
-              className={`shrink-0  px-3 py-2 text-sm font-medium  ${status === group.key ? "border-b-3 border-primary " : "border-border bg-card "}`}
-            >
-              {group.label} {hasCounts && `(${group.posts.length})`}
-            </button>
-          ))}
+      <div className="bg-white rounded-sm px-4 space-y-2">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div
+            role="group"
+            aria-label="Lọc tin theo trạng thái"
+            className="flex max-w-full gap-1.5 overflow-x-auto py-1"
+          >
+            {groups.map((group) => (
+              <button
+                key={group.key}
+                type="button"
+                aria-pressed={status === group.key}
+                onClick={() => setStatus(group.key)}
+                className={`shrink-0  px-3 py-2 text-sm font-medium  ${status === group.key ? "border-b-3 border-primary " : "border-border bg-card "}`}
+              >
+                {group.label} {hasCounts && `(${group.posts.length})`}
+              </button>
+            ))}
+          </div>
         </div>
-        <div className="flex min-w-0 flex-wrap gap-2">
+        <div className="flex justify-end min-w-0 flex-wrap gap-2">
           <select
             aria-label="Sắp xếp theo ngày tạo"
             value={order}
@@ -373,90 +488,90 @@ export default function ManagerPostCard() {
             <option value="oldest">Cũ nhất</option>
           </select>
         </div>
-      </div>
-      {loading ? (
-        <div
-          role="status"
-          className="flex items-center justify-center gap-2 rounded-sm border  bg-card py-16 text-sm "
-        >
-          <LoaderCircle aria-hidden="true" className="size-5 animate-spin" />
-          Đang tải danh sách tin đăng...
-        </div>
-      ) : current?.error ? (
-        <div
-          role="alert"
-          className="rounded-sm border border-red-200 bg-card p-5 text-sm"
-        >
-          <p className="text-red-600">{current.error}</p>
-          <button
-            type="button"
-            onClick={() => {
-              setRequest(null);
-              setRetry((value) => value + 1);
-            }}
-            className="mt-3 rounded-sm border border-gray-400 px-4 py-2"
+        {loading ? (
+          <div
+            role="status"
+            className="flex items-center justify-center gap-2 rounded-sm border  bg-card py-16 text-sm "
           >
-            Thử lại
-          </button>
-        </div>
-      ) : visiblePosts.length === 0 ? (
-        <div className="rounded-sm border border-dashed border-input bg-card px-4 py-16 text-center">
-          <ListChecks
-            aria-hidden="true"
-            className="mx-auto mb-3 size-9 text-primary"
-          />
-          <h2 className="text-sm font-semibold">
-            {posts.length === 0
-              ? "Bạn chưa có tin đăng nào"
-              : "Không tìm thấy tin phù hợp với bộ lọc"}
-          </h2>
-          {posts.length === 0 ? (
-            <Link
-              to="/me/create-post"
-              className="mt-4 inline-flex rounded-sm bg-primary px-4 py-2 text-sm font-semibold text-white"
-            >
-              Đăng tin đầu tiên
-            </Link>
-          ) : (
+            <LoaderCircle aria-hidden="true" className="size-5 animate-spin" />
+            Đang tải danh sách tin đăng...
+          </div>
+        ) : current?.error ? (
+          <div
+            role="alert"
+            className="rounded-sm border border-red-200 bg-card p-5 text-sm"
+          >
+            <p className="text-red-600">{current.error}</p>
             <button
               type="button"
-              onClick={() => setStatus("ALL")}
-              className="mt-4 rounded-sm border border-gray-400 px-4 py-2 text-sm"
-            >
-              Xem tất cả tin đăng
-            </button>
-          )}
-        </div>
-      ) : (
-        <div className="space-y-4">
-          {visiblePosts.map((post) => (
-            <PostCard
-              key={post.maTinDang}
-              post={post}
-              deleting={deletingIds.includes(post.maTinDang)}
-              refresh={() => setRetry((n) => n + 1)}
-              onVerification={(result) =>
-                setRequest((state) =>
-                  state?.userId === post.maNguoiDung
-                    ? {
-                        ...state,
-                        posts: state.posts.map((item) =>
-                          item.maTinDang === post.maTinDang
-                            ? { ...item, xacThuc: result }
-                            : item,
-                        ),
-                      }
-                    : state,
-                )
-              }
-              onEdit={() => setEditing(post)}
-              onDelete={() => {
-                setDeleteTarget(post);
+              onClick={() => {
+                setRequest(null);
+                setRetry((value) => value + 1);
               }}
+              className="mt-3 rounded-sm border border-gray-400 px-4 py-2"
+            >
+              Thử lại
+            </button>
+          </div>
+        ) : visiblePosts.length === 0 ? (
+          <div className="rounded-sm border border-dashed border-input bg-card px-4 py-16 text-center">
+            <ListChecks
+              aria-hidden="true"
+              className="mx-auto mb-3 size-9 text-primary"
             />
-          ))}
-        </div>
-      )}
+            <h2 className="text-sm font-semibold">
+              {posts.length === 0
+                ? "Bạn chưa có tin đăng nào"
+                : "Không tìm thấy tin phù hợp với bộ lọc"}
+            </h2>
+            {posts.length === 0 ? (
+              <Link
+                to="/me/create-post"
+                className="mt-4 inline-flex rounded-sm bg-primary px-4 py-2 text-sm font-semibold text-white"
+              >
+                Đăng tin đầu tiên
+              </Link>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setStatus("ALL")}
+                className="mt-4 rounded-sm border border-gray-400 px-4 py-2 text-sm"
+              >
+                Xem tất cả tin đăng
+              </button>
+            )}
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {visiblePosts.map((post) => (
+              <PostCard
+                key={post.maTinDang}
+                post={post}
+                deleting={deletingIds.includes(post.maTinDang)}
+                refresh={() => setRetry((n) => n + 1)}
+                onVerification={(result) =>
+                  setRequest((state) =>
+                    state?.userId === post.maNguoiDung
+                      ? {
+                          ...state,
+                          posts: state.posts.map((item) =>
+                            item.maTinDang === post.maTinDang
+                              ? { ...item, xacThuc: result }
+                              : item,
+                          ),
+                        }
+                      : state,
+                  )
+                }
+                onEdit={() => setEditing(post)}
+                onDelete={() => {
+                  setDeleteTarget(post);
+                }}
+              />
+            ))}
+          </div>
+        )}
+      </div>
       {deleteTarget && deleteTarget.maNguoiDung === userId && (
         <Dialog.Root
           open

@@ -62,8 +62,14 @@ function VideoPreview({ file }: { file: File }) {
     return () => URL.revokeObjectURL(url);
   }, [file]);
   return (
-    <video ref={ref} controls playsInline preload="metadata" aria-label={file.name}
-      className="aspect-video w-full bg-black object-contain" />
+    <video
+      ref={ref}
+      controls
+      playsInline
+      preload="metadata"
+      aria-label={file.name}
+      className="aspect-video w-full bg-black object-contain"
+    />
   );
 }
 
@@ -875,9 +881,11 @@ const PostForm = () => {
                 render={({ field }) => (
                   <div className="space-y-4">
                     <p aria-live="polite" className="text-sm ">
-                      {field.value.length}/{MAX_IMAGES} ảnh (tối thiểu {MIN_IMAGES}){" "}
-                      <span className="text-red-500">*</span>
-                      <span className="ml-4">{video ? 1 : 0}/1 video (tùy chọn)</span>
+                      {field.value.length}/{MAX_IMAGES} ảnh (tối thiểu{" "}
+                      {MIN_IMAGES}) <span className="text-red-500">*</span>
+                      <span className="ml-4">
+                        {video ? 1 : 0}/1 video (tùy chọn)
+                      </span>
                     </p>
                     <div className="grid items-start gap-4 sm:grid-cols-[180px_minmax(0,1fr)]">
                       <Label
@@ -886,7 +894,11 @@ const PostForm = () => {
                       >
                         <ImagePlus className="size-6 text-primary" />
                         <span>Chọn ảnh và video</span>
-                        <span className="text-xs ">JPG, PNG, WebP · MP4, WebM<br />Tối đa 10 MB/tệp</span>
+                        <span className="text-xs ">
+                          JPG, PNG, WebP · MP4, WebM
+                          <br />
+                          Tối đa 10 MB/tệp
+                        </span>
                         <input
                           id="images"
                           name={field.name}
@@ -897,9 +909,7 @@ const PostForm = () => {
                           multiple
                           className="sr-only"
                           aria-required="true"
-                          aria-invalid={
-                            !!errors.images || !!mediaError
-                          }
+                          aria-invalid={!!errors.images || !!mediaError}
                           aria-describedby="images-error"
                           onChange={(event) => {
                             const files = Array.from(
@@ -907,18 +917,36 @@ const PostForm = () => {
                             );
                             event.currentTarget.value = "";
                             if (!files.length) return;
-                            const videos = files.filter(file => VIDEO_TYPES.includes(file.type));
-                            const images = files.filter(file => IMAGE_TYPES.includes(file.type));
-                            if (images.length + videos.length !== files.length) {
-                              setMediaError("Chỉ nhận ảnh JPG, PNG, WebP và video MP4, WebM.");
+                            const videos = files.filter((file) =>
+                              VIDEO_TYPES.includes(file.type),
+                            );
+                            const images = files.filter((file) =>
+                              IMAGE_TYPES.includes(file.type),
+                            );
+                            if (
+                              images.length + videos.length !==
+                              files.length
+                            ) {
+                              setMediaError(
+                                "Chỉ nhận ảnh JPG, PNG, WebP và video MP4, WebM.",
+                              );
                               return;
                             }
-                            if (files.some(file => !file.size || file.size > 10 * 1024 * 1024)) {
-                              setMediaError("Mỗi tệp phải có dữ liệu và không vượt quá 10 MB.");
+                            if (
+                              files.some(
+                                (file) =>
+                                  !file.size || file.size > 10 * 1024 * 1024,
+                              )
+                            ) {
+                              setMediaError(
+                                "Mỗi tệp phải có dữ liệu và không vượt quá 10 MB.",
+                              );
                               return;
                             }
                             if (videos.length + Number(Boolean(video)) > 1) {
-                              setMediaError("Chỉ được chọn 1 video. Hãy xóa video đã chọn nếu muốn thay.");
+                              setMediaError(
+                                "Chỉ được chọn 1 video. Hãy xóa video đã chọn nếu muốn thay.",
+                              );
                               return;
                             }
                             const uniqueFiles = [...field.value];
@@ -935,18 +963,17 @@ const PostForm = () => {
                               }
                             }
                             if (uniqueFiles.length > MAX_IMAGES) {
-                              setMediaError(
-                                "Tối đa 6 ảnh. Vui lòng chọn lại.",
-                              );
+                              setMediaError("Tối đa 6 ảnh. Vui lòng chọn lại.");
                               return;
                             }
                             setMediaError("");
                             if (videos.length) setVideo(videos[0]);
-                            if (images.length) setValue("images", uniqueFiles, {
-                              shouldValidate: true,
-                              shouldDirty: true,
-                              shouldTouch: true,
-                            });
+                            if (images.length)
+                              setValue("images", uniqueFiles, {
+                                shouldValidate: true,
+                                shouldDirty: true,
+                                shouldTouch: true,
+                              });
                           }}
                         />
                       </Label>
@@ -995,10 +1022,21 @@ const PostForm = () => {
                         {video && (
                           <div className="relative min-w-0 self-start overflow-hidden rounded-lg border border-slate-200">
                             <VideoPreview file={video} />
-                            <p className="truncate px-2 py-1 text-xs" title={video.name}>{video.name}</p>
-                            <button type="button" aria-label={`Xóa video ${video.name}`}
+                            <p
+                              className="truncate px-2 py-1 text-xs"
+                              title={video.name}
+                            >
+                              {video.name}
+                            </p>
+                            <button
+                              type="button"
+                              aria-label={`Xóa video ${video.name}`}
                               className="absolute right-2 top-2 rounded-full bg-white p-1.5 shadow hover:bg-slate-100"
-                              onClick={() => { setVideo(null); setMediaError(""); }}>
+                              onClick={() => {
+                                setVideo(null);
+                                setMediaError("");
+                              }}
+                            >
                               <X className="size-4" />
                             </button>
                           </div>
