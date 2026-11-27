@@ -110,9 +110,9 @@ const AdminLayout = ({ title, children }: AdminLayoutProps) => {
 
       <main className="min-w-0 flex-1 ">
         <header className="flex justify-between items-center w-full min-h-20 bg-white  border border-slate-200 p-6">
-          <h1 className="text-2xl font-bold">{title}</h1>
+          <h1 className="text-2xl font-semibold">{title}</h1>
           <div className="flex items-center gap-3">
-            <h2 className="text-sm font-bold">{user?.hoTen}</h2>
+            <h2 className="text-sm font-semibold">{user?.hoTen}</h2>
             <DropdownMenu>
               <DropdownMenuTrigger>
                 <Avatar>

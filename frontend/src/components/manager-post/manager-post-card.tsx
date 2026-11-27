@@ -262,7 +262,11 @@ function PostCard({
           </p>
         )}
       </div>
-      <div className="mt-auto pt-3">
+      <div className="flex flex-col justify-between gap-3 pt-3 md:pt-0">
+        <dl className="flex flex-wrap gap-x-4 gap-y-1 text-sm md:justify-end">
+          <div className="flex gap-1"><dt>Quan tâm:</dt><dd className="font-semibold tabular-nums">{post.soLuotLuu ?? 0}</dd></div>
+          <div className="flex gap-1"><dt>Khách hàng:</dt><dd className="font-semibold tabular-nums">{post.soKhachHang ?? 0}</dd></div>
+        </dl>
         <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2  pt-3">
           {viewPost(
             <>
@@ -456,7 +460,7 @@ export default function ManagerPostCard() {
         ? {
             ...state,
             posts: state.posts.map((post) =>
-              post.maTinDang === updated.maTinDang ? updated : post,
+              post.maTinDang === updated.maTinDang ? { ...post, ...updated } : post,
             ),
           }
         : state,
@@ -596,7 +600,7 @@ export default function ManagerPostCard() {
                 type="button"
                 aria-pressed={status === group.key}
                 onClick={() => setStatus(group.key)}
-                className={`shrink-0  px-3 py-2 text-sm font-medium  ${status === group.key ? "border-b-3 border-primary " : "border-border bg-card "}`}
+                className={`shrink-0  px-3 py-2 text-sm   ${status === group.key ? "border-b-3 border-primary " : "border-border bg-card "}`}
               >
                 {group.label} {hasCounts && `(${group.posts.length})`}
               </button>

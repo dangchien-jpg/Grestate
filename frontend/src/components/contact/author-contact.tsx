@@ -1,7 +1,9 @@
+import { Dialog } from "@base-ui/react/dialog";
+import ContactRequestForm from "./contact-request-form";
 import { useState } from "react";
 import { useAuthStore } from "@/stores/authStore";
 import { Link, useLocation, useNavigate } from "react-router";
-import { Phone, MessageCircle } from "lucide-react";
+import { Phone, MessageCircle, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { PublicAuthor } from "@/types/post";
 
@@ -21,6 +23,7 @@ function membership(value: string) {
 
 export default function AuthorContact({
   author,
+  postId,
   total,
   name = author.hoTen,
   phone = author.soDienThoai,
@@ -28,6 +31,7 @@ export default function AuthorContact({
   requireLogin = false,
 }: {
   author: PublicAuthor;
+  postId?: number;
   total: number;
   name?: string;
   phone?: string | null;
@@ -37,6 +41,7 @@ export default function AuthorContact({
   const location = useLocation();
   const navigate = useNavigate();
   const userId = useAuthStore((state) => state.user?.maNguoiDung);
+  const user = useAuthStore(state => state.user);
   const needsLogin = requireLogin && !userId;
   const openLogin = () => navigate("/signin", { state: { backgroundLocation: location } });
   const [shown, setShown] = useState<{ phone: string; userId?: number } | null>(null);
@@ -129,6 +134,29 @@ export default function AuthorContact({
             <MessageCircle className="size-4" />
             Chưa có liên kết Zalo
           </Button>
+        )}
+        {postId && userId !== author.maNguoiDung && (
+          user ? (
+            <Dialog.Root key={user.maNguoiDung}>
+              <Dialog.Trigger render={<Button variant="outline" className="w-full" />}>
+                Nhờ chủ tin liên hệ
+              </Dialog.Trigger>
+              <Dialog.Portal>
+                <Dialog.Backdrop className="fixed inset-0 z-50 bg-black/45" />
+                <Dialog.Popup className="fixed left-1/2 top-1/2 z-50 max-h-[90dvh] w-[calc(100%-2rem)] max-w-md -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-xl border bg-card p-5 text-card-foreground shadow-xl sm:p-6">
+                  <div className="mb-4 flex items-center justify-between gap-3">
+                    <Dialog.Title className="text-lg font-semibold">Nhờ chủ tin liên hệ</Dialog.Title>
+                    <Dialog.Close aria-label="Đóng" className="rounded-md p-2 hover:bg-muted">
+                      <X className="size-5" />
+                    </Dialog.Close>
+                  </div>
+                  <ContactRequestForm postId={postId} name={user.hoTen} phone={user.soDienThoai ?? ""} />
+                </Dialog.Popup>
+              </Dialog.Portal>
+            </Dialog.Root>
+          ) : (
+            <Button variant="outline" className="w-full" onClick={openLogin}>Nhờ chủ tin liên hệ</Button>
+          )
         )}
       </div>
     </section>

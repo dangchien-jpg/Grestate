@@ -14,6 +14,7 @@ import notificationRoute from "./routes/notification.route.js";
 import favoriteRoute from "./routes/favorite.route.js";
 import adminRoute from "./routes/admin.route.js";
 import verifyPostRoute from "./routes/verify-post.route.js";
+import contactRoute from "./routes/contact.route.js";
 import reportRoute from "./routes/report.route.js";
 import chatRoute from "./routes/chat.route.js";
 import generateContentRoute from "./routes/generate-content.route.js";
@@ -52,6 +53,7 @@ app.use("/api/notifications", notificationRoute);
 app.use("/api/favorites", favoriteRoute);
 app.use("/api/admin", adminRoute);
 app.use("/api/report", reportRoute);
+app.use("/api/contact", contactRoute);
 app.use("/api/verify-post", verifyPostRoute);
 
 async function startServer() {

@@ -311,6 +311,7 @@ const DetailPage = () => {
             className="w-full max-w-[640px] space-y-4 lg:sticky lg:top-28"
           >
             <AuthorContact
+              postId={post.maTinDang}
               requireLogin
               key={post.maTinDang}
               author={post.nguoiDang}

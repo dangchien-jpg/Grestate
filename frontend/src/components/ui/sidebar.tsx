@@ -1,5 +1,4 @@
-﻿import type { ComponentPropsWithoutRef, ReactNode } from "react";
-import { House } from "lucide-react";
+import type { ComponentPropsWithoutRef, ReactNode } from "react";
 import { Link, NavLink } from "react-router";
 import { cn } from "@/lib/utils";
 
@@ -45,9 +44,11 @@ export function Sidebar({
         className="flex min-h-28 shrink-0 items-center justify-center px-2 py-6 "
       >
         {logo ?? (
-          <span className="flex flex-col items-center gap-1 text-red">
-            <House className="size-8" strokeWidth={1.7} aria-hidden="true" />
-          </span>
+          <img
+            src="/Grestate_Icon.svg"
+            alt=""
+            className="h-auto w-10 max-w-full"
+          />
         )}
       </Link>
 

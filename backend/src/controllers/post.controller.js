@@ -40,6 +40,7 @@ const fetchPostList = async (
       orderBy: [{ createdAt: "desc" }, { maTinDang: "desc" }],
       include: {
         ...(includeVerification && {
+          _count: { select: { tinDangYeuThichs: true } },
           lichSuKiemDuyets: {
             orderBy: [{ ngayKiemDuyet: "desc" }, { maKiemDuyet: "desc" }],
             take: 1,
@@ -93,10 +94,23 @@ const fetchPostList = async (
       },
     });
 
+    const customers = includeVerification && records.length
+      ? await prisma.$queryRaw`
+          SELECT r.maTinDang, COUNT(DISTINCT r.maNguoiGui) AS total
+          FROM YEUCAULIENHE r
+          JOIN TINDANG t ON t.maTinDang = r.maTinDang
+          WHERE t.maNguoiDung = ${where.maNguoiDung} AND t.deletedAt IS NULL
+          GROUP BY r.maTinDang
+        `
+      : [];
+    const customerCounts = new Map(customers.map(row => [row.maTinDang, Number(row.total)]));
+
     const posts = records.map(
-      ({ yeuCauXacThucs, lichSuKiemDuyets, ...post }) => ({
+      ({ yeuCauXacThucs, lichSuKiemDuyets, _count, ...post }) => ({
         daXacThuc: isVerifiedPost(post, yeuCauXacThucs[0]),
         ...(includeVerification && {
+          soLuotLuu: _count.tinDangYeuThichs,
+          soKhachHang: customerCounts.get(post.maTinDang) ?? 0,
           lyDoKiemDuyet: moderationReason(
             post.trangThai,
             lichSuKiemDuyets?.[0],

@@ -118,6 +118,8 @@ export interface VerificationSummary {
 }
 
 export interface TinDangDanhSach extends TinDang {
+  soLuotLuu?: number;
+  soKhachHang?: number;
   lyDoKiemDuyet?: string | null;
   daXacThuc?: boolean;
   xacThuc?: VerificationSummary | null;

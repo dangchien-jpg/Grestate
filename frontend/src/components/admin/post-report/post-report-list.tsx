@@ -1,6 +1,7 @@
+import QueueToolbar from "../queue-toolbar";
 import VerifiedBadge from "@/components/verify-post/verified-badge";
 import { useEffect, useState } from "react";
-import { LoaderCircle, Flag } from "lucide-react";
+import { ArrowRight, LoaderCircle, Flag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   adminReportService,
@@ -43,33 +44,17 @@ export default function PostReportList() {
   }, [status, page, key]);
   const pages = Math.max(1, Math.ceil((current?.total ?? 0) / 10));
   return (
-    <section className="m-4 rounded bg-white p-4 sm:m-6 sm:p-6">
-      <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
-        <div>
-          <h2 className="text-lg font-bold">Danh sách báo cáo</h2>
-          <p className="mt-1 text-sm text-gray-600">
-            {current && !current.error
-              ? `${current.total} báo cáo`
-              : "Xem xét và xử lý phản ánh về tin đăng"}
-          </p>
-        </div>
-        <select
-          aria-label="Trạng thái báo cáo"
-          value={status}
-          onChange={(event) => {
-            setStatus(event.target.value);
-            setPage(1);
-          }}
-          className="rounded border bg-white px-3 py-2 text-sm"
-        >
-          <option value="ALL">Tất cả trạng thái</option>
-          {Object.entries(reportStatuses).map(([value, label]) => (
-            <option key={value} value={value}>
-              {label}
-            </option>
-          ))}
-        </select>
-      </div>
+    <section className="overflow-hidden rounded-sm bg-white shadow-sm">
+      <QueueToolbar
+        icon={Flag}
+        title="Báo cáo tin đăng"
+        summary={!current ? "Đang tải…" : current.error ? "Chưa cập nhật được danh sách" : `${current.total} báo cáo · ${reportStatuses[status] ?? "Tất cả"}`}
+        statuses={reportStatuses}
+        status={status}
+        loading={!current}
+        onRefresh={() => setRevision(value => value + 1)}
+        onStatus={value => { setStatus(value); setPage(1); }}
+      />
       {!current ? (
         <p role="status" className="flex justify-center gap-2 py-12">
           <LoaderCircle className="size-5 animate-spin" />
@@ -100,82 +85,37 @@ export default function PostReportList() {
           )}
         </div>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[760px] text-left text-sm">
-            <thead className="border-b bg-gray-50">
-              <tr>
-                {[
-                  "Tin đăng",
-                  "Người báo cáo",
-                  "Nội dung",
-                  "Ngày gửi",
-                  "Trạng thái",
-                  "Thao tác",
-                ].map((label) => (
-                  <th key={label} className="px-3 py-3 font-semibold">
-                    {label}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {current.reports.map((report) => (
-                <tr key={report.maBaoCao} className="border-b align-top">
-                  <td className="max-w-64 px-3 py-4">
-                    <div className="flex gap-3">
-                      <img
-                        src={
-                          report.tinDang.hinhAnhTinDangs[0]?.hinhAnhUrl ||
-                          "/placeholder.png"
-                        }
-                        alt=""
-                        className="h-14 w-20 shrink-0 rounded object-cover"
-                      />
-                      <div>
-                        <p className="line-clamp-2 font-semibold">
-                          <VerifiedBadge verified={report.tinDang.daXacThuc} />{report.tinDang.tieuDe}
-                        </p>
-                        <p className="mt-1 text-xs text-gray-500">
-                          Tin #{report.maTinDang} · Báo cáo #{report.maBaoCao}
-                        </p>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-3 py-4">{report.nguoiBaoCao.hoTen}</td>
-                  <td className="max-w-56 px-3 py-4">
-                    <p className="line-clamp-3 whitespace-pre-wrap break-words">
-                      {report.noiDung}
-                    </p>
-                  </td>
-                  <td className="px-3 py-4">
-                    {new Date(report.ngayBaoCao).toLocaleDateString("vi-VN")}
-                  </td>
-                  <td className="px-3 py-4">
-                    <span
-                      className={`inline-flex whitespace-nowrap rounded border px-2 py-1 text-xs ${report.trangThai === "CO_VI_PHAM" ? "border-red-200 bg-red-50 text-red-700" : report.trangThai === "KHONG_VI_PHAM" ? "border-green-200 bg-green-50 text-green-700" : "border-amber-200 bg-amber-50 text-amber-700"}`}
-                    >
-                      {reportStatuses[report.trangThai] ?? report.trangThai}
+        <>
+          <div className="hidden lg:grid-cols-[minmax(0,2fr)_minmax(100px,1fr)_145px_90px] gap-4 border-y bg-[#eee] px-6 py-3 text-xs font-semibold lg:grid">
+            <span>Tin đăng</span><span>Người báo cáo</span><span>Ngày gửi</span><span className="text-right">Xử lý</span>
+          </div>
+          <ul className="divide-y divide-slate-200">
+            {current.reports.map((report) => (
+              <li key={report.maBaoCao}>
+                <button type="button" onClick={() => setSelected(report.maBaoCao)}
+                  className="group grid w-full items-center gap-2 px-4 py-4 text-left hover:bg-[#eee]/30 focus-visible:outline-primary sm:px-6 lg:grid-cols-[minmax(0,2fr)_minmax(100px,1fr)_145px_90px] lg:gap-4">
+                  <span className="flex min-w-0 items-start gap-3">
+                    <img src={report.tinDang.hinhAnhTinDangs[0]?.hinhAnhUrl || "/placeholder.png"} alt="" loading="lazy" className="h-14 w-20 shrink-0 rounded-sm bg-slate-100 object-cover" />
+                    <span className="min-w-0">
+                      <span className="line-clamp-2 text-sm font-semibold group-hover:text-primary"><VerifiedBadge verified={report.tinDang.daXacThuc} />{report.tinDang.tieuDe}</span>
+                      <span className="block mt-1 text-xs text-muted-foreground">Tin #{report.maTinDang} · Báo cáo #{report.maBaoCao}</span>
+                    <span className="block mt-1 line-clamp-2 text-sm">{report.noiDung}</span>
+                    <span className={`mt-1 inline-flex rounded-sm border px-2 py-0.5 text-xs ${report.trangThai === "CO_VI_PHAM" ? "border-red-200 bg-red-50 text-red-700" : report.trangThai === "KHONG_VI_PHAM" ? "border-green-200 bg-green-50 text-green-700" : "border-amber-200 bg-amber-50 text-amber-700"}`}>{reportStatuses[report.trangThai] ?? report.trangThai}</span>
                     </span>
-                  </td>
-                  <td className="px-3 py-4">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setSelected(report.maBaoCao)}
-                    >
-                      Xem xét
-                    </Button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+                  </span>
+                  <span className="text-sm"><span className="lg:hidden">Người báo cáo: </span>{report.nguoiBaoCao.hoTen}</span>
+                  <time dateTime={report.ngayBaoCao} className="text-sm">{new Date(report.ngayBaoCao).toLocaleDateString("vi-VN")}</time>
+                  <span className="inline-flex items-center gap-1 text-sm font-semibold text-primary lg:justify-end">Chi tiết <ArrowRight size={15} /></span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        </>
       )}
       {current && !current.error && current.total > 0 && (
         <nav
           aria-label="Phân trang báo cáo"
-          className="mt-6 flex items-center justify-center gap-4 text-sm"
+          className="flex items-center justify-center gap-4 border-t p-4 text-sm"
         >
           <Button
             variant="outline"

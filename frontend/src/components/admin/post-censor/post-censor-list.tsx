@@ -1,6 +1,7 @@
+import QueueToolbar from "../queue-toolbar";
 import VerifiedBadge from "@/components/verify-post/verified-badge";
 import { useEffect, useState } from "react";
-import { Eye, ListChecks, LoaderCircle, MapPin } from "lucide-react";
+import { ArrowRight, ListChecks, LoaderCircle } from "lucide-react";
 import {
   adminCensorService,
   censorError,
@@ -39,38 +40,17 @@ export default function PostCensorList() {
   }, [status, page, revision, key]);
   const pages = Math.max(1, Math.ceil((current?.total ?? 0) / 9));
   return (
-    <section
-      aria-label="Danh sách kiểm duyệt"
-      className="m-4 rounded-sm bg-white p-4 font-sans sm:m-6 sm:p-6 lg:m-8"
-    >
-      <div className="mb-5 flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <h2 className="text-lg font-bold">Danh sách tin đăng</h2>
-          <p className="mt-1 text-sm">
-            {current && !current.error
-              ? `${current.total} tin đăng`
-              : "Quản lý và kiểm duyệt nội dung tin đăng"}
-          </p>
-        </div>
-      </div>
-      <div className="mb-6 flex flex-wrap gap-3">
-        <select
-          aria-label="Trạng thái kiểm duyệt"
-          value={status}
-          onChange={(event) => {
-            setStatus(event.target.value);
-            setPage(1);
-          }}
-          className="h-10 rounded-sm border border-input bg-white px-3 text-sm"
-        >
-          <option value="ALL">Tất cả trạng thái</option>
-          {Object.entries(censorStatuses).map(([value, label]) => (
-            <option key={value} value={value}>
-              {label}
-            </option>
-          ))}
-        </select>
-      </div>
+    <section className="overflow-hidden rounded-sm bg-white shadow-sm">
+      <QueueToolbar
+        icon={ListChecks}
+        title="Kiểm duyệt tin đăng"
+        summary={!current ? "Đang tải…" : current.error ? "Chưa cập nhật được danh sách" : `${current.total} tin đăng · ${censorStatuses[status] ?? "Tất cả"}`}
+        statuses={censorStatuses}
+        status={status}
+        loading={!current}
+        onRefresh={() => setRevision(value => value + 1)}
+        onStatus={value => { setStatus(value); setPage(1); }}
+      />
       {!current ? (
         <p
           role="status"
@@ -108,89 +88,38 @@ export default function PostCensorList() {
           )}
         </div>
       ) : (
-        <div className="space-y-3">
-          {current.posts.map((post) => (
-            <article
-              key={post.maTinDang}
-              className="flex min-w-0 flex-col overflow-hidden rounded-sm border border-gray-200 bg-white shadow-sm sm:flex-row"
-            >
-              <button
-                type="button"
-                onClick={() => setSelected(post.maTinDang)}
-                aria-label={`Xem xét tin ${post.tieuDe}`}
-                className="relative block aspect-video w-full shrink-0 overflow-hidden bg-gray-100 sm:aspect-auto sm:w-44 lg:w-52"
-              >
-                <img
-                  src={post.anhDaiDienUrl || "/placeholder.png"}
-                  alt={post.tieuDe}
-                  loading="lazy"
-                  onError={(event) => {
-                    if (!event.currentTarget.src.endsWith("/placeholder.png"))
-                      event.currentTarget.src = "/placeholder.png";
-                  }}
-                  className="h-full w-full object-cover sm:absolute sm:inset-0"
-                />
-              </button>
-              <div className="flex min-w-0 flex-1 flex-col p-3 sm:p-4">
-                <div className="flex flex-wrap items-center gap-2">
-                  <span
-                    className={` inline-flex w-fit rounded-sm border px-2 py-1 text-xs font-medium ${censorStatusClasses[post.trangThai] ?? "border-gray-200 bg-gray-50"}`}
-                  >
-                    {censorStatuses[post.trangThai] ?? post.trangThai}
+        <>
+          <div className="hidden lg:grid-cols-[minmax(0,2fr)_minmax(100px,1fr)_145px_90px] gap-4 border-y bg-[#eee] px-6 py-3 text-xs font-semibold lg:grid">
+            <span>Tin đăng</span><span>Người đăng</span><span>Ngày gửi</span><span className="text-right">Xử lý</span>
+          </div>
+          <ul className="divide-y divide-slate-200">
+            {current.posts.map((post) => (
+              <li key={post.maTinDang}>
+                <button type="button" onClick={() => setSelected(post.maTinDang)}
+                  className="group grid w-full items-center gap-2 px-4 py-4 text-left hover:bg-[#eee]/30 focus-visible:outline-primary sm:px-6 lg:grid-cols-[minmax(0,2fr)_minmax(100px,1fr)_145px_90px] lg:gap-4">
+                  <span className="flex min-w-0 items-start gap-3">
+                    <img src={post.anhDaiDienUrl || "/placeholder.png"} alt="" loading="lazy" className="h-14 w-20 shrink-0 rounded-sm bg-slate-100 object-cover" />
+                    <span className="min-w-0">
+                      <span className="line-clamp-2 text-sm font-semibold group-hover:text-primary"><VerifiedBadge verified={post.daXacThuc} />{post.tieuDe}</span>
+                      <span className="block mt-1 text-xs text-muted-foreground">Tin #{post.maTinDang} · {post.loaiBatDongSan.tenLoai}</span>
+                    <span className="block mt-1 text-sm">{formatPrice(post.giaNiemYet)} · {post.dienTich.toLocaleString("vi-VN")} m²</span>
+                    <span className="block line-clamp-1 text-xs">{[post.diaChiChiTiet, post.phuongXa.tenPhuongXa, post.phuongXa.tinhThanh.tenTinhThanh].filter(Boolean).join(", ")}</span>
+                    <span className={`mt-1 inline-flex rounded-sm border px-2 py-0.5 text-xs ${censorStatusClasses[post.trangThai] ?? ""}`}>{censorStatuses[post.trangThai] ?? post.trangThai}</span>
+                    </span>
                   </span>
-                  <p className="text-[10px]">
-                    Mã tin: {post.maTinDang} · {post.loaiBatDongSan.tenLoai}
-                  </p>
-                </div>
-                <h3 className="mt-1.5 line-clamp-2 text-sm leading-5 font-bold wrap-break-word">
-                  <VerifiedBadge verified={post.daXacThuc} />{post.tieuDe}
-                </h3>
-                <div className="mt-2 flex flex-wrap gap-3 text-sm">
-                  <strong className="text-red-600">
-                    {formatPrice(post.giaNiemYet)}
-                  </strong>
-                  <span>{post.dienTich.toLocaleString("vi-VN")} m²</span>
-                </div>
-                <p className="mt-2 flex gap-1 text-xs leading-5">
-                  <MapPin className="mt-0.5 size-3.5 shrink-0" />
-                  <span className="line-clamp-1">
-                    {[
-                      post.diaChiChiTiet,
-                      post.phuongXa.tenPhuongXa,
-                      post.phuongXa.tinhThanh.tenTinhThanh,
-                    ]
-                      .filter(Boolean)
-                      .join(", ")}
-                  </span>
-                </p>
-                <div className="mt-2 flex flex-wrap items-end justify-between gap-2">
-                  <div>
-                    <p className="text-xs">
-                      Người đăng: {post.nguoiDang.hoTen}
-                    </p>
-                    <p className="mt-1 text-[10px]">
-                      Ngày gửi:{" "}
-                      {new Date(post.updatedAt).toLocaleDateString("vi-VN")}
-                    </p>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => setSelected(post.maTinDang)}
-                    className=" inline-flex w-fit items-center justify-center self-end gap-2 rounded-sm bg-primary px-3 py-1.5 text-xs font-semibold text-white"
-                  >
-                    <Eye className="size-4" />
-                    Xem chi tiết
-                  </button>
-                </div>
-              </div>
-            </article>
-          ))}
-        </div>
+                  <span className="text-sm"><span className="lg:hidden">Người đăng: </span>{post.nguoiDang.hoTen}</span>
+                  <time dateTime={post.updatedAt} className="text-sm">{new Date(post.updatedAt).toLocaleDateString("vi-VN")}</time>
+                  <span className="inline-flex items-center gap-1 text-sm font-semibold text-primary lg:justify-end">Chi tiết <ArrowRight size={15} /></span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        </>
       )}
       {current && !current.error && current.total > 0 && (
         <nav
           aria-label="Phân trang"
-          className="mt-6 flex items-center justify-center gap-4 text-sm"
+          className="flex items-center justify-center gap-4 border-t p-4 text-sm"
         >
           <button
             type="button"

@@ -1,9 +1,10 @@
+import ContactInbox from "@/components/contact/contact-inbox";
 import ManagerPostCard from "@/components/manager-post/manager-post-card";
 import AccountMenu from "@/components/layout/account-menu";
 import Sidebar from "@/components/ui/sidebar";
 import { useAuthStore } from "@/stores/authStore";
 import { CircleUserRound, ListChecks, Plus } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Link } from "react-router";
 
 const ManagerPostPage = () => {
   const { user } = useAuthStore();
@@ -39,10 +40,13 @@ const ManagerPostPage = () => {
               <p>Quản lý tin đăng</p>
             </div>
             <div className="flex items-center gap-3">
-              <Button className="flex items-center rounded-sm h-10 text-sm">
+              <Link
+                to={"/me/create-post"}
+                className="flex items-center gap-1 rounded-sm h-10 text-sm bg-primary text-white px-4"
+              >
                 {" "}
                 <Plus className="size-5 " /> Đăng tin mới
-              </Button>
+              </Link>
               <span className="hidden text-sm font-medium sm:inline">
                 {user?.hoTen}
               </span>
@@ -51,6 +55,7 @@ const ManagerPostPage = () => {
           </div>
         </header>
 
+        {user && <ContactInbox key={user.maNguoiDung} />}
         <ManagerPostCard />
       </main>
     </div>

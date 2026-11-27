@@ -43,6 +43,7 @@ model NguoiDung {
   lichSuKiemDuyets LichSuKiemDuyet[]
   tinDangYeuThichs TinDangYeuThich[]
   thongBaos        ThongBao[]
+  yeuCauLienHes    YeuCauLienHe[]
 
   yeuCauXacThucDaGuis YeuCauXacThucTinDang[] @relation("NguoiGuiXacThuc")
   yeuCauXacThucDaXuLys YeuCauXacThucTinDang[] @relation("NguoiXuLyXacThuc")
@@ -159,6 +160,7 @@ model TinDang {
   phanAnhTinDangs  PhanAnhTinDang[]
   lichSuKiemDuyets LichSuKiemDuyet[]
   thongBaos        ThongBao[]
+  yeuCauLienHes    YeuCauLienHe[]
 
   phienBanXacThuc Int @default(1)
   yeuCauXacThucs  YeuCauXacThucTinDang[]
@@ -319,4 +321,31 @@ model MinhChungXacThuc {
   @@index([maYeuCau, thuTuHienThi])
   @@index([maGiayTo])
   @@map("MINHCHUNGXACTHUC")
+}
+
+enum TrangThaiYeuCauLienHe {
+  CHO_LIEN_HE
+  DA_LIEN_HE
+}
+
+model YeuCauLienHe {
+  maYeuCau          Int                   @id @default(autoincrement())
+  maTinDang         Int
+  maNguoiGui        Int
+  tenLienHe         String                @db.VarChar(100)
+  soDienThoaiLienHe String                @db.VarChar(15)
+  loiNhan           String?               @db.VarChar(500)
+  trangThai         TrangThaiYeuCauLienHe @default(CHO_LIEN_HE)
+  ngayGui           DateTime              @default(now()) @db.DateTime(0)
+  ngayLienHe        DateTime?             @db.DateTime(0)
+  /// MySQL đặt bằng 1 khi đang chờ và NULL khi đã liên hệ.
+  danhDauDangCho    Int?                  @default(dbgenerated()) @db.TinyInt
+
+  tinDang  TinDang   @relation(fields: [maTinDang], references: [maTinDang])
+  nguoiGui NguoiDung @relation(fields: [maNguoiGui], references: [maNguoiDung])
+
+  @@unique([maTinDang, maNguoiGui, danhDauDangCho], map: "uq_lienhe_tin_nguoi_dangcho")
+  @@index([maTinDang, trangThai, ngayGui])
+  @@index([maNguoiGui])
+  @@map("YEUCAULIENHE")
 }
