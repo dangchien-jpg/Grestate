@@ -18,6 +18,7 @@ import DetailPage from "@/pages/DetailPage";
 import CreatePostPage from "@/pages/CreatePostPage";
 import PredictPage from "@/pages/PredictPage";
 import FavoritePostPage from "@/pages/FavoritePostPage";
+import CustomerPage from "@/pages/CustomerPage";
 import ManagerPostPage from "@/pages/ManagerPostPage";
 import AdminDashboardPage from "@/pages/AdminDashboardPage";
 import AdminProtectedRoute from "@/components/auth/admin-protected-route";
@@ -63,6 +64,7 @@ function AppRoutes() {
           <Route path="/me/profile" element={<ProfilePage />} />
           <Route path="/me/create-post" element={<CreatePostPage />} />
           <Route path="/me/favorite-post" element={<FavoritePostPage />} />
+          <Route path="/me/customers" element={<CustomerPage />} />
           <Route path="/me/manager-post" element={<ManagerPostPage />} />
 
           <Route element={<AdminProtectedRoute />}>

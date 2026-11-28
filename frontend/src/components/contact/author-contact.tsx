@@ -41,10 +41,13 @@ export default function AuthorContact({
   const location = useLocation();
   const navigate = useNavigate();
   const userId = useAuthStore((state) => state.user?.maNguoiDung);
-  const user = useAuthStore(state => state.user);
+  const user = useAuthStore((state) => state.user);
   const needsLogin = requireLogin && !userId;
-  const openLogin = () => navigate("/signin", { state: { backgroundLocation: location } });
-  const [shown, setShown] = useState<{ phone: string; userId?: number } | null>(null);
+  const openLogin = () =>
+    navigate("/signin", { state: { backgroundLocation: location } });
+  const [shown, setShown] = useState<{ phone: string; userId?: number } | null>(
+    null,
+  );
   let zaloUrl: string | null = null;
   const zaloLink = author.duongDanZalo?.trim();
   if (zaloLink) {
@@ -104,13 +107,19 @@ export default function AuthorContact({
         >
           <Phone className="size-4" />
           {phone
-            ? shown?.phone === phone && (!requireLogin || (!needsLogin && shown.userId === userId))
+            ? shown?.phone === phone &&
+              (!requireLogin || (!needsLogin && shown.userId === userId))
               ? phone
               : "**********　 Xem số"
             : "Chưa có số điện thoại"}
         </Button>
         {zaloUrl && needsLogin ? (
-          <Button type="button" variant="outline" className="h-12 w-full gap-2" onClick={openLogin}>
+          <Button
+            type="button"
+            variant="outline"
+            className="h-12 w-full gap-2"
+            onClick={openLogin}
+          >
             <MessageCircle className="size-4" />
             Liên hệ qua Zalo
           </Button>
@@ -135,29 +144,42 @@ export default function AuthorContact({
             Chưa có liên kết Zalo
           </Button>
         )}
-        {postId && userId !== author.maNguoiDung && (
-          user ? (
+        {postId &&
+          userId !== author.maNguoiDung &&
+          (user ? (
             <Dialog.Root key={user.maNguoiDung}>
-              <Dialog.Trigger render={<Button variant="outline" className="w-full" />}>
+              <Dialog.Trigger
+                render={<Button variant="outline" className="w-full h-11" />}
+              >
                 Nhờ chủ tin liên hệ
               </Dialog.Trigger>
               <Dialog.Portal>
                 <Dialog.Backdrop className="fixed inset-0 z-50 bg-black/45" />
                 <Dialog.Popup className="fixed left-1/2 top-1/2 z-50 max-h-[90dvh] w-[calc(100%-2rem)] max-w-md -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-xl border bg-card p-5 text-card-foreground shadow-xl sm:p-6">
                   <div className="mb-4 flex items-center justify-between gap-3">
-                    <Dialog.Title className="text-lg font-semibold">Nhờ chủ tin liên hệ</Dialog.Title>
-                    <Dialog.Close aria-label="Đóng" className="rounded-md p-2 hover:bg-muted">
+                    <Dialog.Title className="text-lg font-semibold">
+                      Nhờ chủ tin liên hệ
+                    </Dialog.Title>
+                    <Dialog.Close
+                      aria-label="Đóng"
+                      className="rounded-md p-2 hover:bg-muted"
+                    >
                       <X className="size-5" />
                     </Dialog.Close>
                   </div>
-                  <ContactRequestForm postId={postId} name={user.hoTen} phone={user.soDienThoai ?? ""} />
+                  <ContactRequestForm
+                    postId={postId}
+                    name={user.hoTen}
+                    phone={user.soDienThoai ?? ""}
+                  />
                 </Dialog.Popup>
               </Dialog.Portal>
             </Dialog.Root>
           ) : (
-            <Button variant="outline" className="w-full" onClick={openLogin}>Nhờ chủ tin liên hệ</Button>
-          )
-        )}
+            <Button variant="outline" className="w-full" onClick={openLogin}>
+              Nhờ chủ tin liên hệ
+            </Button>
+          ))}
       </div>
     </section>
   );

@@ -19,7 +19,13 @@ export interface ContactRequest {
 }
 
 export interface ListedContact extends ContactRequest {
-  tinDang: { maTinDang: number; tieuDe: string; trangThai: string };
+  tinDang: {
+    maTinDang: number;
+    tieuDe: string;
+    trangThai: string;
+    giaNiemYet?: string | number;
+    hinhAnhTinDangs?: { hinhAnhUrl: string }[];
+  };
 }
 
 interface ContactList {
@@ -35,6 +41,10 @@ export async function createContactRequest(postId: number, input: ContactInput) 
 
 export async function fetchSentContactRequests(postId: number) {
   return (await api.get<ContactList>("/contact/sent", { params: { maTinDang: postId } })).data;
+}
+
+export async function fetchPendingContactCount() {
+  return (await api.get<{ total: number }>("/contact/received/pending-count")).data.total;
 }
 
 export async function fetchReceivedContactRequests() {

@@ -65,7 +65,7 @@ const Header = () => {
               <span
                 aria-live="polite"
                 aria-atomic="true"
-                className="absolute -top-1 -right-1 inline-flex h-4 min-w-4 items-center justify-center rounded-md bg-red-600 px-1 text-[10px] leading-none font-semibold text-white ring-2 ring-white"
+                className="absolute -top-1 -right-1 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-red-600 px-1 text-[10px] leading-none font-semibold text-white ring-2 ring-white"
               >
                 {favoriteCount}
               </span>

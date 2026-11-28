@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Bell } from "lucide-react";
+import { ArrowLeft, Bell, Megaphone } from "lucide-react";
 import { toast } from "sonner";
 import {
   DropdownMenu,
@@ -21,8 +21,6 @@ export default function Notification() {
     "loading",
   );
   const [detail, setDetail] = useState<UserNotification | null>(null);
-  const dialog = useRef<HTMLDialogElement>(null);
-  const trigger = useRef<HTMLButtonElement>(null);
   const activeRequest = useRef<AbortController | null>(null);
   const [refresh, setRefresh] = useState(0);
   const unread = items.filter((item) => !item.daDoc).length;
@@ -44,10 +42,6 @@ export default function Notification() {
     return () => request.abort();
   }, [refresh]);
 
-  useEffect(() => {
-    if (detail) dialog.current?.showModal();
-  }, [detail]);
-
   async function view(item: UserNotification) {
     activeRequest.current?.abort();
     setDetail(item);
@@ -65,33 +59,62 @@ export default function Notification() {
   }
 
   return (
-    <>
-      <DropdownMenu
-        open={open}
-        onOpenChange={(next) => {
-          setOpen(next);
-          if (next) setRefresh((value) => value + 1);
-        }}
+    <DropdownMenu
+      open={open}
+      onOpenChange={(next) => {
+        setOpen(next);
+        if (next) setRefresh((value) => value + 1);
+        else setDetail(null);
+      }}
+    >
+      <DropdownMenuTrigger
+        aria-label={`Thông báo, ${unread} chưa đọc`}
+        className="relative inline-flex size-8 shrink-0 items-center justify-center rounded-full"
       >
-        <DropdownMenuTrigger
-          ref={trigger}
-          aria-label={`Thông báo, ${unread} chưa đọc`}
-          className="relative inline-grid size-8 place-items-center rounded-sm"
-        >
-          <Bell className="size-6" />
-          {unread > 0 && (
-            <span className="absolute -right-1 -top-1 rounded-md bg-red-600 px-1 text-[10px] font-semibold text-white">
-              {unread}
-            </span>
-          )}
-        </DropdownMenuTrigger>
-        <DropdownMenuContent
-          align="end"
-          side="bottom"
-          alignOffset={0}
-          sideOffset={8}
-          className="w-80 max-w-[92vw]"
-        >
+        <Bell className="size-6" />
+        {unread > 0 && (
+          <span className="pointer-events-none absolute -top-1 -right-1 inline-flex h-4 min-w-4 items-center justify-center px-1 rounded-full bg-red-600 text-[10px] font-semibold leading-none tabular-nums text-white ring-2 ring-white">
+            {unread > 99 ? "99+" : unread}
+          </span>
+        )}
+      </DropdownMenuTrigger>
+      <DropdownMenuContent
+        align="end"
+        side="bottom"
+        alignOffset={0}
+        sideOffset={8}
+        className="w-80 max-w-[92vw]"
+      >
+        {detail ? (
+          <DropdownMenuGroup>
+            <div className="flex items-center gap-2 border-b p-2">
+              <DropdownMenuItem
+                aria-label="Quay lại danh sách thông báo"
+                closeOnClick={false}
+                onClick={() => setDetail(null)}
+                className="justify-center p-2"
+              >
+                <ArrowLeft aria-hidden="true" className="size-4" />
+              </DropdownMenuItem>
+              <DropdownMenuLabel>Chi tiết thông báo</DropdownMenuLabel>
+            </div>
+            <article className="space-y-2 p-3">
+              <h3 className="break-words text-sm font-semibold">
+                {detail.tieuDe}
+              </h3>
+              <time className="text-xs" dateTime={detail.createdAt}>
+                {new Date(detail.createdAt).toLocaleDateString("vi-VN", {
+                  day: "2-digit",
+                  month: "2-digit",
+                  year: "numeric",
+                })}
+              </time>
+              <p className="whitespace-pre-wrap break-words text-sm">
+                {detail.noiDung}
+              </p>
+            </article>
+          </DropdownMenuGroup>
+        ) : (
           <DropdownMenuGroup>
             <DropdownMenuLabel>Thông báo</DropdownMenuLabel>
             {status === "error" ? (
@@ -108,60 +131,40 @@ export default function Notification() {
             {items.map((item) => (
               <DropdownMenuItem
                 key={item.maThongBao}
+                closeOnClick={false}
                 onClick={() => view(item)}
               >
-                {!item.daDoc && (
-                  <span
-                    aria-label="Chưa đọc"
-                    className="size-2 shrink-0 rounded-sm bg-primary"
-                  />
-                )}
+                <span className="relative inline-flex size-6 shrink-0 items-center justify-center">
+                  <Megaphone aria-hidden="true" className="size-6" />
+                  {!item.daDoc && (
+                    <span className="absolute -right-0.5 -top-0.5 size-2 rounded-full bg-primary ring-2 ring-background">
+                      <span className="sr-only">Chưa đọc</span>
+                    </span>
+                  )}
+                </span>
                 <span className="min-w-0">
                   <span
                     className={
-                      item.daDoc ? "block text-sm" : "block font-semibold"
+                      item.daDoc
+                        ? "block text-sm"
+                        : "block text-sm font-semibold"
                     }
                   >
                     {item.tieuDe}
                   </span>
-                  <time className="text-sm">
-                    {new Date(item.createdAt).toLocaleString("vi-VN")}
+                  <time className="text-xs">
+                    {new Date(item.createdAt).toLocaleDateString("vi-VN", {
+                      day: "2-digit",
+                      month: "2-digit",
+                      year: "numeric",
+                    })}
                   </time>
                 </span>
               </DropdownMenuItem>
             ))}
           </DropdownMenuGroup>
-        </DropdownMenuContent>
-      </DropdownMenu>
-      <dialog
-        ref={dialog}
-        aria-labelledby="notification-title"
-        onClose={() => {
-          setDetail(null);
-          trigger.current?.focus();
-        }}
-        className="fixed inset-0 m-auto max-h-[80vh] w-96 max-w-[92vw] rounded-sm p-5 shadow-lg backdrop:bg-black/40"
-      >
-        {detail && (
-          <>
-            <h2 id="notification-title" className="text-lg font-semibold">
-              {detail.tieuDe}
-            </h2>
-            <time className="text-xs">
-              {new Date(detail.createdAt).toLocaleString("vi-VN")}
-            </time>
-            <p className="my-4 whitespace-pre-wrap break-words">
-              {detail.noiDung}
-            </p>
-            <button
-              onClick={() => dialog.current?.close()}
-              className="rounded-sm  border border-[#ccc] px-3 py-1"
-            >
-              Đóng
-            </button>
-          </>
         )}
-      </dialog>
-    </>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }

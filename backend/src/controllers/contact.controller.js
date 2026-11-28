@@ -116,6 +116,18 @@ export const fetchSentContactRequests = async (req, res) => {
   }
 };
 
+export const countPendingContacts = async (req, res) => {
+  try {
+    const total = await prisma.yeuCauLienHe.count({
+      where: { trangThai: "CHO_LIEN_HE", tinDang: { maNguoiDung: req.user.maNguoiDung } },
+    });
+    return res.json({ total });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Không thể đếm yêu cầu chờ liên hệ" });
+  }
+};
+
 export const fetchReceivedContactRequests = async (req, res) => {
   try {
     const { maTinDang, trangThai } = req.query;
@@ -143,7 +155,19 @@ export const fetchReceivedContactRequests = async (req, res) => {
         ...(maTinDang !== undefined && { maTinDang: id }),
         ...(trangThai !== undefined && { trangThai }),
       },
-      include: { tinDang: { select: postSummary } },
+      include: {
+        tinDang: {
+          select: {
+            ...postSummary,
+            giaNiemYet: true,
+            hinhAnhTinDangs: {
+              select: { hinhAnhUrl: true },
+              orderBy: [{ laAnhDaiDien: "desc" }, { thuTuHienThi: "asc" }, { maHinhAnh: "asc" }],
+              take: 1,
+            },
+          },
+        },
+      },
       omit: { danhDauDangCho: true },
       orderBy: newestFirst,
     });

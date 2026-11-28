@@ -7,6 +7,7 @@ export interface SidebarItem {
   title: string;
   link: string;
   badge?: ReactNode;
+  badgeClassName?: string;
   /** Display a red circular icon and a divider below this item. */
   variant?: "default" | "primary";
   /** Match only this URL instead of also matching child routes. */
@@ -85,7 +86,7 @@ export function Sidebar({
                       {item.icon}
                     </span>
                     {item.badge != null && (
-                      <span className="absolute -top-2 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-[#c90000] px-1.5 py-0.5 text-xs font-bold leading-4 text-white">
+                      <span className={cn("absolute -top-2 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-[#c90000] px-1.5 py-0.5 text-xs font-bold leading-4 text-white", item.badgeClassName)}>
                         {item.badge}
                       </span>
                     )}

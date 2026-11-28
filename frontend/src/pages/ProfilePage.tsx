@@ -1,34 +1,14 @@
 import AccountMenu from "@/components/layout/account-menu";
-import Sidebar from "@/components/ui/sidebar";
+import UserSidebar from "@/components/layout/user-sidebar";
 import ProfileForm from "@/components/user/profile-form";
 import { useAuthStore } from "@/stores/authStore";
-import { Plus, ListChecks, CircleUserRound } from "lucide-react";
 
 export const ProfilePage = () => {
   const { user } = useAuthStore();
 
   return (
-    <div className="flex min-h-screen">
-      <Sidebar
-        items={[
-          {
-            icon: <Plus />,
-            title: "Đăng tin",
-            link: "/create-post",
-            variant: "primary",
-          },
-          {
-            icon: <ListChecks />,
-            title: "Tin đăng",
-            link: "/me/manager-post",
-          },
-          {
-            icon: <CircleUserRound />,
-            title: "Tài khoản",
-            link: "/me/profile",
-          },
-        ]}
-      />
+    <div className="flex min-h-screen flex-col md:flex-row">
+      <UserSidebar key={user?.maNguoiDung} />
 
       <main className="min-w-0 flex-1 ">
         <header className="flex justify-between items-center w-full min-h-20 b bg-white  border border-slate-200 p-6">

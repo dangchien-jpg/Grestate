@@ -158,44 +158,60 @@ function PostCard({
       </button>
     );
   }
+  const showReason = post.trangThai === "BI_GO" || post.trangThai === "TU_CHOI";
   return (
     <article
       className="
-        group flex flex-col gap-4 rounded-sm border border-slate-200 bg-card p-3.5
+        group flex flex-col gap-4 rounded-sm border border-[#dedede] bg-card p-3.5
         text-card-foreground shadow-[0_1px_2px_rgba(15,23,42,0.03)] transition-colors
-        duration-200 hover:border-slate-300 sm:flex-row sm:p-4
+        duration-200 hover:border-[#ccc] sm:grid sm:grid-cols-[auto_minmax(0,1fr)_auto] sm:p-4
       "
     >
-      <div
-        aria-label={`Xem tin: ${post.tieuDe}`}
-        className="
-          relative block aspect-video shrink-0 self-start overflow-hidden rounded-md
-          bg-slate-100 w-full sm:aspect-[4/3] sm:w-48 lg:w-56
-        "
-      >
-        <img
-          src={post.anhDaiDienUrl || "/placeholder.png"}
-          alt={post.tieuDe}
-          loading="lazy"
-          decoding="async"
-          onError={(event) => {
-            if (!event.currentTarget.src.endsWith("/placeholder.png"))
-              event.currentTarget.src = "/placeholder.png";
-          }}
-          className="absolute inset-0 h-full w-full object-cover"
-        />
-        <span
+      <div className="w-full min-w-0 shrink-0 sm:w-48 lg:w-56">
+        <div
+          aria-label={`Xem tin: ${post.tieuDe}`}
           className="
-            absolute right-2.5 bottom-2.5 inline-flex items-center gap-1.5 rounded
-            bg-slate-950/70 px-2 py-1 text-[11px] font-medium text-white backdrop-blur-sm
+            relative block aspect-video overflow-hidden rounded-md
+            bg-slate-100 w-full sm:aspect-[4/3]
           "
         >
-          <Images aria-hidden="true" className="size-3.5" />
-          {post.hinhAnhTinDangs.length} ảnh
-        </span>
+          <img
+            src={post.anhDaiDienUrl || "/placeholder.png"}
+            alt={post.tieuDe}
+            loading="lazy"
+            decoding="async"
+            onError={(event) => {
+              if (!event.currentTarget.src.endsWith("/placeholder.png"))
+                event.currentTarget.src = "/placeholder.png";
+            }}
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+          <span
+            className="
+              absolute right-2.5 bottom-2.5 inline-flex items-center gap-1.5 rounded
+              bg-slate-950/70 px-2 py-1 text-[11px] font-medium text-white backdrop-blur-sm
+            "
+          >
+            <Images aria-hidden="true" className="size-3.5" />
+            {post.hinhAnhTinDangs.length} ảnh
+          </span>
+        </div>
       </div>
+      {showReason && (
+        <p className="w-full sm:col-span-2 sm:row-start-2 rounded-sm border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">
+          <strong>
+            {post.trangThai === "BI_GO"
+              ? "Lý do gỡ tin"
+              : "Lý do từ chối duyệt"}
+            :{" "}
+          </strong>
+          <span className="whitespace-pre-wrap wrap-anywhere">
+            {post.lyDoKiemDuyet || "Chưa có lý do được ghi nhận."}
+          </span>
+        </p>
+      )}
 
-      <div className="flex min-w-0 flex-1 flex-col">
+      <div className="flex min-w-0 flex-1 flex-col sm:col-start-2 sm:row-start-1">
         <div className="mb-2 flex flex-wrap items-center gap-2">
           <span
             className={`
@@ -209,12 +225,6 @@ function PostCard({
             />
             {status.label}
           </span>
-
-          <VerifyPostAction
-            post={post}
-            onSubmitted={onVerification}
-            onRefresh={refresh}
-          />
         </div>
         <h2 className="text-lg leading-snug font-semibold tracking-[-0.015em] sm:text-lg">
           {viewPost(
@@ -248,25 +258,38 @@ function PostCard({
             Mã tin: {post.maTinDang}
           </span>
         </div>
-        {(post.trangThai === "BI_GO" || post.trangThai === "TU_CHOI") && (
-          <p className="mt-3 rounded-sm border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">
-            <strong>
-              {post.trangThai === "BI_GO"
-                ? "Lý do gỡ tin"
-                : "Lý do từ chối duyệt"}
-              :{" "}
-            </strong>
-            <span className="whitespace-pre-wrap wrap-anywhere">
-              {post.lyDoKiemDuyet || "Chưa có lý do được ghi nhận."}
-            </span>
-          </p>
-        )}
       </div>
-      <div className="flex flex-col justify-between gap-3 pt-3 md:pt-0">
-        <dl className="flex flex-wrap gap-x-4 gap-y-1 text-sm md:justify-end">
-          <div className="flex gap-1"><dt>Quan tâm:</dt><dd className="font-semibold tabular-nums">{post.soLuotLuu ?? 0}</dd></div>
-          <div className="flex gap-1"><dt>Khách hàng:</dt><dd className="font-semibold tabular-nums">{post.soKhachHang ?? 0}</dd></div>
-        </dl>
+
+      <div
+        className={`flex flex-col justify-between gap-3 pt-3 sm:col-start-3 sm:row-start-1 md:pt-0 ${showReason ? "sm:row-end-3" : ""}`}
+      >
+        <div className="bg-[#dedede] p-2 rounded-sm">
+          <dl className="flex flex-wrap gap-x-4 gap-y-1 text-sm ">
+            <div className="flex gap-1">
+              <dt>Quan tâm:</dt>
+              <dd className="font-semibold tabular-nums">
+                {post.soLuotLuu ?? 0}
+              </dd>
+            </div>
+            <div className="flex gap-1">
+              <dt>Khách hàng:</dt>
+              <dd className="font-semibold tabular-nums">
+                {post.soKhachHang ?? 0}
+              </dd>
+            </div>
+          </dl>
+          <div className="flex flex-col gap-2 mt-4 text-sm">
+            <p className="text-sm font-semibold">Tin xác thực </p>{" "}
+            <VerifyPostAction
+              post={post}
+              onSubmitted={onVerification}
+              onRefresh={refresh}
+            />
+            <a href="" className="underline text-xs">
+              Tìm hiểu về Tin xác thực
+            </a>
+          </div>
+        </div>
         <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2  pt-3">
           {viewPost(
             <>
@@ -460,7 +483,9 @@ export default function ManagerPostCard() {
         ? {
             ...state,
             posts: state.posts.map((post) =>
-              post.maTinDang === updated.maTinDang ? { ...post, ...updated } : post,
+              post.maTinDang === updated.maTinDang
+                ? { ...post, ...updated }
+                : post,
             ),
           }
         : state,
@@ -562,7 +587,7 @@ export default function ManagerPostCard() {
   return (
     <section
       aria-label="Danh sách tin đăng của bạn"
-      className="mx-auto max-w-6xl p-4 font-sans sm:p-6 lg:p-8"
+      className="mx-auto max-w-6xl p-4 font-sans sm: lg:"
     >
       <dl className="mb-4 grid grid-cols-2 gap-3 lg:grid-cols-4">
         {summary.map(({ label, count, icon: Icon, description, color }) => (
@@ -587,7 +612,7 @@ export default function ManagerPostCard() {
           </div>
         ))}
       </dl>
-      <div className="bg-white rounded-sm px-4 space-y-2">
+      <div className="bg-white rounded-sm px-4 space-y-2 py-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div
             role="group"
@@ -607,17 +632,7 @@ export default function ManagerPostCard() {
             ))}
           </div>
         </div>
-        <div className="flex justify-end min-w-0 flex-wrap gap-2">
-          <select
-            aria-label="Sắp xếp theo ngày tạo"
-            value={order}
-            onChange={(event) => setOrder(event.target.value)}
-            className="h-10 rounded-sm shadow-sm bg-card px-3 text-sm"
-          >
-            <option value="newest">Mới nhất</option>
-            <option value="oldest">Cũ nhất</option>
-          </select>
-        </div>
+
         {loading ? (
           <div
             role="status"

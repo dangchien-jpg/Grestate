@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { Dialog } from "@base-ui/react/dialog";
 import { isAxiosError } from "axios";
-import { Clock3, ShieldCheck, Upload, X } from "lucide-react";
+import { Upload, X } from "lucide-react";
 import { toast } from "sonner";
 import Backdrop from "@/components/backdrop/backdrop";
 import { Button } from "@/components/ui/button";
@@ -366,16 +366,14 @@ export default function VerifyPostAction({
     return (
       <span
         role="status"
-        className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-1 text-xs text-amber-800"
+        className="inline-flex items-center gap-1 bg-white px-2 py-2 rounded-sm     text-xs text-amber-800"
       >
-        <Clock3 size={14} />
         Đang chờ xác thực
       </span>
     );
   if (request?.trangThai === "DA_XAC_THUC")
     return (
-      <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-1 text-xs font-medium text-emerald-800">
-        <ShieldCheck size={14} />
+      <span className="inline-flex items-center gap-1 bg-white px-2 py-2 rounded-sm   text-xs font-medium text-emerald-800">
         Đã xác thực
       </span>
     );
@@ -396,15 +394,10 @@ export default function VerifyPostAction({
           <Button
             type="button"
             variant="outline"
-            className={
-              rejected
-                ? "text-red-700 rounded-full bg-transparent"
-                : "text-primary rounded-full bg-transparent"
-            }
+            className={rejected ? "text-red-700 " : "text-primary "}
           />
         }
       >
-        <ShieldCheck />
         {rejected ? "Xác thực bị từ chối · Xem lý do" : "Xác thực tin"}
       </Dialog.Trigger>
       <Dialog.Portal>
